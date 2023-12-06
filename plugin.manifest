@@ -1,0 +1,7 @@
+pluginclassname=TestPlugin
+pluginname=TestPlugin
+origin=data-quest
+version=1.0.0
+description=Testing plugin
+studipMinVersion=4.6
+studipMaxVersion=5.5
