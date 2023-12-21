@@ -1,6 +1,10 @@
 <?php
 
-require_once __DIR__ . '/bootstrap.inc.php';
+
+require_once __DIR__ . '/models/test.php';
+require_once __DIR__ . '/classes/Controller.php';
+require_once __DIR__ . '/classes/Plugin.php';
+
 class TestPlugin extends StudIPPlugin implements SystemPlugin
 {
     public function __construct()

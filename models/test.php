@@ -17,4 +17,17 @@ class Test extends SimpleORMap
         ];
         parent::configure($config);
     }
+
+    public static function getTypes(): array
+    {
+        return [
+            1 => 'Short story',
+            2 =>  'novel'
+        ];
+    }
+
+    public function getTypeDescription(): string
+    {
+        return self::getTypes()[$this->type] ?? 'Unknown type!';
+    }
 }

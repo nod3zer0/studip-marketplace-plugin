@@ -1,7 +1,6 @@
-pluginclassname=TestPlugin
-pluginname=TestPlugin
+pluginclassname=Marketplace
+pluginname=Marketplace
 origin=data-quest
 version=1.0.0
-description=Testing plugin
+description=Marketplace plugin
 studipMinVersion=4.6
-studipMaxVersion=5.5
