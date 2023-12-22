@@ -1,6 +1,6 @@
 pluginclassname=Marketplace
 pluginname=Marketplace
-origin=data-quest
+origin=Marketplace
 version=1.0.0
 description=Marketplace plugin
 studipMinVersion=4.6

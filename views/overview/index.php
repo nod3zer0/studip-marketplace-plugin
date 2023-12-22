@@ -1,6 +1,6 @@
 <table class="default sortable-table">
     <caption>
-        Texts
+        Demands
     </caption>
     <colgroup>
         <col>
@@ -11,21 +11,17 @@
     <thead>
         <tr>
             <th data-sort="text">Title</th>
-            <th data-sort="text">Type</th>
             <th data-sort="text">Author</th>
             <th data-sort="digit">Created on</th>
         </tr>
     </thead>
     <tbody>
-        <? if ($all_texts) : ?>
-            <? foreach ($all_texts as $text_obj) : ?>
+        <? if ($all_demands) : ?>
+            <? foreach ($all_demands as $demand_obj) : ?>
                 <tr>
-                    <td></td>
-                    <td><?= $text_obj->getTypeDescription(); ?></td>
-                    <td>
-
-
-                    <td></td>
+                    <td> <?= $demand_obj->title ?></td>
+                    <td><?= htmlReady($demand_obj->author->getFullName()) ?></td>
+                    <td> <?= strftime('%x', $demand_obj->mkdate) ?></td>
                 </tr>
             <? endforeach; ?>
         <? else : ?>

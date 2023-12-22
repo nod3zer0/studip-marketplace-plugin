@@ -1,3 +1,3 @@
 
 make:
-	zip -r testPlugin controllers/* views/* migrations/* classes/* models/* plugin.manifest TestPlugin.class.php bootstrap.inc.php
+	rm marketplace.zip; zip -r marketplace controllers/* views/* migrations/* classes/* models/* plugin.manifest Marketplace.class.php bootstrap.inc.php

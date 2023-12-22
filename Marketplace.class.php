@@ -1,11 +1,11 @@
 <?php
 
-
-require_once __DIR__ . '/models/test.php';
+require_once __DIR__ . '/models/demand.php';
+require_once __DIR__ . '/models/property.php';
 require_once __DIR__ . '/classes/Controller.php';
 require_once __DIR__ . '/classes/Plugin.php';
 
-class TestPlugin extends StudIPPlugin implements SystemPlugin
+class Marketplace extends StudIPPlugin implements SystemPlugin
 {
     public function __construct()
     {
@@ -18,11 +18,11 @@ class TestPlugin extends StudIPPlugin implements SystemPlugin
             'file-text',
             Icon::ROLE_NAVIGATION
         ));
-        Navigation::addItem('/test_root', $root_nav);
+        Navigation::addItem('/marketplace_root', $root_nav);
         $navigation = new Navigation(
             'Overview',
             PluginEngine::getURL($this, [], 'overview')
         );
-        $root_nav->addSubNavigation('test_overview', $navigation);
+        $root_nav->addSubNavigation('marketplace_overview', $navigation);
     }
 }

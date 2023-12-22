@@ -1,13 +1,13 @@
 <?php
-class OverviewController extends \TestPlugin\Controller
+class OverviewController extends \Marketplace\Controller
 {
     private function buildSidebar()
     {
         $sidebar = Sidebar::Get();
         $actionWidget = $sidebar->addWidget(new ActionsWidget());
         $actionWidget->addLink(
-            'Create text',
-            $this->url_for('overview/edit_text'),
+            'Create demand',
+            $this->url_for('overview/create_demand'),
             Icon::create('add'),
             ['data-dialog' => true]
         );
@@ -15,42 +15,40 @@ class OverviewController extends \TestPlugin\Controller
 
     public function index_action()
     {
-        Navigation::activateItem('test_root/test_overview');
-        PageLayout::setTitle('Texts overview');
+        Navigation::activateItem('marketplace_root/marketplace_overview');
+        PageLayout::setTitle('Demands');
         OverviewController::buildSidebar();
-        $this->all_texts = \TestPlugin\Test::findBySQL("1");
-
-        //$this->all_texts = \TestPlugin\Test::findBySQL("1");
+        $this->all_demands = \Marketplace\Demand::findBySQL("1");
     }
 
-    public function edit_text_action(string $text_id = '')
+    public function create_demand_action(string $demand_id = '')
     {
-        PageLayout::setTitle('Edit text');
-        $this->text_obj = \TestPlugin\Test::find($text_id);
-        if (!$this->text_obj) {
-            $this->text_obj = new \TestPlugin\Test();
+        PageLayout::setTitle('Edit demand');
+        $this->demand_obj = \Marketplace\Demand::find($demand_id);
+        if (!$this->demand_obj) {
+            $this->demand_obj = new \Marketplace\Demand();
         }
     }
 
-    public function store_text_action(string $text_id = '')
+
+    public function store_demand_action(string $demand_id = '')
     {
         CSRFProtection::verifyRequest();
-        $this->text_obj = \TestPlugin\Test::find($text_id);
-        if (!$this->text_obj) {
-            $this->text_obj = new \TestPlugin\Test();
-            $this->text_obj->author_id = $GLOBALS['user']->id;
+        $this->demand_obj = \Marketplace\Demand::find($demand_id);
+        if (!$this->demand_obj) {
+            $this->demand_obj = new \Marketplace\Demand();
+            $this->demand_obj->author_id = $GLOBALS['user']->id;
         }
-        $this->text_obj->setData([
+        $this->demand_obj->setData([
             'title' => Request::get('title'),
-            'description' => Request::get('description'),
-            'type' => Request::int('type')
+            'description' => Request::get('description')
         ]);
-        if ($this->text_obj->store() !== false) {
-            PageLayout::postSuccess('The text was
+        if ($this->demand_obj->store() !== false) {
+            PageLayout::postSuccess('The demand was
 successfully saved');
         } else {
             PageLayout::postError('An error occurred while
-saving the text');
+saving the demand');
         }
         $this->redirect('overview/index');
     }
