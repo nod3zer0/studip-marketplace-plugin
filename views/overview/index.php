@@ -13,15 +13,16 @@
             <th data-sort="text">Title</th>
             <th data-sort="text">Author</th>
             <th data-sort="digit">Created on</th>
-            <th data-sort="text">Actions</th>
-            <th data-sort="text">Actions</th>
+            <th data-sort="text">Edit</th>
         </tr>
     </thead>
     <tbody>
         <? if ($all_demands) : ?>
             <? foreach ($all_demands as $demand_obj) : ?>
                 <tr>
-                    <td> <?= $demand_obj->title ?></td>
+                    <td>
+                        <a data-dialog href="<?= $controller->link_for('overview/demand_detail', $demand_obj->id) ?>"><?= $demand_obj->title ?></a>
+                    </td>
                     <td><?= htmlReady($demand_obj->author->getFullName()) ?></td>
                     <td> <?= strftime('%x', $demand_obj->mkdate) ?></td>
                     <td>
@@ -35,16 +36,6 @@
                             ); ?>
                             <?= $actions ?>
                         <? endif; ?>
-                    </td>
-                    <td>
-                        <? $actions = ActionMenu::get(); ?>
-                        <? $actions->addLink(
-                            $controller->url_for('overview/demand_detail/' . $demand_obj->id),
-                            'View',
-                            Icon::create('edit'),
-                            ['data-dialog' => true]
-                        ); ?>
-                        <?= $actions ?>
                     </td>
                 </tr>
             <? endforeach; ?>
