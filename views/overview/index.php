@@ -13,6 +13,8 @@
             <th data-sort="text">Title</th>
             <th data-sort="text">Author</th>
             <th data-sort="digit">Created on</th>
+            <th data-sort="text">Actions</th>
+            <th data-sort="text">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -22,6 +24,28 @@
                     <td> <?= $demand_obj->title ?></td>
                     <td><?= htmlReady($demand_obj->author->getFullName()) ?></td>
                     <td> <?= strftime('%x', $demand_obj->mkdate) ?></td>
+                    <td>
+                        <? if ($demand_obj->hasPermission()) : ?>
+                            <? $actions = ActionMenu::get(); ?>
+                            <? $actions->addLink(
+                                $controller->url_for('overview/create_demand/' . $demand_obj->id),
+                                'Edit',
+                                Icon::create('edit'),
+                                ['data-dialog' => true]
+                            ); ?>
+                            <?= $actions ?>
+                        <? endif; ?>
+                    </td>
+                    <td>
+                        <? $actions = ActionMenu::get(); ?>
+                        <? $actions->addLink(
+                            $controller->url_for('overview/demand_detail/' . $demand_obj->id),
+                            'View',
+                            Icon::create('edit'),
+                            ['data-dialog' => true]
+                        ); ?>
+                        <?= $actions ?>
+                    </td>
                 </tr>
             <? endforeach; ?>
         <? else : ?>
@@ -29,6 +53,7 @@
                 <td colspan="4">
                 </td>
             </tr>
+
         <? endif; ?>
     </tbody>
 </table>

@@ -21,6 +21,12 @@ class OverviewController extends \Marketplace\Controller
         $this->all_demands = \Marketplace\Demand::findBySQL("1");
     }
 
+    public function demand_detail_action(string $demand_id = '')
+    {
+        CSRFProtection::verifyRequest();
+        $this->demand_obj = \Marketplace\Demand::find($demand_id);
+    }
+
     public function create_demand_action(string $demand_id = '')
     {
         PageLayout::setTitle('Edit demand');
@@ -38,6 +44,11 @@ class OverviewController extends \Marketplace\Controller
         if (!$this->demand_obj) {
             $this->demand_obj = new \Marketplace\Demand();
             $this->demand_obj->author_id = $GLOBALS['user']->id;
+        }
+        if (!$this->demand_obj->hasPermission()) {
+            PageLayout::postError('You do not have permission to customize the text');
+            $this->redirect('overview/index');
+            return;
         }
         $this->demand_obj->setData([
             'title' => Request::get('title'),

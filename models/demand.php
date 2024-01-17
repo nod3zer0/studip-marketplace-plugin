@@ -17,4 +17,9 @@ class Demand extends SimpleORMap
         ];
         parent::configure($config);
     }
+
+    public function hasPermission(): bool
+    {
+        return $GLOBALS['user']->id === $this->author_id || $GLOBALS['user']->perms === 'root';
+    }
 }
