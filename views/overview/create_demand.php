@@ -21,6 +21,12 @@ use Studip\Button; ?>
             </label>
             <textarea name="description"><?= $demand_obj->description ?></textarea>
         </div>
+        <div>
+            <label>
+                Tags
+            </label>
+            <input name="tags" value="">
+        </div>
 
     </fieldset>
 

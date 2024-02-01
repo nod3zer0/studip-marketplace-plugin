@@ -1,4 +1,7 @@
 <?php
+
+use Marketplace\TagDemand;
+
 class OverviewController extends \Marketplace\Controller
 {
     private function buildSidebar()
@@ -25,6 +28,7 @@ class OverviewController extends \Marketplace\Controller
     {
         CSRFProtection::verifyRequest();
         $this->demand_obj = \Marketplace\Demand::find($demand_id);
+        $this->tags = \Marketplace\TagDemand::findBySQL("demand_id = ?", [$demand_id]);
     }
 
     public function create_demand_action(string $demand_id = '')
@@ -54,6 +58,9 @@ class OverviewController extends \Marketplace\Controller
             'title' => Request::get('title'),
             'description' => Request::get('description')
         ]);
+
+        $tags = explode(",", Request::get('tags'));
+
         if ($this->demand_obj->store() !== false) {
             PageLayout::postSuccess('The demand was
 successfully saved');
@@ -61,6 +68,12 @@ successfully saved');
             PageLayout::postError('An error occurred while
 saving the demand');
         }
+
+        foreach ($tags as $tag) {
+            TagDemand::addTag($tag, $this->demand_obj->id);
+        }
+
+
         $this->redirect('overview/index');
     }
 }

@@ -16,4 +16,14 @@ use Studip\Button; ?>
         </div>
         <div><?= $demand_obj->description ?></div>
     </div>
+    <div>
+        <div>
+            Tags
+        </div>
+        <div>
+            <? foreach ($tags as $tag) : ?>
+                <div><?= $tag->mp_tag->name ?></div>
+            <? endforeach; ?>
+        </div>
+
 </fieldset>

@@ -9,13 +9,13 @@ class Demand extends SimpleORMap
 {
     protected static function configure($config = [])
     {
-        $config['db_table'] = 'demand';
+        $config['db_table'] = 'mp_demand';
         $config['belongs_to']['author'] = [
             'class_name' => User::class,
             'foreign_key' => 'author_id',
             'assoc_foreign_key' => 'user_id'
         ];
-        $config['has_many']['tag_demand'] = [
+        $config['has_many']['mp_tag_demand'] = [
             'class_name' => \Marketplace\TagDemand::class,
             'assoc_func' => 'findByParent_id'
         ];
