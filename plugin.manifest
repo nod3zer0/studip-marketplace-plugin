@@ -1,6 +1,6 @@
 pluginclassname=Marketplace
 pluginname=Marketplace
 origin=Marketplace
-version=1.0.0
+version=1.0.1
 description=Marketplace plugin
 studipMinVersion=4.6
