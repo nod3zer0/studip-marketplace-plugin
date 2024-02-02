@@ -38,6 +38,12 @@ class OverviewController extends \Marketplace\Controller
         if (!$this->demand_obj) {
             $this->demand_obj = new \Marketplace\Demand();
         }
+        $this->tags = \Marketplace\TagDemand::findBySQL("demand_id = ?", [$demand_id]);
+        $this->tagsString = "";
+        foreach ($this->tags as $tag) {
+            $this->tagsString .= $tag->mp_tag->name . ",";
+        }
+        $this->tagsString = rtrim($this->tagsString, ",");
     }
 
 
@@ -59,7 +65,6 @@ class OverviewController extends \Marketplace\Controller
             'description' => Request::get('description')
         ]);
 
-        $tags = explode(",", Request::get('tags'));
 
         if ($this->demand_obj->store() !== false) {
             PageLayout::postSuccess('The demand was
@@ -69,9 +74,22 @@ successfully saved');
 saving the demand');
         }
 
-        foreach ($tags as $tag) {
-            TagDemand::addTag($tag, $this->demand_obj->id);
+        $tags = explode(",", Request::get('tags'));
+        $previous_tags = explode(",", Request::get('tags_previous'));
+        foreach ($previous_tags as $tag) {
+            if (!in_array($tag, $tags)) {
+                TagDemand::deleteTag($tag, $this->demand_obj->id);
+            }
         }
+        foreach ($tags as $tag) {
+            if (!in_array($tag, $previous_tags)) {
+                TagDemand::addTag($tag, $this->demand_obj->id);
+            }
+        }
+
+        // foreach ($tags as $tag) {
+        //     TagDemand::addTag($tag, $this->demand_obj->id);
+        // }
 
 
         $this->redirect('overview/index');

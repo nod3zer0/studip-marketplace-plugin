@@ -38,4 +38,20 @@ class TagDemand extends SimpleORMap
             $tag_demand_obj->store();
         }
     }
+
+    public function getAllTags($demand_id): array
+    {
+        return TagDemand::findBySQL("demand_id = ?", [$demand_id]);
+    }
+
+    public function deleteTag($tag_name, $demand_id)
+    {
+        $tag_obj = \Marketplace\Tag::findByName($tag_name);
+        if ($tag_obj) {
+            $tag_demand_obj = TagDemand::findOneBySQL("tag_id = ? AND demand_id = ?", [$tag_obj->id, $demand_id]);
+            if ($tag_demand_obj) {
+                $tag_demand_obj->delete();
+            }
+        }
+    }
 }

@@ -25,8 +25,9 @@ use Studip\Button; ?>
             <label>
                 Tags
             </label>
-            <input name="tags" value="">
+            <input name="tags" value="<?= $tagsString ?>">
         </div>
+        <input type="hidden" name="tags_previous" value="<?= $tagsString ?>">
 
     </fieldset>
 
