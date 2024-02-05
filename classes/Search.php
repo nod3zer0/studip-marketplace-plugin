@@ -246,6 +246,8 @@ namespace Marketplace;
                     $sql .= " " . $token->getSQL();
                 } else if ($next_token && $next_token->getType() == "ParenthesisCloseT") {
                     $sql .= " " . $token->getSQL();
+                }else if($token->getType() == "LogicT") {
+                    $sql .= " ". $token->getSQL();
                 } else if ($next_token) {
                     $sql .= " ". $token->getSQL() . " AND";
                 }else {
