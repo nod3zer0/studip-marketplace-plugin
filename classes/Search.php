@@ -13,6 +13,8 @@ namespace Marketplace;
     {
         abstract public function getType(): String;
         abstract public function getSQL(): String;
+
+        abstract public function getValue();
     }
 
     class WordNode extends Node
@@ -31,7 +33,12 @@ namespace Marketplace;
 
         public function getSQL(): String
         {
-            return $this->value;
+            return "";
+        }
+
+        public function getValue()
+        {
+            return null;
         }
     }
 
@@ -51,8 +58,14 @@ namespace Marketplace;
 
         public function getSQL(): String
         {
-            return "mp_tag.name LIKE \"" . $this->value . "\"";
+            return "mp_tag.name LIKE ?";
         }
+
+        public function getValue()
+        {
+            return $this->value;
+        }
+
     }
 
     class AndNode extends Node
@@ -65,6 +78,10 @@ namespace Marketplace;
         public function getSQL(): String
         {
             return "AND";
+        }
+        public function getValue()
+        {
+            return null;
         }
     }
 
@@ -81,6 +98,11 @@ namespace Marketplace;
         {
             return "OR";
         }
+
+        public function getValue()
+        {
+            return null;
+        }
     }
 
     class NotNode extends Node
@@ -93,6 +115,11 @@ namespace Marketplace;
         public function getSQL(): String
         {
             return "NOT";
+        }
+
+        public function getValue()
+        {
+            return null;
         }
     }
 
@@ -107,6 +134,11 @@ namespace Marketplace;
         {
             return "(";
         }
+
+        public function getValue()
+        {
+            return null;
+        }
     }
 
     class CloseNode extends Node
@@ -119,6 +151,11 @@ namespace Marketplace;
         public function getSQL(): String
         {
             return ")";
+        }
+
+        public function getValue()
+        {
+            return null;
         }
     }
 
@@ -140,7 +177,12 @@ namespace Marketplace;
 
         public function getSQL(): String
         {
-            return "mp_demand." . $this->property . " LIKE \"" . $this->value . "\"";
+            return "mp_demand." . $this->property . " LIKE ?";
+        }
+
+        public function getValue()
+        {
+            return $this->value;
         }
     }
 
@@ -237,6 +279,7 @@ namespace Marketplace;
         {
             $tokenizer = new Tokenizer($query);
             $sql = "SELECT * FROM mp_demand LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id WHERE ";
+            $values = [];
             while ($token = $tokenizer->get_next_token()) {
                 $next_token = $tokenizer->peek_next_token();
                 if ($next_token && $next_token->getType() == "LogicT") { //do not add AND if logic token
@@ -253,8 +296,9 @@ namespace Marketplace;
                 }else {
                     $sql .= " ". $token->getSQL();
                 }
+                $values[] = $token->getValue();
             }
-            return $sql;
+            return array($sql, $values);
         }
     }
 
@@ -262,7 +306,7 @@ namespace Marketplace;
 
     while ($line = fgets($f)) {
         $generator = new SqlGenerator();
-        echo $generator->generateSQL($line);
+        echo $generator->generateSQL($line)[0];
     }
 
     fclose($f);

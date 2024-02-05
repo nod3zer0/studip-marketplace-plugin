@@ -14,7 +14,7 @@ class SearchController extends \Marketplace\Controller
         if ($query != '') {
             $generator = new SqlGenerator();
             $sql = $generator->generateSQL($query);
-            $this->st = $db->fetchAll($sql, []);
+            $this->st = $db->fetchAll($sql[0], $sql[1]);
         }else{
             $this->st = $db->fetchAll("SELECT * FROM mp_demand LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id", []);
         }
