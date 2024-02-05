@@ -278,7 +278,7 @@ namespace Marketplace;
         public function generateSQL($query)
         {
             $tokenizer = new Tokenizer($query);
-            $sql = "SELECT * FROM mp_demand LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id WHERE ";
+            $sql = "LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id WHERE ";
             $values = [];
             while ($token = $tokenizer->get_next_token()) {
                 $next_token = $tokenizer->peek_next_token();
