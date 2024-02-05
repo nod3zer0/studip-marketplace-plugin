@@ -4,7 +4,8 @@
     enum NodeType
     {
         case LogicT;
-        case ParenthesisT;
+        case ParenthesisOpenT;
+        case ParenthesisCloseT;
         case PropertyT;
     }
 
@@ -50,7 +51,7 @@
 
         public function getSQL(): String
         {
-            return "mp_tag.name LIKE " . $this->value;
+            return "mp_tag.name LIKE \"" . $this->value . "\"";
         }
     }
 
@@ -63,9 +64,11 @@
 
         public function getSQL(): String
         {
-            return "\AND";
+            return "AND";
         }
     }
+
+#t OR #f ( title:eeee OR title:fffff)
 
     class OrNode extends Node
     {
@@ -97,7 +100,7 @@
     {
         public function getType(): NodeType
         {
-            return NodeType::ParenthesisT;
+            return NodeType::ParenthesisOpenT;
         }
 
         public function getSQL(): String
@@ -110,7 +113,7 @@
     {
         public function getType(): NodeType
         {
-            return NodeType::ParenthesisT;
+            return NodeType::ParenthesisCloseT;
         }
 
         public function getSQL(): String
@@ -137,7 +140,7 @@
 
         public function getSQL(): String
         {
-            return "mp_demand." . $this->property . " LIKE " . $this->value;
+            return "mp_demand." . $this->property . " LIKE \"" . $this->value . "\"";
         }
     }
 
@@ -213,7 +216,7 @@
                 if (substr($tokens[$i][0], 0, 1) == "#") //tags
                 {
                    $this->tokenObjects[] = new TagNode(substr($tokens[$i], 1));
-                } else if ($tokens[$i] == "\AND") //ADN
+                } else if ($tokens[$i] == "AND") //ADN
                 {
                     $this->tokenObjects[] = new AndNode();
                 } else if ($tokens[$i] == "OR") //OR
@@ -262,13 +265,44 @@
             return null;
 
         }
+
+        function peek_next_token(): ?Node
+        {
+            if ($this->tokenObjects) {
+                return $this->tokenObjects[0];
+            }
+            return null;
+        }
     }
 
 
 
 
 
-
+    class SqlGenerator
+    {
+        public function generateSQL($query)
+        {
+            $tokenizer = new Tokenizer($query);
+            $sql = "";
+            while ($token = $tokenizer->get_next_token()) {
+                $next_token = $tokenizer->peek_next_token();
+                if ($next_token && $next_token->getType() == NodeType::LogicT) { //do not add AND if logic token
+                    $sql .= " " . $token->getSQL() . " " . $next_token->getSQL();
+                    $tokenizer->get_next_token();//skip logic token
+                } else if ($token->getType() == NodeType::ParenthesisOpenT) {
+                    $sql .= " " . $token->getSQL();
+                } else if ($next_token && $next_token->getType() == NodeType::ParenthesisCloseT) {
+                    $sql .= " " . $token->getSQL();
+                } else if ($next_token) {
+                    $sql .= " ". $token->getSQL() . " AND";
+                }else {
+                    $sql .= " ". $token->getSQL();
+                }
+            }
+            return $sql;
+        }
+    }
 
 
 
@@ -357,10 +391,8 @@
     $f = fopen('php://stdin', 'r');
 
     while ($line = fgets($f)) {
-        $tokenizer = new Tokenizer($line);
-        while ($token = $tokenizer->get_next_token()) {
-            echo $token->getSQL();
-        }
+        $generator = new SqlGenerator();
+        echo $generator->generateSQL($line);
     }
 
     fclose($f);
