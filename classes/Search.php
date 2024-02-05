@@ -1,4 +1,14 @@
 <?php
+namespace Marketplace;
+
+    // enum NodeType
+    // {
+    //     case LogicT;
+    //     case ParenthesisOpenT;
+    //     case ParenthesisCloseT;
+    //     case PropertyT;
+    // }
+
     abstract class Node
     {
         abstract public function getType(): String;

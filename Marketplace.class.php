@@ -6,6 +6,7 @@ require_once __DIR__ . '/models/tag.php';
 require_once __DIR__ . '/models/tag_demand.php';
 require_once __DIR__ . '/classes/Controller.php';
 require_once __DIR__ . '/classes/Plugin.php';
+require_once __DIR__ . '/classes/Search.php';
 
 class Marketplace extends StudIPPlugin implements SystemPlugin
 {

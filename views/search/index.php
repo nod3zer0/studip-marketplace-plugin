@@ -1,7 +1,7 @@
 <?
 
 use Studip\Button; ?>
-<form class="default collapsable" action="<?= $controller->link_for('search/search', $demand_obj->id) ?>" method="post">
+<form class="default collapsable" action="<?= $controller->link_for('search/index', $demand_obj->id) ?>" method="post">
     <?= CSRFProtection::tokenTag() ?>
     <fieldset data-open="bd_basicsettings">
         <div>
@@ -19,6 +19,7 @@ use Studip\Button; ?>
                     Title
                 </div>
                 <div><?= $row['title'] ?></div>
+                <div><?= $row['name'] ?></div>
             </div>
         <? endforeach; ?>
     </div>
