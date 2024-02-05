@@ -10,8 +10,6 @@ class InitProperty extends Migration
             name TEXT NOT NULL,
             type TINYINT(2) NOT NULL DEFAULT 1,
             matching BOOL NOT NULL DEFAULT 1,
-            demand_id CHAR(32) CHARACTER SET latin1 COLLATE
-            latin1_bin NOT NULL,
             value TEXT,
             PRIMARY KEY (id)
             )";
