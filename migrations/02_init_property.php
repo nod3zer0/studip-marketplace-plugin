@@ -7,9 +7,10 @@ class InitProperty extends Migration
         $query = "CREATE TABLE IF NOT EXISTS mp_property (
             id CHAR(32) CHARACTER SET latin1 COLLATE
             latin1_bin NOT NULL,
-            name TEXT NOT NULL,
-            type TINYINT(2) NOT NULL DEFAULT 1,
-            matching BOOL NOT NULL DEFAULT 1,
+            custom_property_id CHAR(32) CHARACTER SET latin1 COLLATE
+            latin1_bin NOT NULL,
+            demand_id CHAR(32) CHARACTER SET latin1 COLLATE
+            latin1_bin NOT NULL,
             value TEXT,
             PRIMARY KEY (id)
             )";

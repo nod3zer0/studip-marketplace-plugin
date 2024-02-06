@@ -1,6 +1,52 @@
 <?
 
 use Studip\Button; ?>
+
+<script>
+    STUDIP.Vue.load().then(({
+        Vue,
+        createApp,
+        eventBus,
+        store
+    }) => {
+        new Vue({
+            el: '#custom_properties_values',
+            data: {
+                custom_properties: []
+            },
+            created() {
+                this.loadCustomProperties();
+            },
+            methods: {
+                loadCustomProperties: function() {
+                    fetch('/public/plugins.php/marketplace/overview/get_custom_properties')
+                        .then(response => response.json())
+                        .then(data => {
+                            // Check if data is an array
+                            if (Array.isArray(data)) {
+                                // Update properties with data from the response
+                                this.custom_properties = data.map(prop => ({
+                                    name: prop.name,
+                                    type: parseInt(prop.type), // Convert to integer
+                                    required: !!parseInt(prop.required), // Convert to boolean
+                                    value: prop.value
+                                }));
+                            } else {
+                                console.error('Invalid properties data received:', data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching properties:', error);
+                        });
+                },
+
+            }
+
+        });
+    });
+</script>
+
+
 <form class="default collapsable" action="<?= $controller->link_for('overview/store_demand', $demand_obj->id) ?>" method="post">
     <?= CSRFProtection::tokenTag() ?>
     <fieldset data-open="bd_basicsettings">
@@ -28,6 +74,13 @@ use Studip\Button; ?>
             <input name="tags" value="<?= $tagsString ?>">
         </div>
         <input type="hidden" name="tags_previous" value="<?= $tagsString ?>">
+        <div id="custom_properties_values">
+            <div v-for="(item, index) in custom_properties" :key="index">
+                <label>
+                    <label :for="index"> {{ custom_properties[index].name }} </label>
+                    <input v-model="custom_properties[index].value">
+            </div>
+        </div>
 
     </fieldset>
 

@@ -46,6 +46,16 @@ class OverviewController extends \Marketplace\Controller
         $this->tagsString = rtrim($this->tagsString, ",");
     }
 
+    public function get_custom_properties_action()
+    {
+        $db = DBManager::get();
+        $properties = $db->fetchAll("SELECT * FROM mp_custom_property");
+        foreach ($properties as $key => $property) {
+            $properties[$key]['value'] = "";
+        }
+        $this->render_text('' . json_encode($properties));
+    }
+
 
     public function store_demand_action(string $demand_id = '')
     {
