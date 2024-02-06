@@ -4,6 +4,7 @@ require_once __DIR__ . '/models/demand.php';
 require_once __DIR__ . '/models/property.php';
 require_once __DIR__ . '/models/tag.php';
 require_once __DIR__ . '/models/tag_demand.php';
+require_once __DIR__ . '/models/custom_property.php';
 require_once __DIR__ . '/classes/Controller.php';
 require_once __DIR__ . '/classes/Plugin.php';
 require_once __DIR__ . '/classes/Search.php';
