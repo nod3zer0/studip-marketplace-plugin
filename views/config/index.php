@@ -6,6 +6,7 @@
         </li>
     </ul>
     <button @click="addItem">Add property</button>
+    <button @click="submitProperties">Submit</button>
 </div>
 
 <script>
@@ -21,8 +22,27 @@
             },
             deleteItem: function(index) {
                 this.properties.splice(index, 1);
+            },
+            submitProperties: function() {
+                // TODO: make url dynamic
+                fetch('/public/plugins.php/marketplace/config/save_config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.properties)
+                })
+                .then(response => {
+                    // Handle response
+                    console.log('Response:', response.text());
+                })
+                .catch(error => {
+                    // Handle error
+                    console.error('Error:', error);
+                });
             }
         }
+
     });
     });
 </script>

@@ -11,4 +11,8 @@ class ConfigController extends \Marketplace\Controller
         PageLayout::setTitle('Configuration');
     }
 
+    public function save_config_action(){
+        $this->render_text('' . file_get_contents('php://input'));
+    }
+
 }
