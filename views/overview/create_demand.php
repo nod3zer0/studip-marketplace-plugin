@@ -12,14 +12,21 @@ use Studip\Button; ?>
         new Vue({
             el: '#custom_properties_values',
             data: {
-                custom_properties: []
+                custom_properties: [],
+                demand_id: '<?php echo $demand_obj->id; ?>' //TODO do better, this is just dirty fix
             },
             created() {
                 this.loadCustomProperties();
             },
             methods: {
                 loadCustomProperties: function() {
-                    fetch('/public/plugins.php/marketplace/overview/get_custom_properties')
+                    fetch('/public/plugins.php/marketplace/overview/get_custom_properties', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify([this.demand_id])
+                        })
                         .then(response => response.json())
                         .then(data => {
                             // Check if data is an array
@@ -39,6 +46,24 @@ use Studip\Button; ?>
                             console.error('Error fetching properties:', error);
                         });
                 },
+                submitCustomProperties: function() {
+                    // TODO: make url dynamic
+                    fetch('/public/plugins.php/marketplace/overview/update_custom_properties', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify([this.custom_properties, this.demand_id])
+                        })
+                        .then(response => {
+                            // Handle response
+                            console.log('Response:', response.text());
+                        })
+                        .catch(error => {
+                            // Handle error
+                            console.error('Error:', error);
+                        });
+                }
 
             }
 
@@ -74,13 +99,6 @@ use Studip\Button; ?>
             <input name="tags" value="<?= $tagsString ?>">
         </div>
         <input type="hidden" name="tags_previous" value="<?= $tagsString ?>">
-        <div id="custom_properties_values">
-            <div v-for="(item, index) in custom_properties" :key="index">
-                <label>
-                    <label :for="index"> {{ custom_properties[index].name }} </label>
-                    <input v-model="custom_properties[index].value">
-            </div>
-        </div>
 
     </fieldset>
 
@@ -88,3 +106,14 @@ use Studip\Button; ?>
         <?= Button::create('Submit') ?>
     </footer>
 </form>
+
+<div id="custom_properties_values">
+    <div v-for="(item, index) in custom_properties" :key="index">
+        <label>
+            <label :for="index"> {{ custom_properties[index].name }} </label>
+            <input v-model="custom_properties[index].value">
+    </div>
+    <div>
+        <button @click="submitCustomProperties">properites s</button>
+    </div>
+</div>

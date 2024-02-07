@@ -14,6 +14,47 @@ class Property extends SimpleORMap
             'foreign_key' => 'demand_id',
             'assoc_foreign_key' => 'id'
         ];
+        $config['belongs_to']['mp_custom_property'] = [
+            'class_name' => \Marketplace\CustomProperty::class,
+            'foreign_key' => 'custom_property_id',
+            'assoc_foreign_key' => 'id'
+        ];
         parent::configure($config);
+    }
+
+    public function findByDemandId($demand_id)
+    {
+        return self::findBySQL("demand_id = ?", [$demand_id]);
+    }
+
+    public function update_custom_properties($new_properties, $demand_id)
+    {
+        $old_properties = self::findBySQL("demand_id = ?", [$demand_id]);
+        $new_properties_obj = [];
+        $i = 0;
+        foreach ($new_properties as $property) {
+            $new_properties_obj[$i] = new Property();
+            $new_properties_obj[$i]->value = $property["value"];
+            $new_properties_obj[$i]->demand_id = $demand_id;
+            $new_properties_obj[$i]->name = $property["name"];
+            $new_properties_obj[$i]->custom_property_id = CustomProperty::get_property_by_name($property->name)->id;
+            $i++;
+        }
+
+        $to_insert = array_udiff($new_properties_obj, $old_properties, function ($a, $b) {
+            return strcmp($a->custom_property_id, $b->custom_property_id);
+        });
+        $to_update = array_uintersect($new_properties_obj, $old_properties, function ($a, $b) {
+            return strcmp($a->custom_property_id, $b->custom_property_id);
+        });
+
+        foreach ($to_insert as $property) {
+            $property->store();
+        }
+        foreach ($to_update as $property) {
+            $old_property = Property::findBySQL("demand_id = ? AND custom_property_id = ?", [$demand_id, $property->custom_property_id]);
+            $old_property->value = $property->value;
+            $old_property->store();
+        }
     }
 }
