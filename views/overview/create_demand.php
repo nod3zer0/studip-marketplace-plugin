@@ -36,7 +36,8 @@ use Studip\Button; ?>
                                     name: prop.name,
                                     type: parseInt(prop.type), // Convert to integer
                                     required: !!parseInt(prop.required), // Convert to boolean
-                                    value: prop.value
+                                    value: prop.value,
+                                    custom_property_id: prop.id
                                 }));
                             } else {
                                 console.error('Invalid properties data received:', data);

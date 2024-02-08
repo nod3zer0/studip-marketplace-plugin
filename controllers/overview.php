@@ -2,6 +2,7 @@
 
 use Marketplace\TagDemand;
 use \Marketplace\CustomProperty;
+use \Marketplace\Property;
 
 class OverviewController extends \Marketplace\Controller
 {
@@ -64,10 +65,10 @@ class OverviewController extends \Marketplace\Controller
         $this->render_text('' . json_encode($properties));
     }
 
-    public function update_custom_properties_action(string $demand_id = '')
+    public function update_custom_properties_action()
     {
         $properties = json_decode(file_get_contents('php://input'), true);
-        Property::update_custom_properties($properties['properties'], $properties['demand_id']);
+        Property::update_custom_properties($properties[0], $properties[1]);
         $this->render_text('' . json_encode($properties));
     }
 

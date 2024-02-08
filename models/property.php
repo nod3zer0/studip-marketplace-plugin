@@ -36,8 +36,7 @@ class Property extends SimpleORMap
             $new_properties_obj[$i] = new Property();
             $new_properties_obj[$i]->value = $property["value"];
             $new_properties_obj[$i]->demand_id = $demand_id;
-            $new_properties_obj[$i]->name = $property["name"];
-            $new_properties_obj[$i]->custom_property_id = CustomProperty::get_property_by_name($property->name)->id;
+            $new_properties_obj[$i]->custom_property_id = $property["custom_property_id"];
             $i++;
         }
 
@@ -52,7 +51,7 @@ class Property extends SimpleORMap
             $property->store();
         }
         foreach ($to_update as $property) {
-            $old_property = Property::findBySQL("demand_id = ? AND custom_property_id = ?", [$demand_id, $property->custom_property_id]);
+            $old_property = Property::findOneBySQL("demand_id = ? AND custom_property_id = ?", [$demand_id, $property->custom_property_id]);
             $old_property->value = $property->value;
             $old_property->store();
         }
