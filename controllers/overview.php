@@ -90,6 +90,17 @@ class OverviewController extends \Marketplace\Controller
             $this->redirect('overview/index');
             return;
         }
+
+        if (Request::submitted('delete_btn')) {
+            if ($this->demand_obj->delete()) {
+                PageLayout::postSuccess('The demand was successfully deleted');
+            } else {
+                PageLayout::postError('An error occurred while deleting the demand');
+            }
+            $this->redirect('overview/index');
+            return;
+        }
+
         $this->demand_obj->setData([
             'title' => Request::get('title'),
             'description' => Request::get('description')

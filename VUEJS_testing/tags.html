@@ -1,0 +1,35 @@
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</head>
+
+
+<body>
+    <div id="tags">
+        <ul>
+            <li v-for="(item, index) in tags" :key="index">
+                <input v-model="tags[index]">
+                <button @click.prevent="deleteItem(index)">Delete</button>
+            </li>
+        </ul>
+        <div> {{tags.join(',')}} </div>
+        <input name="tags" type="hidden" :value="tags.join(',')">
+        <button @click.prevent="addItem">Add tag</button>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#tags',
+            data: {
+                tags: []
+            },
+            methods: {
+                addItem: function() {
+                    this.tags.push('');
+                },
+                deleteItem: function(index) {
+                    this.tags.splice(index, 1);
+                }
+            }
+        });
+    </script>
+</body>

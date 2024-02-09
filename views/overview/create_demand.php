@@ -73,6 +73,36 @@ use Studip\Button; ?>
     });
 </script>
 
+<script>
+    STUDIP.Vue.load().then(({
+        Vue,
+        createApp,
+        eventBus,
+        store
+    }) => {
+        new Vue({
+            el: '#tags',
+            data: {
+                tags: []
+            },
+            created() {
+                this.loadTags();
+            },
+            methods: {
+                addItem: function() {
+                    this.tags.push('');
+                },
+                deleteItem: function(index) {
+                    this.tags.splice(index, 1);
+                },
+                loadTags: function() {
+                    this.tags = '<?php echo $tagsString; ?>'.split(',');
+                }
+            }
+        });
+    });
+</script>
+
 <form class="default collapsable" action="<?= $controller->link_for('overview/store_demand', $demand_obj->id) ?>" method="post">
     <?= CSRFProtection::tokenTag() ?>
     <fieldset data-open="bd_basicsettings">
@@ -90,10 +120,20 @@ use Studip\Button; ?>
             <textarea name="description"><?= $demand_obj->description ?></textarea>
         </div>
         <div>
-            <label>
-                Tags
-            </label>
-            <input name="tags" value="<?= $tagsString ?>">
+            <div id="tags">
+                <label>
+                    Tags
+                </label>
+                <ul>
+                    <li v-for="(item, index) in tags" :key="index">
+                        <input v-model="tags[index]">
+                        <button @click.prevent="deleteItem(index)">Delete</button>
+                    </li>
+                </ul>
+                <input name="tags" type="hidden" :value="tags.join(',')">
+                <button @click.prevent="addItem">Add tag</button>
+            </div>
+
         </div>
         <input type="hidden" name="tags_previous" value="<?= $tagsString ?>">
 
@@ -109,6 +149,7 @@ use Studip\Button; ?>
     </fieldset>
 
     <footer data-dialog-button>
-        <?= Button::create('Submit') ?>
+        <?= Button::create('Submit', 'submit_btn') ?>
+        <?= Button::create('Delete', 'delete_btn') ?>
     </footer>
 </form>
