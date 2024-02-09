@@ -3,27 +3,36 @@
 use Studip\Button; ?>
 <?= CSRFProtection::tokenTag() ?>
 <fieldset data-open="bd_basicsettings">
-    <div>
-        <div>
-            Title
-        </div>
-        <div><?= $demand_obj->title ?>"</div>
-    </div>
+    <section>
+        <dl>
+            <dt>
+                Title
+            </dt>
+            <dd><?= $demand_obj->title ?>"</dd>
 
-    <div>
-        <div>
-            Description
-        </div>
-        <div><?= $demand_obj->description ?></div>
-    </div>
-    <div>
-        <div>
-            Tags
-        </div>
-        <div>
+
+
+            <dt>
+                Description
+            </dt>
+            <dd><?= $demand_obj->description ?></dd>
+
+
+            <dt>
+                Tags
+            </dt>
+
             <? foreach ($tags as $tag) : ?>
-                <div><?= $tag->mp_tag->name ?></div>
+                <dd><?= $tag->mp_tag->name ?></dd>
             <? endforeach; ?>
-        </div>
 
+            <? foreach ($properties as $property) : ?>
+                <dt>
+                    <?= $property['name'] ?>
+                </dt>
+                <dd><?= $property['value'] ?></dd>
+            <? endforeach; ?>
+
+        </dl>
+    </section>
 </fieldset>

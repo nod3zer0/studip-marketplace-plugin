@@ -31,6 +31,8 @@ class OverviewController extends \Marketplace\Controller
         CSRFProtection::verifyRequest();
         $this->demand_obj = \Marketplace\Demand::find($demand_id);
         $this->tags = \Marketplace\TagDemand::findBySQL("demand_id = ?", [$demand_id]);
+        $db = DBManager::get();
+        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$demand_id]);
     }
 
     public function create_demand_action(string $demand_id = '')
