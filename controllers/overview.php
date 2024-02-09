@@ -101,6 +101,7 @@ successfully saved');
             PageLayout::postError('An error occurred while
 saving the demand');
         }
+        $demand_id = $this->demand_obj->id;
 
         $tags = explode(",", Request::get('tags'));
         $previous_tags = explode(",", Request::get('tags_previous'));
