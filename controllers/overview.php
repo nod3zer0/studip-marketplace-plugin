@@ -46,6 +46,8 @@ class OverviewController extends \Marketplace\Controller
             $this->tagsString .= $tag->mp_tag->name . ",";
         }
         $this->tagsString = rtrim($this->tagsString, ",");
+        $db = DBManager::get();
+        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$demand_id]);
     }
 
     public function get_custom_properties_action()
@@ -112,12 +114,8 @@ saving the demand');
                 TagDemand::addTag($tag, $this->demand_obj->id);
             }
         }
-
-        // foreach ($tags as $tag) {
-        //     TagDemand::addTag($tag, $this->demand_obj->id);
-        // }
-
-
+        $request = Request::getInstance();
+        Property::update_custom_properties($request['custom_properties'], $demand_id);
         $this->redirect('overview/index');
     }
 }

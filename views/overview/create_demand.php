@@ -64,7 +64,8 @@ use Studip\Button; ?>
                             // Handle error
                             console.error('Error:', error);
                         });
-                }
+                },
+                addItem: function() {}
 
             }
 
@@ -72,14 +73,9 @@ use Studip\Button; ?>
     });
 </script>
 
-
 <form class="default collapsable" action="<?= $controller->link_for('overview/store_demand', $demand_obj->id) ?>" method="post">
     <?= CSRFProtection::tokenTag() ?>
     <fieldset data-open="bd_basicsettings">
-        <legend>
-            IDK what is this 1
-        </legend>
-
         <div>
             <label class="required">
                 Title
@@ -101,20 +97,18 @@ use Studip\Button; ?>
         </div>
         <input type="hidden" name="tags_previous" value="<?= $tagsString ?>">
 
+        <? foreach ($properties as $property) : ?>
+            <div>
+                <label>
+                    <?= $property['name'] ?>
+                </label>
+                <input name="custom_properties[<?= $property['id'] ?>]" value="<?= $property['value'] ?>">
+            </div>
+        <? endforeach; ?>
+
     </fieldset>
 
     <footer data-dialog-button>
         <?= Button::create('Submit') ?>
     </footer>
 </form>
-
-<div id="custom_properties_values">
-    <div v-for="(item, index) in custom_properties" :key="index">
-        <label>
-            <label :for="index"> {{ custom_properties[index].name }} </label>
-            <input v-model="custom_properties[index].value">
-    </div>
-    <div>
-        <button @click="submitCustomProperties">properites s</button>
-    </div>
-</div>

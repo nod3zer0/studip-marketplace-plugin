@@ -32,11 +32,11 @@ class Property extends SimpleORMap
         $old_properties = self::findBySQL("demand_id = ?", [$demand_id]);
         $new_properties_obj = [];
         $i = 0;
-        foreach ($new_properties as $property) {
+        foreach ($new_properties as $key =>  $property) {
             $new_properties_obj[$i] = new Property();
-            $new_properties_obj[$i]->value = $property["value"];
+            $new_properties_obj[$i]->value = $property;
             $new_properties_obj[$i]->demand_id = $demand_id;
-            $new_properties_obj[$i]->custom_property_id = $property["custom_property_id"];
+            $new_properties_obj[$i]->custom_property_id = $key;
             $i++;
         }
 
