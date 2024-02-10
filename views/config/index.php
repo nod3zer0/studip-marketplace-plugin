@@ -3,6 +3,15 @@
         <li v-for="(item, index) in properties" :key="index">
             <input v-model="properties[index].name">
             <button @click="deleteItem(index)">Delete</button>
+            <label for="type">Type (doesn't work at the moment):</label>
+            <select id="type" v-model="properties[index].type">
+                <option value="1">Text</option>
+                <option value="2">Number</option>
+                <option value="3">Date</option>
+                <option value="4">Boolean</option>
+            </select>
+            <label for="required">Required:</label>
+            <input type="checkbox" id="required" v-model="properties[index].required">
         </li>
     </ul>
     <button @click="addItem">Add property</button>

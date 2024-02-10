@@ -143,7 +143,7 @@ use Studip\Button; ?>
                 <label>
                     <?= $property['name'] ?>
                 </label>
-                <input name="custom_properties[<?= $property['id'] ?>]" value="<?= $property['value'] ?>">
+                <input <? if ($property["required"])  echo "required"; ?> name="custom_properties[<?= $property['id'] ?>]" value="<?= $property['value'] ?>">
             </div>
         <? endforeach; ?>
 
