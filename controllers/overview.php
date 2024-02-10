@@ -103,7 +103,7 @@ class OverviewController extends \Marketplace\Controller
 
         $this->demand_obj->setData([
             'title' => Request::get('title'),
-            'description' => Request::get('description')
+            'description' => Studip\Markup::purifyHtml(Request::get('description'))
         ]);
 
 
