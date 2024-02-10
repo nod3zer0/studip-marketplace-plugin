@@ -1,5 +1,6 @@
 <?
 
+use Studip\Form;
 use Studip\Button; ?>
 
 <script>
@@ -117,7 +118,7 @@ use Studip\Button; ?>
             <label>
                 Description
             </label>
-            <textarea name="description"><?= $demand_obj->description ?></textarea>
+            <textarea class="add_toolbar wysiwyg" name="description"><?= wysiwygReady($demand_obj->description) ?></textarea>
         </div>
         <div>
             <div id="tags">
@@ -151,5 +152,6 @@ use Studip\Button; ?>
     <footer data-dialog-button>
         <?= Button::create('Submit', 'submit_btn') ?>
         <?= Button::create('Delete', 'delete_btn') ?>
+
     </footer>
 </form>
