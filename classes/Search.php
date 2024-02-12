@@ -1,312 +1,509 @@
 <?php
+
 namespace Marketplace;
 
-    // enum NodeType
-    // {
-    //     case LogicT;
-    //     case ParenthesisOpenT;
-    //     case ParenthesisCloseT;
-    //     case PropertyT;
-    // }
+abstract class Token
+{
+}
 
-    abstract class Node
+class TagToken extends Token
+{
+    public $value;
+
+    public function __construct(string $value)
     {
-        abstract public function getType(): String;
-        abstract public function getSQL(): String;
+        $this->value = $value;
+    }
+    public function getValue(): String
+    {
+        return $this->value;
+    }
+}
 
-        abstract public function getValue();
+abstract class LogicToken extends Token
+{
+}
+
+class AndToken extends LogicToken
+{
+}
+
+class OrToken extends LogicToken
+{
+}
+
+class NotToken extends LogicToken
+{
+}
+
+class OpenToken extends LogicToken
+{
+}
+
+class CloseToken extends LogicToken
+{
+}
+
+
+abstract class ComparisonToken extends Token
+{
+}
+class EqualToken extends ComparisonToken
+{
+}
+
+class ColonToken extends ComparisonToken
+{
+}
+
+class GreaterToken extends ComparisonToken
+{
+}
+
+class LessToken extends ComparisonToken
+{
+}
+
+class GreaterEqualToken extends ComparisonToken
+{
+}
+
+class LessEqualToken extends ComparisonToken
+{
+}
+
+class PropertyToken extends Token
+{
+}
+
+class DefaultPropertyToken extends PropertyToken
+{
+    public $value;
+
+    public function __construct(string $value)
+    {
+        $this->value = $value;
+    }
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+}
+
+class ValueToken extends Token
+{
+}
+
+class StringToken extends ValueToken
+{
+    public $value;
+
+    public function __construct(string $value)
+    {
+        $this->value = $value;
+    }
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+}
+
+
+
+class IntToken extends ValueToken
+{
+    public $value;
+
+    public function __construct(int $value)
+    {
+        $this->value = $value;
+    }
+    public function getValue(): int
+    {
+        return $this->value;
+    }
+}
+
+class DateToken extends ValueToken
+{
+    public $value;
+
+    public function __construct(string $value)
+    {
+        $this->value = $value;
+    }
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+}
+
+class FloatToken extends ValueToken
+{
+    public $value;
+
+    public function __construct(float $value)
+    {
+        $this->value = $value;
+    }
+    public function getValue(): float
+    {
+        return $this->value;
+    }
+}
+
+class CustomPropertyToken extends PropertyToken
+{
+
+    public $value;
+
+    public function __construct(string $value)
+    {
+        $this->value = $value;
+    }
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+}
+
+
+
+
+
+class Parser
+{
+    private $tokenObjects = array();
+    private $query;
+
+    private $default_properties = [
+        "title" => "title",
+        "date" => "date",
+    ];
+
+    private $custom_properties = [
+        "test3" => "test3",
+        "test23" => "test23",
+    ];
+
+    public function __construct($query)
+    {
+        $this->query = $query;
+        $this->tokenize();
     }
 
-    class WordNode extends Node
+    public function getNextToken()
     {
-        public $value;
+        return array_shift($this->tokenObjects);
+    }
 
-        public function __construct($value)
-        {
-            $this->value = $value;
-        }
-
-        public function getType(): String
-        {
-            return "PropertyT";
-        }
-
-        public function getSQL(): String
-        {
-            return "";
-        }
-
-        public function getValue()
-        {
+    public function peekNextToken()
+    {
+        if ($this->tokenObjects) {
+            return $this->tokenObjects[0];
+        } else {
             return null;
         }
     }
 
-    class TagNode extends Node
+    public function tokenize()
     {
-        public $value;
 
-        public function __construct($value)
-        {
-            $this->value = $value;
-        }
+        $charactersToReplace = ["(", ")", "&", "|", "!", ">", "<", ">=", "<=", "=", ":"];
+        $replaceWith = [" ( ", " ) ", " & ", " | ", " ! ", " > ", " < ", " >= ", " <= ", " = ", " : "];
+        $result = str_replace($charactersToReplace, $replaceWith, $this->query);
+        $tokens =  explode(" ", $result);
 
-        public function getType(): String
-        {
-            return "PropertyT";
-        }
 
-        public function getSQL(): String
-        {
-            return "mp_tag.name LIKE ?";
-        }
+        for ($i = 0; $i < count($tokens); $i++) {
 
-        public function getValue()
-        {
-            return $this->value;
-        }
-
-    }
-
-    class AndNode extends Node
-    {
-        public function getType(): String
-        {
-            return "LogicT";
-        }
-
-        public function getSQL(): String
-        {
-            return "AND";
-        }
-        public function getValue()
-        {
-            return null;
-        }
-    }
-
-#t OR #f ( title:eeee OR title:fffff)
-
-    class OrNode extends Node
-    {
-        public function getType(): String
-        {
-            return "LogicT";
-        }
-
-        public function getSQL(): String
-        {
-            return "OR";
-        }
-
-        public function getValue()
-        {
-            return null;
-        }
-    }
-
-    class NotNode extends Node
-    {
-        public function getType(): String
-        {
-            return "LogicT";
-        }
-
-        public function getSQL(): String
-        {
-            return "NOT";
-        }
-
-        public function getValue()
-        {
-            return null;
-        }
-    }
-
-    class OpenNode extends Node
-    {
-        public function getType(): String
-        {
-            return "ParenthesisOpenT";
-        }
-
-        public function getSQL(): String
-        {
-            return "(";
-        }
-
-        public function getValue()
-        {
-            return null;
-        }
-    }
-
-    class CloseNode extends Node
-    {
-        public function getType(): String
-        {
-            return "ParenthesisCloseT";
-        }
-
-        public function getSQL(): String
-        {
-            return ")";
-        }
-
-        public function getValue()
-        {
-            return null;
-        }
-    }
-
-    class DefaultPropertyNode extends Node
-    {
-        public $property;
-        public $value;
-
-        public function __construct($property, $value)
-        {
-            $this->property = $property;
-            $this->value = $value;
-        }
-
-        public function getType(): String
-        {
-            return "PropertyT";
-        }
-
-        public function getSQL(): String
-        {
-            return "mp_demand." . $this->property . " LIKE ?";
-        }
-
-        public function getValue()
-        {
-            return $this->value;
-        }
-    }
-
-    class Tokenizer
-    {
-        private $tokenObjects = [];
-        private $query;
-
-        private $default_properties = [
-            "title" => "title",
-            "date" => "date",
-        ];
-
-        public function __construct($query)
-        {
-            $this->query = $query;
-            $this->tokenize();
-        }
-
-        public function tokenize()
-        {
-            $tokens =  explode(" ", $this->query);
-
-            for ($i = 0; $i < count($tokens); $i++) {
-                if (substr($tokens[$i][0], 0, 1) == "#") //tags
-                {
-                   $this->tokenObjects[] = new TagNode(substr($tokens[$i], 1));
-                } else if ($tokens[$i] == "AND") //ADN
-                {
-                    $this->tokenObjects[] = new AndNode();
-                } else if ($tokens[$i] == "OR") //OR
-                {
-                    $this->tokenObjects[] = new OrNode();
-                } else if ($tokens[$i] == "NOT") //NOT
-                {
-                    $this->tokenObjects[] = new NotNode();
-                } else if ($tokens[$i] == "(") //(
-                {
-                    $this->tokenObjects[] = new OpenNode();
-                } else if ($tokens[$i] == ")") //)
-                {
-                    $this->tokenObjects[] = new CloseNode();
+            $tokens[$i] = trim($tokens[$i]);
+            if ($tokens[$i] == "") {
+                continue;
+            } else if (substr($tokens[$i][0], 0, 1) == "#") //tags
+            {
+                $this->tokenObjects[] = new TagToken(substr($tokens[$i], 1));
+            } else if ($tokens[$i] == "AND" || $tokens[$i] == "&") //ADN
+            {
+                $this->tokenObjects[] = new AndToken();
+            } else if ($tokens[$i] == "OR" || $tokens[$i] == "|") //OR
+            {
+                $this->tokenObjects[] = new OrToken();
+            } else if ($tokens[$i] == "NOT" || $tokens[$i] == "!") //NOT
+            {
+                $this->tokenObjects[] = new NotToken();
+            } else if ($tokens[$i] == "(") //(
+            {
+                $this->tokenObjects[] = new OpenToken();
+            } else if ($tokens[$i] == ")") //)
+            {
+                $this->tokenObjects[] = new CloseToken();
+            } else if ($tokens[$i] == "=") //=
+            {
+                $this->tokenObjects[] = new EqualToken();
+            } else if ($tokens[$i] == ":") {
+                $this->tokenObjects[] = new ColonToken();
+            } else if ($tokens[$i] == ">") //>
+            {
+                $this->tokenObjects[] = new GreaterToken();
+            } else if ($tokens[$i] == "<") //<
+            {
+                $this->tokenObjects[] = new LessToken();
+            } else if ($tokens[$i] == ">=") //>=
+            {
+                $this->tokenObjects[] = new GreaterEqualToken();
+            } else if ($tokens[$i] == "<=") //<=
+            {
+                $this->tokenObjects[] = new LessEqualToken();
+            } else if (preg_match('/^[0-9]+$/', $tokens[$i])) //int
+            {
+                $this->tokenObjects[] = new IntToken((int)$tokens[$i]);
+            } else if (preg_match('/^[0-9]+\.[0-9]+$/', $tokens[$i])) //float
+            {
+                $this->tokenObjects[] = new FloatToken((float)$tokens[$i]);
+            } else if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $tokens[$i])) //date
+            {
+                $this->tokenObjects[] = new DateToken($tokens[$i]);
+            } else if (preg_match('/^[a-zA-Z0-9_]+$/', $tokens[$i])) //string
+            {
+                if (isset($this->default_properties[$tokens[$i]])) {
+                    $this->tokenObjects[] = new DefaultPropertyToken($tokens[$i]);
+                } else if (isset($this->custom_properties[$tokens[$i]])) {
+                    $this->tokenObjects[] = new CustomPropertyToken($tokens[$i]);
                 } else {
-                    if (str_contains($tokens[$i], ":")) { //split by :
-                        $tmp_token = explode(":", $tokens[$i]);
-                        if (isset($this->default_properties[$tmp_token[0]])) {
-                            $this->tokenObjects[] = new DefaultPropertyNode($tmp_token[0], $tmp_token[1]);
-                        } else {
-                            //TODO custom properties
-                        }
-                        $i++;
-                    } else if ($i + 2 < count($tokens) && $tokens[$i + 1][0] == ":") {
-                        if (isset($this->default_properties[$tokens[$i]])) {
-                            $this->tokenObjects[] = new DefaultPropertyNode($tokens[$i], $tokens[$i + 2]);
-                        } else {
-                            //TODO custom properties
-                        }
-                        $i += 2;
-                    } else {
-                        $this->tokenObjects[] = new WordNode($tokens[$i]);
-                    }
+                    $this->tokenObjects[] = new StringToken($tokens[$i]);
                 }
+            } else {
+                throw new Exception("Invalid token: " . $tokens[$i]);
             }
-        }
-
-
-        function get_next_token(): ?Node
-        {
-            if ($this->tokenObjects) {
-                $token =  $this->tokenObjects[0];
-                array_shift($this->tokenObjects);
-                return $token;
-            }
-            return null;
-
-        }
-
-        function peek_next_token(): ?Node
-        {
-            if ($this->tokenObjects) {
-                return $this->tokenObjects[0];
-            }
-            return null;
         }
     }
+}
 
-
-
-
-
-    class SqlGenerator
+class SqlGenerator
+{
+    public $values = [];
+    public $numberOfBrackets = 0;
+    public function generateSQL($query)
     {
-        public function generateSQL($query)
-        {
-            $tokenizer = new Tokenizer($query);
-            $sql = "LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id WHERE ";
-            $values = [];
-            while ($token = $tokenizer->get_next_token()) {
-                $next_token = $tokenizer->peek_next_token();
-                if ($next_token && $next_token->getType() == "LogicT") { //do not add AND if logic token
-                    $sql .= " " . $token->getSQL() . " " . $next_token->getSQL();
-                    $tokenizer->get_next_token();//skip logic token
-                } else if ($token->getType() == "ParenthesisOpenT") {
-                    $sql .= " " . $token->getSQL();
-                } else if ($next_token && $next_token->getType() == "ParenthesisCloseT") {
-                    $sql .= " " . $token->getSQL();
-                }else if($token->getType() == "LogicT") {
-                    $sql .= " ". $token->getSQL();
-                } else if ($next_token) {
-                    $sql .= " ". $token->getSQL() . " AND";
-                }else {
-                    $sql .= " ". $token->getSQL();
-                }
-                $values[] = $token->getValue();
-            }
-            return array($sql, $values);
+        $parser = new Parser($query);
+
+        $output = "";
+
+        $output = $this->generateStart($parser);
+
+        return [$output, $this->values];
+    }
+
+    public function generateStart($parser)
+    {
+        $output = "LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id LEFT JOIN mp_property ON mp_property.demand_id=mp_demand.id LEFT JOIN mp_custom_property ON mp_custom_property.id=mp_property.custom_property_id WHERE ";
+        $output  .= $this->generateExpression($parser);
+        return $output;
+    }
+
+
+    public function generateExpression($parser)
+    {
+        echo "generateExpression\n";
+        $output = "";
+        $token = $parser->peekNextToken();
+        if ($token instanceof TagToken) {
+            $output .= $this->generateTag($parser);
+        } else if ($token instanceof DefaultPropertyToken) {
+            $output .= $this->generateDefaultProperty($parser);
+        } else if ($token instanceof StringToken) {
+            $output .= $this->generateString($parser);
+        } else if ($token instanceof CustomPropertyToken) {
+            $output .= $this->generateCustomProperty($parser);
+        } else if ($token instanceof OpenToken) {
+            $output .= $this->generateOpen($parser);
+        } else if ($token instanceof CloseToken) {
+            $output .= $this->generateClose($parser);
+        } else if (!$token) {
+            return $output;
+        } else {
+            throw new Exception("Invalid token: " . $parser->peekNextToken()->getValue());
         }
+        return $output;
     }
 
-    $f = fopen('php://stdin', 'r');
+    // return "mp_tag.name LIKE ?";
+    public function generateTag($parser)
+    {
+        echo "generateTag\n";
+        $output = "mp_tag.name LIKE ? ";
+        $this->values[] = $parser->getNextToken()->getValue();
 
-    while ($line = fgets($f)) {
-        $generator = new SqlGenerator();
-        echo $generator->generateSQL($line)[0];
+        if ($parser->peekNextToken() instanceof LogicToken) {
+            $output .= $this->generateLogic($parser);
+        } else if (!$parser->peekNextToken()) { // check NULL
+            return $output;
+        } else {
+            $output .= " AND " . $this->generateExpression($parser);
+        }
+
+        return $output;
     }
 
-    fclose($f);
+    public function generateLogic($parser)
+    {
+        echo "generateLogic\n";
+
+        $output = "";
+        $token = $parser->peekNextToken();
+        if ($token instanceof AndToken) {
+            $output .= $this->generateAnd($parser);
+        } else if ($token instanceof OrToken) {
+            $output .= $this->generateOr($parser);
+        } else if ($token instanceof NotToken) {
+            $output .= $this->generateNot($parser);
+        } else if ($token instanceof OpenToken) {
+            $output .= $this->generateOpen($parser);
+        } else if ($token instanceof CloseToken) {
+            $output .= $this->generateClose($parser);
+        } else {
+            throw new Exception("Invalid token: " . $token->getValue());
+        }
+
+        return $output;
+    }
+
+
+
+    public function generateAnd($parser)
+    {
+        $output = "";
+        $parser->getNextToken();
+        $output .= " AND ";
+        $output .= $this->generateExpression($parser);
+        return $output;
+    }
+
+    public function generateOr($parser)
+    {
+        echo "generateOr\n";
+        $output = "";
+        $parser->getNextToken();
+        $output .= " OR ";
+        $output .= $this->generateExpression($parser);
+        return $output;
+    }
+
+    public function generateNot($parser)
+    {
+        $output = "";
+        $parser->getNextToken();
+        $output .= " NOT ";
+        $output .= $this->generateExpression($parser);
+        return $output;
+    }
+
+    public function generateOpen($parser)
+    {
+        echo "generateOpen\n";
+        $this->numberOfBrackets++;
+        $output = "";
+        $parser->getNextToken();
+        $output .= " ( ";
+        $output .= $this->generateExpression($parser);
+        return $output;
+    }
+
+    public function generateClose($parser)
+    {
+        echo "generateClose\n";
+        if ($this->numberOfBrackets == 0) {
+            throw new Exception("Invalid token: " . $parser->peekNextToken()->getValue());
+        }
+        $this->numberOfBrackets--;
+        $output = "";
+        $parser->getNextToken();
+        $output .= " ) ";
+        if ($parser->peekNextToken() instanceof LogicToken) {
+            $output .= $this->generateLogic($parser);
+        } else if (!$parser->peekNextToken()) { // check NULL
+            return $output;
+        } else {
+            $output .= " AND " . $this->generateExpression($parser);
+        }
+
+        return $output;
+    }
+
+    public function generateDefaultProperty($parser)
+    {
+        $output = "mp_demand." . $parser->getNextToken()->getValue() . " LIKE ? ";
+
+
+        if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
+            throw new Exception("Invalid token: " . $parser->peekNextToken());
+        }
+        $parser->getNextToken();
+
+        if ($parser->peekNextToken() instanceof ValueToken) {
+            $this->values[] =  $parser->getNextToken()->getValue();
+        } else {
+            throw new Exception("Invalid token: " . $parser->peekNextToken());
+        }
+
+        if ($parser->peekNextToken() instanceof LogicToken) {
+            $output .= $this->generateLogic($parser);
+        } else if (!$parser->peekNextToken()) { // check NULL
+            return $output;
+        } else {
+            $output .= " AND " . $this->generateExpression($parser);
+        }
+
+        return $output;
+    }
+
+    public function generateCustomProperty($parser)
+    {
+        $output = "( mp_custom_property.name LIKE ? AND mp_property.value LIKE ? )";
+        $this->values[] = $parser->getNextToken()->getValue();
+
+        if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
+            throw new Exception("Invalid token: " . $parser->peekNextToken());
+        }
+        $parser->getNextToken();
+
+        if ($parser->peekNextToken() instanceof ValueToken) {
+            $this->values[] =  $parser->getNextToken()->getValue();
+        } else {
+            throw new Exception("Invalid token: " . $parser->peekNextToken());
+        }
+
+        if ($parser->peekNextToken() instanceof LogicToken) {
+            $output .= $this->generateLogic($parser);
+        } else if (!$parser->peekNextToken()) { // check NULL
+            return $output;
+        } else {
+            $output .= " AND " . $this->generateExpression($parser);
+        }
+
+        return $output;
+    }
+
+
+    public function generateString($parser)
+    {
+        //TODO
+        return "";
+    }
+}
+
+
+$f = fopen('php://stdin', 'r');
+
+while ($line = fgets($f)) {
+    $generator = new SqlGenerator();
+    $result = $generator->generateSQL($line);
+    echo $result[0];
+    echo "\n";
+    foreach ($result[1] as $value) {
+        echo " " . $value;
+    }
+}
+
+fclose($f);
