@@ -181,14 +181,12 @@ class Parser
         "date" => "date",
     ];
 
-    private $custom_properties = [
-        "test3" => "test3",
-        "test23" => "test23",
-    ];
+    private $custom_properties = [];
 
-    public function __construct($query)
+    public function __construct($query, $custom_properties)
     {
         $this->query = $query;
+        $this->custom_properties = $custom_properties;
         $this->tokenize();
     }
 
@@ -268,7 +266,7 @@ class Parser
             {
                 if (isset($this->default_properties[$tokens[$i]])) {
                     $this->tokenObjects[] = new DefaultPropertyToken($tokens[$i]);
-                } else if (isset($this->custom_properties[$tokens[$i]])) {
+                } else if (in_array($tokens[$i], $this->custom_properties)) {
                     $this->tokenObjects[] = new CustomPropertyToken($tokens[$i]);
                 } else {
                     $this->tokenObjects[] = new StringToken($tokens[$i]);
@@ -284,9 +282,10 @@ class SqlGenerator
 {
     public $values = [];
     public $numberOfBrackets = 0;
-    public function generateSQL($query)
+    public function generateSQL($query, $custom_properties)
     {
-        $parser = new Parser($query);
+
+        $parser = new Parser($query, $custom_properties);
 
         $output = "";
 
@@ -498,7 +497,7 @@ $f = fopen('php://stdin', 'r');
 
 while ($line = fgets($f)) {
     $generator = new SqlGenerator();
-    $result = $generator->generateSQL($line);
+    $result = $generator->generateSQL($line, ["test3"]);
     echo $result[0];
     echo "\n";
     foreach ($result[1] as $value) {
