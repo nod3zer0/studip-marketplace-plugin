@@ -37,6 +37,15 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
             'Config',
             PluginEngine::getURL($this, [], 'config')
         );
-        $root_nav->addSubNavigation('marketplace_config', $search_nav);
+        if ($GLOBALS['user']->perms === 'root') {
+            $root_nav->addSubNavigation('marketplace_config', $search_nav);
+        }
+
+
+
+        $test = new Navigation(
+            'Test',
+            PluginEngine::getURL($this, [], 'test')
+        );
     }
 }

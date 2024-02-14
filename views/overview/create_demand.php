@@ -21,7 +21,7 @@ use Studip\Button; ?>
             },
             methods: {
                 loadCustomProperties: function() {
-                    fetch('/public/plugins.php/marketplace/overview/get_custom_properties', {
+                    fetch('<?= $controller->link_for('overview/get_custom_properties') ?>', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -143,7 +143,32 @@ use Studip\Button; ?>
                 <label>
                     <?= $property['name'] ?>
                 </label>
-                <input <? if ($property["required"])  echo "required"; ?> name="custom_properties[<?= $property['id'] ?>]" value="<?= $property['value'] ?>">
+                <?
+                $property_html = "";
+                $required = "";
+                if ($property["required"]) {
+                    $required = "required";
+                }
+                switch ($property['type']) {
+                    case 1:
+                        $property_html = ('<input type="text" ' . $required . ' name="custom_properties[' . $property['id'] . ']" value="' . $property['value'] . '">');
+                        break;
+                    case 2:
+                        $property_html = ('<input type="number" '  . $required . ' name="custom_properties[' . $property['id'] . ']" value="' . $property['value'] . '">');
+                        break;
+                    case 3:
+                        $property_html = ('<input type="date" '  . $required .  ' name="custom_properties[' . $property['id'] . ']" value="' . $property['value'] . '">');
+                        break;
+                    case 4:
+                        $property_html = ('<input type="checkbox" '  . $required .  ' name="custom_properties[' . $property['id'] . ']" value="' . $property['value'] . '">');
+                        break;
+                    case 5:
+                        $property_html = ('<textarea class="add_toolbar wysiwyg"'  . $required .  ' name="custom_properties[' . $property['id'] . ']">' . $property['value'] . '</textarea>');
+                        break;
+                }
+                echo $property_html;
+                ?>
+                <!-- <? if ($property["required"])  echo "required"; ?> name="custom_properties[<?= $property['id'] ?>]" value="<?= $property['value'] ?>"> -->
             </div>
         <? endforeach; ?>
 
