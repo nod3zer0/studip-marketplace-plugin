@@ -9,7 +9,7 @@ class ConfigController extends \Marketplace\Controller
 
     public function index_action()
     {
-        Navigation::activateItem('marketplace_root/marketplace_config');
+        Navigation::activateItem('marketplace_root/default_marketplace/marketplace_config');
         PageLayout::setTitle('Configuration');
     }
 

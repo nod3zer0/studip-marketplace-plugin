@@ -23,29 +23,34 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
             Icon::ROLE_NAVIGATION
         ));
         Navigation::addItem('/marketplace_root', $root_nav);
-        $navigation = new Navigation(
+
+        $default_marketplace = new Navigation(
+            'Default marketplace',
+            PluginEngine::getURL($this, [], 'overview')
+        );
+        $root_nav->addSubNavigation('default_marketplace', $default_marketplace);
+        $overview = new Navigation(
             'Overview',
             PluginEngine::getURL($this, [], 'overview')
         );
-        $root_nav->addSubNavigation('marketplace_overview', $navigation);
+        $default_marketplace->addSubNavigation('marketplace_overview', $overview);
         $search_nav = new Navigation(
             'Search',
             PluginEngine::getURL($this, [], 'search')
         );
-        $root_nav->addSubNavigation('marketplace_search', $search_nav);
-        $search_nav = new Navigation(
-            'Config',
-            PluginEngine::getURL($this, [], 'config')
-        );
+        $default_marketplace->addSubNavigation('marketplace_search', $search_nav);
+
         if ($GLOBALS['user']->perms === 'root') {
-            $root_nav->addSubNavigation('marketplace_config', $search_nav);
+            $config_nav = new Navigation(
+                'Config',
+                PluginEngine::getURL($this, [], 'config')
+            );
+            $default_marketplace->addSubNavigation('marketplace_config', $config_nav);
         }
-
-
-
         $test = new Navigation(
             'Test',
-            PluginEngine::getURL($this, [], 'test')
+            PluginEngine::getURL($this, [], 'overview/demand_detail/46c96adb568e8e00e8f9c4354ac52799')
         );
+        $config_nav->addSubNavigation('marketplace_test', $test);
     }
 }
