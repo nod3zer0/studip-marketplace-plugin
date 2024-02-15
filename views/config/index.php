@@ -9,7 +9,6 @@
                 <option value="5">Text area</option>
                 <option value="2">Number</option>
                 <option value="3">Date</option>
-                <option value="4">Boolean</option>
             </select>
             <label for="required">Required:</label>
             <input type="checkbox" id="required" v-model="properties[index].required">
@@ -78,6 +77,8 @@
                         .then(response => {
                             // Handle response
                             console.log('Response:', response.text());
+                            //reload page
+                            location.reload();
                         })
                         .catch(error => {
                             // Handle error

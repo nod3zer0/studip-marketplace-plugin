@@ -47,10 +47,5 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
             );
             $default_marketplace->addSubNavigation('marketplace_config', $config_nav);
         }
-        $test = new Navigation(
-            'Test',
-            PluginEngine::getURL($this, [], 'overview/demand_detail/46c96adb568e8e00e8f9c4354ac52799')
-        );
-        $config_nav->addSubNavigation('marketplace_test', $test);
     }
 }
