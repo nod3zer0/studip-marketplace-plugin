@@ -7,6 +7,8 @@ class InitCustomproperties extends Migration
         $query = "CREATE TABLE IF NOT EXISTS mp_custom_property (
             id CHAR(32) CHARACTER SET latin1 COLLATE
             latin1_bin NOT NULL,
+            marketplace_id CHAR(32) CHARACTER SET latin1 COLLATE
+            latin1_bin NOT NULL,
             name TEXT NOT NULL,
             type TINYINT(2) NOT NULL DEFAULT 1,
             required BOOL NOT NULL DEFAULT 1,

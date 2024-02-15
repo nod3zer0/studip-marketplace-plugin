@@ -13,6 +13,8 @@ class InitDemand extends Migration
             chdate INT(11) NOT NULL,
             author_id CHAR(32) CHARACTER SET latin1 COLLATE
             latin1_bin NOT NULL,
+            marketplace_id CHAR(32) CHARACTER SET latin1 COLLATE
+            latin1_bin NOT NULL,
             PRIMARY KEY (id)
             )";
         $db->exec($query);

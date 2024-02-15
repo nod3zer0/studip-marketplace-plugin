@@ -5,6 +5,7 @@ require_once __DIR__ . '/models/property.php';
 require_once __DIR__ . '/models/tag.php';
 require_once __DIR__ . '/models/tag_demand.php';
 require_once __DIR__ . '/models/custom_property.php';
+require_once __DIR__ . '/models/marketplace.php';
 require_once __DIR__ . '/classes/Controller.php';
 require_once __DIR__ . '/classes/Plugin.php';
 require_once __DIR__ . '/classes/Search.php';
@@ -46,6 +47,11 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
                 PluginEngine::getURL($this, [], 'config')
             );
             $default_marketplace->addSubNavigation('marketplace_config', $config_nav);
+            $global_config = new Navigation(
+                'Config',
+                PluginEngine::getURL($this, [], 'global_config')
+            );
+            $root_nav->addSubNavigation('global_config', $global_config);
         }
     }
 }
