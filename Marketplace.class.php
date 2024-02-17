@@ -10,8 +10,6 @@ require_once __DIR__ . '/classes/Controller.php';
 require_once __DIR__ . '/classes/Plugin.php';
 require_once __DIR__ . '/classes/Search.php';
 
-use \Marketplace\MarketplaceModel;
-
 class Marketplace extends StudIPPlugin implements SystemPlugin
 {
     public function __construct()
@@ -19,13 +17,19 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         parent::__construct();
         $root_nav = new Navigation(
             'Marketplace',
-            PluginEngine::getURL($this, [], 'overview')
+            PluginEngine::getURL($this, [], 'global_overview')
         );
         $root_nav->setImage(Icon::create(
             'file-text',
             Icon::ROLE_NAVIGATION
         ));
         Navigation::addItem('/marketplace_root', $root_nav);
+
+        $global_overview = new Navigation(
+            'Global overview',
+            PluginEngine::getURL($this, [], 'global_overview')
+        );
+        $root_nav->addSubNavigation('global_overview', $global_overview);
 
         $default_marketplace = new Navigation(
             'Default marketplace',
@@ -54,16 +58,6 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
                 PluginEngine::getURL($this, [], 'global_config')
             );
             $root_nav->addSubNavigation('global_config', $global_config);
-        }
-
-        $marketplaces = MarketplaceModel::findBySQL("1");
-
-        foreach ($marketplaces as $marketplace) {
-            $marketplace_nav = new Navigation(
-                $marketplace->name,
-                PluginEngine::getURL($this, [], 'overview', ['marketplace_id' => $marketplace->id])
-            );
-            $root_nav->addSubNavigation($marketplace->id, $marketplace_nav);
         }
     }
 }

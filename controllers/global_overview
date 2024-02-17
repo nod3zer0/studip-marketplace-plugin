@@ -1,0 +1,16 @@
+<?php
+
+use Marketplace\TagDemand;
+use Marketplace\SqlGenerator;
+use \Marketplace\CustomProperty;
+use \Marketplace\MarketplaceModel;
+
+class GlobalOverviewControler extends \Marketplace\Controller
+{
+
+    public function index_action()
+    {
+        Navigation::activateItem('marketplace_root/global_config');
+        PageLayout::setTitle('Configuration');
+    }
+}

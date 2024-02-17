@@ -6,39 +6,39 @@ use \Marketplace\Property;
 
 class OverviewController extends \Marketplace\Controller
 {
-    private function buildSidebar()
+    private function buildSidebar($marketplace_id)
     {
         $sidebar = Sidebar::Get();
         $actionWidget = $sidebar->addWidget(new ActionsWidget());
         $actionWidget->addLink(
             'Create demand',
-            $this->url_for('overview/create_demand'),
+            $this->url_for('overview/create_demand/' . $marketplace_id),
             Icon::create('add'),
             ['data-dialog' => true]
         );
     }
 
-    public function index_action()
+    public function index_action($marketplace_id)
     {
-        Navigation::activateItem('marketplace_root/default_marketplace/marketplace_overview');
+        Navigation::activateItem('marketplace_root/default_marketplace/marketplace_overview_' . $marketplace_id);
         PageLayout::setTitle('Demands');
-        OverviewController::buildSidebar();
+        OverviewController::buildSidebar($marketplace_id);
         $this->all_demands = \Marketplace\Demand::findBySQL("1");
     }
 
-    public function demand_detail_action(string $demand_id = '')
+    public function demand_detail_action(string $marketplace_id, string $demand_id = '')
     {
         CSRFProtection::verifyRequest();
-        $this->demand_obj = \Marketplace\Demand::find($demand_id);
+        $this->demand_obj = \Marketplace\Demand::findBySQL("LEFT JOIN mp_marketplace ON mp_marketplace.id=mp_demand.marketplace.id mp_demand.id = ?", [$marketplace_id, $demand_id]);
         $this->tags = \Marketplace\TagDemand::findBySQL("demand_id = ?", [$demand_id]);
         $db = DBManager::get();
-        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$demand_id]);
+        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN mp_marketplace ON mp_marketplace.id=mp_custom_property.marketplace_id LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$marketplace_id, $demand_id]);
     }
 
-    public function create_demand_action(string $demand_id = '')
+    public function create_demand_action(string $marketplace_id, string $demand_id = '')
     {
         PageLayout::setTitle('Edit demand');
-        $this->demand_obj = \Marketplace\Demand::find($demand_id);
+        $this->demand_obj = \Marketplace\Demand::findBySQL("LEFT JOIN mp_marketplace ON mp_marketplace.id=mp_demand.marketplace.id mp_demand.id = ?", [$marketplace_id, $demand_id]);
         if (!$this->demand_obj) {
             $this->demand_obj = new \Marketplace\Demand();
         }
@@ -49,14 +49,14 @@ class OverviewController extends \Marketplace\Controller
         }
         $this->tagsString = rtrim($this->tagsString, ",");
         $db = DBManager::get();
-        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$demand_id]);
+        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN mp_marketplace ON mp_marketplace.id=mp_custom_property.marketplace_id LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$marketplace_id, $demand_id]);
     }
 
-    public function get_custom_properties_action()
+    public function get_custom_properties_action(string $marketplace_id)
     {
         $demand_id = json_decode(file_get_contents('php://input'), true);
         $db = DBManager::get();
-        $properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$demand_id]);
+        $properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN mp_marketplace ON mp_marketplace.id=mp_custom_property.marketplace_id LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$marketplace_id, $demand_id]);
 
         //$properties = \Marketplace\CustomProperty::findBySQL("LEFT JOIN mp_property ON mp_custom_property.id = mp_property.custom_property_id");
         $this->render_text('' . json_encode($properties));
@@ -70,20 +70,21 @@ class OverviewController extends \Marketplace\Controller
     }
 
     public function update_custom_properties_action()
-    {
+    { //TODO multiple marketplaces
         $properties = json_decode(file_get_contents('php://input'), true);
         Property::update_custom_properties($properties[0], $properties[1]);
         $this->render_text('' . json_encode($properties));
     }
 
 
-    public function store_demand_action(string $demand_id = '')
+    public function store_demand_action(string $marketplace_id, string $demand_id = '')
     {
         CSRFProtection::verifyRequest();
-        $this->demand_obj = \Marketplace\Demand::find($demand_id);
+        $this->demand_obj = \Marketplace\Demand::findBySQL("LEFT JOIN mp_marketplace ON mp_marketplace.id=mp_demand.marketplace.id mp_demand.id = ?", [$marketplace_id, $demand_id]);
         if (!$this->demand_obj) {
             $this->demand_obj = new \Marketplace\Demand();
             $this->demand_obj->author_id = $GLOBALS['user']->id;
+            $this->demand_obj->marketplace_id = $marketplace_id;
         }
         if (!$this->demand_obj->hasPermission()) {
             PageLayout::postError('You do not have permission to customize the text');
