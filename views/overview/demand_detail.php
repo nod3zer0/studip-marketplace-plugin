@@ -3,15 +3,22 @@
 use Studip\Button; ?>
 <?= CSRFProtection::tokenTag() ?>
 <fieldset data-open="bd_basicsettings">
-    <section>
+    <section class="contentbox">
+        <header>
+            <h1>
+                Details
+            </h1>
+        </header>
         <dl>
             <dt>
-                Title
+                Author
             </dt>
-            <dd><?= $demand_obj->title ?>"</dd>
-
-
-
+            <dd>
+                <?= $avatar->getImageTag(Avatar::MEDIUM) ?>
+            </dd>
+            <dd>
+                <?= htmlReady($demand_obj->author->getFullName()) ?>
+            </dd>
             <dt>
                 Description
             </dt>
