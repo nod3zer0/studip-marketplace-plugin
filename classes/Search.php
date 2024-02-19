@@ -225,9 +225,18 @@ class Parser
             $custom_properties_dict[$property["name"]] = $property["type"];
         }
 
-        for ($i = 0; $i < count($tokens); $i++) {
+        //trim and remove empty tokens
+        foreach ($tokens as $key => $value) {
+            $tokens[$key] = trim($value);
+            if ($tokens[$key] == "") {
+                unset($tokens[$key]);
+            }
+        }
+        //reindex array
 
-            $tokens[$i] = trim($tokens[$i]);
+        $tokens = array_values($tokens);
+
+        for ($i = 0; $i < count($tokens); $i++) {
             if ($tokens[$i] == "") {
                 continue;
             } else if (substr($tokens[$i][0], 0, 1) == "#") //tags
@@ -274,7 +283,8 @@ class Parser
             } else if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $tokens[$i])) //date
             {
                 $this->tokenObjects[] = new DateToken($tokens[$i]);
-            } else if (count($tokens) > ($i) && ($tokens[$i + 1] == ":" || $tokens[$i + 1] == "=")) //string
+            } else if (count($tokens) > ($i) && ($tokens[$i + 1] == ":" || $tokens[$i + 1] == "=" || $tokens[$i + 1] == ">" ||
+                $tokens[$i + 1] == "<" || $tokens[$i + 1] == "<=" || $tokens[$i + 1] == ">=")) //string
             {
                 if (isset($this->default_properties[$tokens[$i]])) {
                     $this->tokenObjects[] = new DefaultPropertyToken($tokens[$i]);
@@ -477,10 +487,10 @@ class SqlGenerator
         return $output;
     }
 
-    public function generateCustomProperty($parser)
+
+    public function generateCustomPropertyString($parser)
     {
         $output = "( mp_custom_property.name LIKE ?  AND MATCH(mp_property.value) AGAINST(?) )";
-        // $output = "( mp_custom_property.name LIKE ? AND mp_property.value LIKE ? )";
         $this->values[] = $parser->getNextToken()->getValue();
 
         if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
@@ -500,6 +510,110 @@ class SqlGenerator
             return $output;
         } else {
             $output .= " AND " . $this->generateExpression($parser);
+        }
+
+        return $output;
+    }
+
+    public function generateCustomPropertyInt($parser)
+    {
+        $output = "( mp_custom_property.name LIKE ?  AND mp_property.value ";
+        $this->values[] = $parser->getNextToken()->getValue();
+
+        if ($parser->peekNextToken() instanceof ColonToken) {
+            $output .= " = ? )";
+        } else if ($parser->peekNextToken() instanceof EqualToken) {
+            $output .= " = ? )";
+        } else if ($parser->peekNextToken() instanceof GreaterToken) {
+            $output .= " > ? )";
+        } else if ($parser->peekNextToken() instanceof LessToken) {
+            $output .= " < ? )";
+        } else if ($parser->peekNextToken() instanceof GreaterEqualToken) {
+            $output .= " >= ? )";
+        } else if ($parser->peekNextToken() instanceof LessEqualToken) {
+            $output .= " <= ? )";
+        } else {
+            throw new \Exception("Invalid token: " . $parser->peekNextToken());
+        }
+
+        $parser->getNextToken();
+
+        if ($parser->peekNextToken() instanceof IntToken || $parser->peekNextToken() instanceof FloatToken) {
+            $this->values[] =  $parser->getNextToken()->getValue();
+        } else {
+            throw new \Exception("Invalid token: " . $parser->peekNextToken());
+        }
+
+        if ($parser->peekNextToken() instanceof LogicToken) {
+            $output .= $this->generateLogic($parser);
+        } else if (!$parser->peekNextToken()) { // check NULL
+            return $output;
+        } else {
+            $output .= " AND " . $this->generateExpression($parser);
+        }
+
+        return $output;
+    }
+
+    public function generateCustomPropertyDate($parser)
+    {
+        $output = "( mp_custom_property.name LIKE ?  AND STR_TO_DATE(mp_property.value, \"%Y %m %d\")";
+        $this->values[] = $parser->getNextToken()->getValue();
+
+        if ($parser->peekNextToken() instanceof ColonToken) {
+            $output .= " = DATE(?)";
+        } else if ($parser->peekNextToken() instanceof EqualToken) {
+            $output .= " = DATE(?))";
+        } else if ($parser->peekNextToken() instanceof GreaterToken) {
+            $output .= " > DATE(?))";
+        } else if ($parser->peekNextToken() instanceof LessToken) {
+            $output .= " < DATE(?))";
+        } else if ($parser->peekNextToken() instanceof GreaterEqualToken) {
+            $output .= " >= DATE(?))";
+        } else if ($parser->peekNextToken() instanceof LessEqualToken) {
+            $output .= " <= DATE(?))";
+        } else {
+            throw new \Exception("Invalid token: " . $parser->peekNextToken());
+        }
+
+        $parser->getNextToken();
+
+        if ($parser->peekNextToken() instanceof DateToken) {
+            $this->values[] =  $parser->getNextToken()->getValue();
+        } else {
+            throw new \Exception("Invalid token: " . $parser->peekNextToken());
+        }
+        echo $output;
+        if ($parser->peekNextToken() instanceof LogicToken) {
+            $output .= $this->generateLogic($parser);
+        } else if (!$parser->peekNextToken()) { // check NULL
+            return $output;
+        } else {
+            $output .= " AND " . $this->generateExpression($parser);
+        }
+        return $output;
+    }
+
+    public function generateCustomProperty($parser)
+    {
+        $output = "";
+        echo $parser->peekNextToken()->getType();
+        switch ($parser->peekNextToken()->getType()) {
+            case 1:
+                $output = $this->generateCustomPropertyString($parser);
+                break;
+            case 2:
+                $output = $this->generateCustomPropertyInt($parser);
+                break;
+            case 3:
+                $output = $this->generateCustomPropertyDate($parser);
+                break;
+            case 4:
+                //$this->generateCustomPropertyBool($parser); TODOs
+                break;
+            case 5:
+                $output = $this->generateCustomPropertyString($parser);
+                break;
         }
 
         return $output;
