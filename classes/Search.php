@@ -583,7 +583,7 @@ class SqlGenerator
         } else {
             throw new \Exception("Invalid token: " . $parser->peekNextToken());
         }
-        echo $output; //SELECT * FROM mp_demand LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id LEFT JOIN mp_property ON mp_property.demand_id=mp_demand.id LEFT JOIN mp_custom_property ON mp_custom_property.id=mp_property.custom_property_id WHERE (mp_custom_property.name LIKE "prop4" AND STR_TO_DATE(mp_property.value, "%Y-%m-%d") = DATE("2024-02-20"))
+        //SELECT * FROM mp_demand LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id LEFT JOIN mp_property ON mp_property.demand_id=mp_demand.id LEFT JOIN mp_custom_property ON mp_custom_property.id=mp_property.custom_property_id WHERE (mp_custom_property.name LIKE "prop4" AND STR_TO_DATE(mp_property.value, "%Y-%m-%d") = DATE("2024-02-20"))
         if ($parser->peekNextToken() instanceof LogicToken) {
             $output .= $this->generateLogic($parser);
         } else if (!$parser->peekNextToken()) { // check NULL
