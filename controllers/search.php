@@ -30,6 +30,7 @@ class SearchController extends \Marketplace\Controller
             $generator = new SqlGenerator();
             try {
                 $sql = $generator->generateSQL($query, $custom_properties);
+
                 $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
             } catch (SearchException $e) {
                 PageLayout::postError('Error', [$e->getMessage()]);

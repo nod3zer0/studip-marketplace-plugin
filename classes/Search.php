@@ -198,7 +198,7 @@ class Parser
 
     private $default_properties = [
         "title" => "title",
-        "date" => "date",
+        "created" => "created",
     ];
 
     private $custom_properties = [];
@@ -642,8 +642,7 @@ class SqlGenerator
             $output .= " AND " . $this->generateExpression($parser);
         }
 
-
-        return "";
+        return $output;
     }
 }
 
