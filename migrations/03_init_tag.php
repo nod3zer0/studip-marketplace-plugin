@@ -8,7 +8,8 @@ class InitTag extends Migration
             id CHAR(32) CHARACTER SET latin1 COLLATE
             latin1_bin NOT NULL,
             name TEXT NOT NULL,
-            PRIMARY KEY (id)
+            PRIMARY KEY (id),
+            FULLTEXT (name)
             )";
         $db->exec($query);
     }

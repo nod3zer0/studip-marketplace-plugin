@@ -12,7 +12,8 @@ class InitProperty extends Migration
             demand_id CHAR(32) CHARACTER SET latin1 COLLATE
             latin1_bin NOT NULL,
             value TEXT,
-            PRIMARY KEY (id)
+            PRIMARY KEY (id),
+            FULLTEXT (value)
             )";
         $db->exec($query);
     }

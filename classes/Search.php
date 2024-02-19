@@ -156,14 +156,21 @@ class CustomPropertyToken extends PropertyToken
 {
 
     public $value;
+    public int $type;
 
-    public function __construct(string $value)
+    public function __construct(string $value, int $type)
     {
         $this->value = $value;
+        $this->type = $type;
     }
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function getType(): int
+    {
+        return $this->type;
     }
 }
 
@@ -212,6 +219,11 @@ class Parser
         $result = str_replace($charactersToReplace, $replaceWith, $this->query);
         $tokens =  explode(" ", $result);
 
+        $custom_properties_dict = [];
+        //convert custom properties to dict name -> type
+        foreach ($this->custom_properties as $property) {
+            $custom_properties_dict[$property["name"]] = $property["type"];
+        }
 
         for ($i = 0; $i < count($tokens); $i++) {
 
@@ -266,8 +278,8 @@ class Parser
             {
                 if (isset($this->default_properties[$tokens[$i]])) {
                     $this->tokenObjects[] = new DefaultPropertyToken($tokens[$i]);
-                } else if (in_array($tokens[$i], $this->custom_properties)) {
-                    $this->tokenObjects[] = new CustomPropertyToken($tokens[$i]);
+                } else if (isset($custom_properties_dict[$tokens[$i]])) {
+                    $this->tokenObjects[] = new CustomPropertyToken($tokens[$i], $custom_properties_dict[$tokens[$i]]);
                 }
             } else if (preg_match('/^[a-zA-Z0-9_]+$/', $tokens[$i])) {
                 if (
@@ -330,7 +342,7 @@ class SqlGenerator
         } else if (!$token) {
             return $output;
         } else {
-            throw new \Exception("Invalid token: " . $parser->peekNextToken()->getValue());
+            throw new \Exception("Invalid token: " . get_class($parser->peekNextToken()));
         }
         return $output;
     }
@@ -467,7 +479,8 @@ class SqlGenerator
 
     public function generateCustomProperty($parser)
     {
-        $output = "( mp_custom_property.name LIKE ? AND mp_property.value LIKE ? )";
+        $output = "( mp_custom_property.name LIKE ?  AND MATCH(mp_property.value) AGAINST(?) )";
+        // $output = "( mp_custom_property.name LIKE ? AND mp_property.value LIKE ? )";
         $this->values[] = $parser->getNextToken()->getValue();
 
         if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {

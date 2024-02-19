@@ -20,10 +20,10 @@ class SearchController extends \Marketplace\Controller
 
 
             $db = DBManager::get();
-            $custom_properties = $db->fetchAll("SELECT name FROM mp_custom_property", []);
-            $custom_properties = array_map(function ($value) {
-                return $value['name'];
-            }, $custom_properties);
+            $custom_properties = $db->fetchAll("SELECT name, type FROM mp_custom_property", []);
+            // $custom_properties = array_map(function ($value) {
+            //     return $value['name'];
+            // }, $custom_properties);
 
 
             $generator = new SqlGenerator();

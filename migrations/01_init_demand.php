@@ -15,7 +15,9 @@ class InitDemand extends Migration
             latin1_bin NOT NULL,
             marketplace_id CHAR(32) CHARACTER SET latin1 COLLATE
             latin1_bin NOT NULL,
-            PRIMARY KEY (id)
+            PRIMARY KEY (id),
+            FULLTEXT (title),
+            FULLTEXT (description)
             )";
         $db->exec($query);
     }
