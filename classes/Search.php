@@ -2,6 +2,19 @@
 
 namespace Marketplace;
 
+
+class SearchException extends \Exception
+{
+    // Redefine the exception so message isn't optional
+    public function __construct($message, $code = 0, \Throwable $previous = null)
+    {
+        // some code
+
+        // make sure everything is assigned properly
+        parent::__construct($message, $code, $previous);
+    }
+}
+
 abstract class Token
 {
 }
@@ -300,7 +313,7 @@ class Parser
                     $this->tokenObjects[] = new StringToken($tokens[$i]);
                 }
             } else {
-                throw new \Exception("Invalid token: " . $tokens[$i]);
+                throw new SearchException("Invalid token: " . $tokens[$i]);
             }
         }
     }
@@ -334,7 +347,6 @@ class SqlGenerator
 
     public function generateExpression($parser)
     {
-        echo "generateExpression\n";
         $output = "";
         $token = $parser->peekNextToken();
         if ($token instanceof TagToken) {
@@ -352,7 +364,7 @@ class SqlGenerator
         } else if (!$token) {
             return $output;
         } else {
-            throw new \Exception("Invalid token: " . get_class($parser->peekNextToken()));
+            throw new SearchException("Invalid token: " . get_class($parser->peekNextToken()));
         }
         return $output;
     }
@@ -360,7 +372,6 @@ class SqlGenerator
     // return "mp_tag.name LIKE ?";
     public function generateTag($parser)
     {
-        echo "generateTag\n";
         $output = "mp_tag.name LIKE ? ";
         $this->values[] = $parser->getNextToken()->getValue();
 
@@ -377,7 +388,6 @@ class SqlGenerator
 
     public function generateLogic($parser)
     {
-        echo "generateLogic\n";
 
         $output = "";
         $token = $parser->peekNextToken();
@@ -392,7 +402,7 @@ class SqlGenerator
         } else if ($token instanceof CloseToken) {
             $output .= $this->generateClose($parser);
         } else {
-            throw new \Exception("Invalid token: " . $token->getValue());
+            throw new SearchException("Invalid token: " . $token->getValue());
         }
 
         return $output;
@@ -411,7 +421,6 @@ class SqlGenerator
 
     public function generateOr($parser)
     {
-        echo "generateOr\n";
         $output = "";
         $parser->getNextToken();
         $output .= " OR ";
@@ -430,7 +439,6 @@ class SqlGenerator
 
     public function generateOpen($parser)
     {
-        echo "generateOpen\n";
         $this->numberOfBrackets++;
         $output = "";
         $parser->getNextToken();
@@ -441,9 +449,8 @@ class SqlGenerator
 
     public function generateClose($parser)
     {
-        echo "generateClose\n";
         if ($this->numberOfBrackets == 0) {
-            throw new \Exception("Invalid token: " . $parser->peekNextToken()->getValue());
+            throw new SearchException("Invalid token: " . $parser->peekNextToken()->getValue());
         }
         $this->numberOfBrackets--;
         $output = "";
@@ -466,14 +473,14 @@ class SqlGenerator
 
 
         if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
-            throw new \Exception("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
         }
         $parser->getNextToken();
 
         if ($parser->peekNextToken() instanceof ValueToken) {
             $this->values[] =  $parser->getNextToken()->getValue();
         } else {
-            throw new \Exception("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
         }
 
         if ($parser->peekNextToken() instanceof LogicToken) {
@@ -494,14 +501,14 @@ class SqlGenerator
         $this->values[] = $parser->getNextToken()->getValue();
 
         if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
-            throw new \Exception("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
         }
         $parser->getNextToken();
 
         if ($parser->peekNextToken() instanceof ValueToken) {
             $this->values[] =  $parser->getNextToken()->getValue();
         } else {
-            throw new \Exception("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
         }
 
         if ($parser->peekNextToken() instanceof LogicToken) {
@@ -533,7 +540,7 @@ class SqlGenerator
         } else if ($parser->peekNextToken() instanceof LessEqualToken) {
             $output .= " <= ? )";
         } else {
-            throw new \Exception("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
         }
 
         $parser->getNextToken();
@@ -541,7 +548,7 @@ class SqlGenerator
         if ($parser->peekNextToken() instanceof IntToken || $parser->peekNextToken() instanceof FloatToken) {
             $this->values[] =  $parser->getNextToken()->getValue();
         } else {
-            throw new \Exception("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
         }
 
         if ($parser->peekNextToken() instanceof LogicToken) {
@@ -573,7 +580,7 @@ class SqlGenerator
         } else if ($parser->peekNextToken() instanceof LessEqualToken) {
             $output .= " <= DATE(?))";
         } else {
-            throw new \Exception("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
         }
 
         $parser->getNextToken();
@@ -581,7 +588,7 @@ class SqlGenerator
         if ($parser->peekNextToken() instanceof DateToken) {
             $this->values[] =  $parser->getNextToken()->getValue();
         } else {
-            throw new \Exception("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
         }
         //SELECT * FROM mp_demand LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id LEFT JOIN mp_property ON mp_property.demand_id=mp_demand.id LEFT JOIN mp_custom_property ON mp_custom_property.id=mp_property.custom_property_id WHERE (mp_custom_property.name LIKE "prop4" AND STR_TO_DATE(mp_property.value, "%Y-%m-%d") = DATE("2024-02-20"))
         if ($parser->peekNextToken() instanceof LogicToken) {
@@ -597,7 +604,6 @@ class SqlGenerator
     public function generateCustomProperty($parser)
     {
         $output = "";
-        echo $parser->peekNextToken()->getType();
         switch ($parser->peekNextToken()->getType()) {
             case 1:
                 $output = $this->generateCustomPropertyString($parser);
