@@ -92,14 +92,21 @@ class PropertyToken extends Token
 class DefaultPropertyToken extends PropertyToken
 {
     public $value;
+    public int $type;
 
-    public function __construct(string $value)
+    public function __construct(string $value, int $type)
     {
         $this->value = $value;
+        $this->type = $type;
     }
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function getType(): int
+    {
+        return $this->type;
     }
 }
 
@@ -197,8 +204,10 @@ class Parser
     private $query;
 
     private $default_properties = [
-        "title" => "title",
-        "created" => "created",
+        "title" => 1,
+        "created" => 3,
+        "date" => 3,
+        "description" => 2,
     ];
 
     private $custom_properties = [];
@@ -300,7 +309,7 @@ class Parser
                 $tokens[$i + 1] == "<" || $tokens[$i + 1] == "<=" || $tokens[$i + 1] == ">=")) //string
             {
                 if (isset($this->default_properties[$tokens[$i]])) {
-                    $this->tokenObjects[] = new DefaultPropertyToken($tokens[$i]);
+                    $this->tokenObjects[] = new DefaultPropertyToken($tokens[$i], $this->default_properties[$tokens[$i]]);
                 } else if (isset($custom_properties_dict[$tokens[$i]])) {
                     $this->tokenObjects[] = new CustomPropertyToken($tokens[$i], $custom_properties_dict[$tokens[$i]]);
                 }
@@ -321,8 +330,14 @@ class Parser
 
 class SqlGenerator
 {
-    public $values = [];
-    public $numberOfBrackets = 0;
+    private $values = [];
+    private $numberOfBrackets = 0;
+
+    private $default_properties_map = [
+        "title" => "title",
+        "created" => "mkdate",
+        "date" => "mkdate",
+    ];
     public function generateSQL($query, $custom_properties)
     {
 
@@ -467,32 +482,7 @@ class SqlGenerator
         return $output;
     }
 
-    public function generateDefaultProperty($parser)
-    {
-        $output = "mp_demand." . $parser->getNextToken()->getValue() . " LIKE ? ";
 
-
-        if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
-        }
-        $parser->getNextToken();
-
-        if ($parser->peekNextToken() instanceof ValueToken) {
-            $this->values[] =  $parser->getNextToken()->getValue();
-        } else {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
-        }
-
-        if ($parser->peekNextToken() instanceof LogicToken) {
-            $output .= $this->generateLogic($parser);
-        } else if (!$parser->peekNextToken()) { // check NULL
-            return $output;
-        } else {
-            $output .= " AND " . $this->generateExpression($parser);
-        }
-
-        return $output;
-    }
 
 
     public function generateCustomPropertyString($parser)
@@ -620,6 +610,124 @@ class SqlGenerator
             case 5:
                 $output = $this->generateCustomPropertyString($parser);
                 break;
+        }
+
+        return $output;
+    }
+
+    public function generateDefaultPropertyString($parser)
+    {
+        $output = "MATCH(mp_demand." . $parser->getNextToken()->getValue() . ") AGAINST(?)";
+
+
+        if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+        }
+        $parser->getNextToken();
+
+        if ($parser->peekNextToken() instanceof ValueToken) {
+            $this->values[] =  $parser->getNextToken()->getValue();
+        } else {
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+        }
+
+        if ($parser->peekNextToken() instanceof LogicToken) {
+            $output .= $this->generateLogic($parser);
+        } else if (!$parser->peekNextToken()) { // check NULL
+            return $output;
+        } else {
+            $output .= " AND " . $this->generateExpression($parser);
+        }
+
+        return $output;
+    }
+
+    public function generateDefaultPropertyDate($parser)
+    {
+        $output = "(mp_demand." . $this->default_properties_map[$parser->getNextToken()->getValue()];
+
+        if ($parser->peekNextToken() instanceof ColonToken) {
+            $output .= " = DATE(?)";
+        } else if ($parser->peekNextToken() instanceof EqualToken) {
+            $output .= " = DATE(?))";
+        } else if ($parser->peekNextToken() instanceof GreaterToken) {
+            $output .= " > DATE(?))";
+        } else if ($parser->peekNextToken() instanceof LessToken) {
+            $output .= " < DATE(?))";
+        } else if ($parser->peekNextToken() instanceof GreaterEqualToken) {
+            $output .= " >= DATE(?))";
+        } else if ($parser->peekNextToken() instanceof LessEqualToken) {
+            $output .= " <= DATE(?))";
+        } else {
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+        }
+
+        $parser->getNextToken();
+
+        if ($parser->peekNextToken() instanceof DateToken) {
+            $this->values[] =  $parser->getNextToken()->getValue();
+        } else {
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+        }
+
+        if ($parser->peekNextToken() instanceof LogicToken) {
+            $output .= $this->generateLogic($parser);
+        } else if (!$parser->peekNextToken()) { // check NULL
+            return $output;
+        } else {
+            $output .= " AND " . $this->generateExpression($parser);
+        }
+
+        return $output;
+    }
+
+
+    public function generateDefaultProperty($parser)
+    {
+        $output = "";
+
+        switch ($parser->peekNextToken()->getType()) {
+            case 1:
+                $output = $this->generateDefaultPropertyString($parser);
+                break;
+            case 2:
+                // $output = $this->generateDefaultPropertyInt($parser); TODO
+                break;
+            case 3:
+                $output = $this->generateDefaultPropertyDate($parser);
+                break;
+            case 4:
+                //$this->generateDefaultPropertyBool($parser); TODO
+                break;
+            case 5:
+                $output = $this->generateDefaultPropertyString($parser);
+                break;
+        }
+
+        return $output;
+
+
+
+        $output = "mp_demand." . $parser->getNextToken()->getValue() . " LIKE ? ";
+
+
+        if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+        }
+        $parser->getNextToken();
+
+        if ($parser->peekNextToken() instanceof ValueToken) {
+            $this->values[] =  $parser->getNextToken()->getValue();
+        } else {
+            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+        }
+
+        if ($parser->peekNextToken() instanceof LogicToken) {
+            $output .= $this->generateLogic($parser);
+        } else if (!$parser->peekNextToken()) { // check NULL
+            return $output;
+        } else {
+            $output .= " AND " . $this->generateExpression($parser);
         }
 
         return $output;
