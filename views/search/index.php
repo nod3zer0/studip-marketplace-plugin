@@ -8,16 +8,17 @@ use Studip\Button; ?>
             <label class="required">
                 search
             </label>
-            <input name="search-query" required value="">
+            <input type="text" name="search-query" required value="">
+            <?= Button::create('Search') ?>
         </div>
     </fieldset>
 
     <footer data-dialog-button>
-        <?= Button::create('Submit') ?>
+
     </footer>
 </form>
 
-    <table class="default sortable-table">
+<table class="default sortable-table">
     <caption>
         Demands
     </caption>
