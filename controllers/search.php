@@ -7,9 +7,14 @@ use Marketplace\SqlGenerator;
 class SearchController extends \Marketplace\Controller
 {
 
-    public function index_action()
+    public function index_action($marketplace_id = '')
     {
-
+        $navigation = Navigation::getItem('default_marketplace/marketplace_search');
+        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'search/index/', []) . $marketplace_id);
+        $navigation = Navigation::getItem('default_marketplace/marketplace_config');
+        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'config/index/', []) . $marketplace_id);
+        $navigation = Navigation::getItem('default_marketplace/marketplace_overview');
+        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'overview/index/', []) . $marketplace_id);
 
 
 

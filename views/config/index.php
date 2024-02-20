@@ -35,7 +35,7 @@
             },
             methods: {
                 loadProperties: function() {
-                    fetch('<?= $controller->link_for('config/get_properties') ?>')
+                    fetch('<?= $controller->link_for('config/get_properties', $marketplace_id) ?>')
                         .then(response => response.json())
                         .then(data => {
                             // Check if data is an array
@@ -67,7 +67,7 @@
                 },
                 submitProperties: function() {
                     // TODO: make url dynamic
-                    fetch('<?= $controller->link_for('config/save_config') ?>', {
+                    fetch('<?= $controller->link_for('config/save_config', $marketplace_id) ?>', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'

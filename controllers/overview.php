@@ -25,9 +25,11 @@ class OverviewController extends \Marketplace\Controller
         OverviewController::buildSidebar($marketplace_id);
 
         $navigation = Navigation::getItem('default_marketplace/marketplace_search');
-        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'search', []) . $marketplace_id);
+        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'search/index/', []) . $marketplace_id);
         $navigation = Navigation::getItem('default_marketplace/marketplace_config');
-        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'config', []) . $marketplace_id);
+        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'config/index/', []) . $marketplace_id);
+        $navigation = Navigation::getItem('default_marketplace/marketplace_overview');
+        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'overview/index/', []) . $marketplace_id);
         $this->marketplace_id = $marketplace_id;
         $this->all_demands = \Marketplace\Demand::findBySQL("marketplace_id = ?", [$marketplace_id]);
     }
@@ -40,7 +42,7 @@ class OverviewController extends \Marketplace\Controller
         PageLayout::setTitle($this->demand_obj->title);
         $this->tags = \Marketplace\TagDemand::findBySQL("demand_id = ?", [$demand_id]);
         $db = DBManager::get();
-        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$demand_id]);
+        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id WHERE mp_custom_property.marketplace_id = ?", [$demand_id, $this->demand_obj->marketplace_id]);
     }
 
     public function create_demand_action(string $marketplace_id, string $demand_id = '')
@@ -58,32 +60,7 @@ class OverviewController extends \Marketplace\Controller
         }
         $this->tagsString = rtrim($this->tagsString, ",");
         $db = DBManager::get();
-        //TODO diferentiete between marketplaces
-        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$demand_id]);
-    }
-
-    public function get_custom_properties_action()
-    {
-        $demand_id = json_decode(file_get_contents('php://input'), true);
-        $db = DBManager::get();
-        $properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$demand_id]);
-
-        //$properties = \Marketplace\CustomProperty::findBySQL("LEFT JOIN mp_property ON mp_custom_property.id = mp_property.custom_property_id");
-        $this->render_text('' . json_encode($properties));
-    }
-
-    public function get_custom_properties_testing_action()
-    {
-        $db = DBManager::get();
-        $properties = $db->fetchAll("SELECT * FROM mp_property");
-        $this->render_text('' . json_encode($properties));
-    }
-
-    public function update_custom_properties_action()
-    {
-        $properties = json_decode(file_get_contents('php://input'), true);
-        Property::update_custom_properties($properties[0], $properties[1]);
-        $this->render_text('' . json_encode($properties));
+        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id WHERE mp_custom_property.marketplace_id = ?", [$demand_id, $marketplace_id]);
     }
 
 
