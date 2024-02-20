@@ -6,24 +6,30 @@ use \Marketplace\Property;
 
 class OverviewController extends \Marketplace\Controller
 {
-    private function buildSidebar()
+    private function buildSidebar(string $marketplace_id)
     {
         $sidebar = Sidebar::Get();
         $actionWidget = $sidebar->addWidget(new ActionsWidget());
         $actionWidget->addLink(
             'Create demand',
-            $this->url_for('overview/create_demand'),
+            $this->url_for('overview/create_demand/', []) . $marketplace_id,
             Icon::create('add'),
             ['data-dialog' => true]
         );
     }
 
-    public function index_action()
+    public function index_action(string $marketplace_id)
     {
         Navigation::activateItem('default_marketplace/marketplace_overview');
         PageLayout::setTitle('Demands');
-        OverviewController::buildSidebar();
-        $this->all_demands = \Marketplace\Demand::findBySQL("1");
+        OverviewController::buildSidebar($marketplace_id);
+
+        $navigation = Navigation::getItem('default_marketplace/marketplace_search');
+        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'search', []) . $marketplace_id);
+        $navigation = Navigation::getItem('default_marketplace/marketplace_config');
+        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'config', []) . $marketplace_id);
+        $this->marketplace_id = $marketplace_id;
+        $this->all_demands = \Marketplace\Demand::findBySQL("marketplace_id = ?", [$marketplace_id]);
     }
 
     public function demand_detail_action(string $demand_id = '')
@@ -37,9 +43,10 @@ class OverviewController extends \Marketplace\Controller
         $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$demand_id]);
     }
 
-    public function create_demand_action(string $demand_id = '')
+    public function create_demand_action(string $marketplace_id, string $demand_id = '')
     {
         PageLayout::setTitle('Edit demand');
+        $this->marketplace_id = $marketplace_id;
         $this->demand_obj = \Marketplace\Demand::find($demand_id);
         if (!$this->demand_obj) {
             $this->demand_obj = new \Marketplace\Demand();
@@ -51,6 +58,7 @@ class OverviewController extends \Marketplace\Controller
         }
         $this->tagsString = rtrim($this->tagsString, ",");
         $db = DBManager::get();
+        //TODO diferentiete between marketplaces
         $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id", [$demand_id]);
     }
 
@@ -79,13 +87,14 @@ class OverviewController extends \Marketplace\Controller
     }
 
 
-    public function store_demand_action(string $demand_id = '')
+    public function store_demand_action(string $marketplace_id, string $demand_id = '')
     {
         CSRFProtection::verifyRequest();
         $this->demand_obj = \Marketplace\Demand::find($demand_id);
         if (!$this->demand_obj) {
             $this->demand_obj = new \Marketplace\Demand();
             $this->demand_obj->author_id = $GLOBALS['user']->id;
+            $this->demand_obj->marketplace_id = $marketplace_id;
         }
         if (!$this->demand_obj->hasPermission()) {
             PageLayout::postError('You do not have permission to customize the text');
@@ -132,6 +141,6 @@ saving the demand');
         }
         $request = Request::getInstance();
         Property::update_custom_properties($request['custom_properties'], $demand_id);
-        $this->redirect('overview/index');
+        $this->redirect('overview/index/' . $marketplace_id);
     }
 }

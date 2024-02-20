@@ -104,7 +104,7 @@ use Studip\Button; ?>
     });
 </script>
 
-<form class="default collapsable" action="<?= $controller->link_for('overview/store_demand', $demand_obj->id) ?>" method="post">
+<form class="default collapsable" action="<?= $controller->link_for('overview/store_demand', $marketplace_id, $demand_obj->id) ?>" method="post">
     <?= CSRFProtection::tokenTag() ?>
     <fieldset data-open="bd_basicsettings">
         <div>

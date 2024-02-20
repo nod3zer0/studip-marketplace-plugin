@@ -19,7 +19,7 @@
                 <tr>
                     <td>
                         <? if ($marketplace->enabled) : ?>
-                            <a href="<?= $controller->link_for('overview', []) ?>"><?= $marketplace->name ?></a>
+                            <a href="<?= $controller->link_for('overview/index/', []) . $marketplace->id ?>"><?= $marketplace->name ?></a>
                         <? endif; ?>
                     </td>
                 </tr>
