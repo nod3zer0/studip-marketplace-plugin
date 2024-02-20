@@ -1,7 +1,7 @@
 <?
 
 use Studip\Button; ?>
-<form class="default collapsable" action="<?= $controller->link_for('search/index', $demand_obj->id) ?>" method="post">
+<form class="default collapsable" action="<?= $controller->link_for('search/index', $marketplace_id) ?>" method="post">
     <?= CSRFProtection::tokenTag() ?>
     <fieldset data-open="bd_basicsettings">
         <div>
@@ -49,7 +49,7 @@ use Studip\Button; ?>
                         <? if ($demand_obj->hasPermission()) : ?>
                             <? $actions = ActionMenu::get(); ?>
                             <? $actions->addLink(
-                                $controller->url_for('overview/create_demand/' . $demand_obj->id),
+                                $controller->url_for('overview/create_demand/') . $marketplace_id . "/" . $demand_obj->id,
                                 'Edit',
                                 Icon::create('edit'),
                                 ['data-dialog' => true]

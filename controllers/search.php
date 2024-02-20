@@ -9,6 +9,7 @@ class SearchController extends \Marketplace\Controller
 
     public function index_action($marketplace_id = '')
     {
+        //TODO move $navigations in all controlers somewhere else (DRY)
         $navigation = Navigation::getItem('default_marketplace/marketplace_search');
         $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'search/index/', []) . $marketplace_id);
         $navigation = Navigation::getItem('default_marketplace/marketplace_config');
@@ -17,7 +18,7 @@ class SearchController extends \Marketplace\Controller
         $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'overview/index/', []) . $marketplace_id);
 
 
-
+        $this->marketplace_id = $marketplace_id;
         Navigation::activateItem('default_marketplace/marketplace_search');
         PageLayout::setTitle('Search');
         $db = DBManager::get();
@@ -34,7 +35,7 @@ class SearchController extends \Marketplace\Controller
 
             $generator = new SqlGenerator();
             try {
-                $sql = $generator->generateSQL($query, $custom_properties);
+                $sql = $generator->generateSQL($query, $custom_properties, $marketplace_id);
 
                 $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
             } catch (SearchException $e) {
@@ -43,7 +44,18 @@ class SearchController extends \Marketplace\Controller
                 return;
             }
         } else {
-            $this->all_demands = \Marketplace\Demand::findBySQL("LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id");
+
+            $query = "LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id LEFT JOIN mp_property ON mp_property.demand_id=mp_demand.id LEFT JOIN mp_custom_property ON mp_custom_property.id=mp_property.custom_property_id";
+
+            if ($marketplace_id != "") {
+                $query .= " WHERE mp_marketplace.id = ? Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id";
+                $this->all_demands = \Marketplace\Demand::findBySQL($query, [$marketplace_id]);
+            } else {
+                $query = "Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id";
+                $this->all_demands = \Marketplace\Demand::findBySQL($query);
+            }
+
+
             //    $this->st = $db->fetchAll("SELECT * FROM mp_demand LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id", []);
         }
     }

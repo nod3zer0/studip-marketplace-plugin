@@ -338,23 +338,29 @@ class SqlGenerator
         "created" => "mkdate",
         "date" => "mkdate",
     ];
-    public function generateSQL($query, $custom_properties)
+    public function generateSQL($query, $custom_properties, $marketplace_id = "")
     {
 
         $parser = new Parser($query, $custom_properties);
 
         $output = "";
 
-        $output = $this->generateStart($parser);
+        $output = $this->generateStart($parser, $marketplace_id);
 
         $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id";
 
         return [$output, $this->values];
     }
 
-    public function generateStart($parser)
+    public function generateStart($parser, $marketplace_id)
     {
-        $output = "LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id LEFT JOIN mp_property ON mp_property.demand_id=mp_demand.id LEFT JOIN mp_custom_property ON mp_custom_property.id=mp_property.custom_property_id WHERE ";
+        $output = "LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id LEFT JOIN mp_property ON mp_property.demand_id=mp_demand.id LEFT JOIN mp_custom_property ON mp_custom_property.id=mp_property.custom_property_id WHERE ";
+
+        if ($marketplace_id != "") {
+            $output .= "mp_marketplace.id = ? AND ";
+            $this->values[] = $marketplace_id;
+        }
+
         $output  .= $this->generateExpression($parser);
         return $output;
     }
