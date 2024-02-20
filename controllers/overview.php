@@ -20,7 +20,7 @@ class OverviewController extends \Marketplace\Controller
 
     public function index_action()
     {
-        Navigation::activateItem('marketplace_root/default_marketplace/marketplace_overview');
+        Navigation::activateItem('default_marketplace/marketplace_overview');
         PageLayout::setTitle('Demands');
         OverviewController::buildSidebar();
         $this->all_demands = \Marketplace\Demand::findBySQL("1");

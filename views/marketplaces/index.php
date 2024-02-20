@@ -19,7 +19,7 @@
                 <tr>
                     <td>
                         <? if ($marketplace->enabled) : ?>
-                            <a data-dialog href="<?= $controller->link_for('overview', $markeplace->id) ?>"><?= $marketplace->name ?></a>
+                            <a href="<?= $controller->link_for('overview', []) ?>"><?= $marketplace->name ?></a>
                         <? endif; ?>
                     </td>
                 </tr>

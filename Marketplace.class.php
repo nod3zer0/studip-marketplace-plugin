@@ -19,7 +19,7 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         parent::__construct();
         $root_nav = new Navigation(
             'Marketplace',
-            PluginEngine::getURL($this, [], 'overview')
+            PluginEngine::getURL($this, [], 'marketplaces')
         );
         $root_nav->setImage(Icon::create(
             'file-text',
@@ -27,11 +27,13 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         ));
         Navigation::addItem('/marketplace_root', $root_nav);
 
+
         $default_marketplace = new Navigation(
             'Default marketplace',
             PluginEngine::getURL($this, [], 'overview')
         );
-        $root_nav->addSubNavigation('default_marketplace', $default_marketplace);
+        Navigation::addItem('/default_marketplace', $default_marketplace);
+        //$root_nav->addSubNavigation('default_marketplace', $default_marketplace);
         $overview = new Navigation(
             'Overview',
             PluginEngine::getURL($this, [], 'overview')
@@ -42,6 +44,14 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
             PluginEngine::getURL($this, [], 'search')
         );
         $default_marketplace->addSubNavigation('marketplace_search', $search_nav);
+
+
+
+        $marketplaces = new Navigation(
+            'Marketplaces',
+            PluginEngine::getURL($this, [], 'marketplaces')
+        );
+        $root_nav->addSubNavigation('marketplaces', $marketplaces);
 
         if ($GLOBALS['user']->perms === 'root') {
             $config_nav = new Navigation(

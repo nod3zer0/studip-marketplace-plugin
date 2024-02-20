@@ -13,7 +13,7 @@ class SearchController extends \Marketplace\Controller
 
 
 
-        Navigation::activateItem('marketplace_root/default_marketplace/marketplace_search');
+        Navigation::activateItem('default_marketplace/marketplace_search');
         PageLayout::setTitle('Search');
         $db = DBManager::get();
         $query = Request::get('search-query');
