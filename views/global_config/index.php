@@ -3,7 +3,7 @@
         <li v-for="(item, index) in marketplaces" :key="index">
             <input v-model="marketplaces[index].name">
             <button @click="deleteItem(index)">Delete</button>
-            <label for="type">Type (doesn't work at the moment):</label>
+            <label for="type">Enabled</label>
             <input type="checkbox" id="enabled" v-model="marketplaces[index].enabled">
         </li>
     </ul>
@@ -36,7 +36,7 @@
                                 // Update properties with data from the response
                                 this.marketplaces = data.map(marketplace => ({
                                     name: marketplace.name,
-                                    enabled: !!parseInt(marketplace.required), // Convert to boolean
+                                    enabled: !!parseInt(marketplace.enabled), // Convert to boolean
                                     id: marketplace.id
                                 }));
                             } else {

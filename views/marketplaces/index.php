@@ -17,11 +17,13 @@
         <? if ($marketplaces) : ?>
             <? foreach ($marketplaces as $marketplace) : ?>
                 <tr>
-                    <td>
-                        <? if ($marketplace->enabled) : ?>
+                    <? if ($marketplace->enabled) : ?>
+                        <td>
+
                             <a href="<?= $controller->link_for('overview/index/', []) . $marketplace->id ?>"><?= $marketplace->name ?></a>
-                        <? endif; ?>
-                    </td>
+
+                        </td>
+                    <? endif; ?>
                 </tr>
             <? endforeach; ?>
         <? else : ?>

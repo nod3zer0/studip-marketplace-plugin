@@ -15,6 +15,11 @@ class Demand extends SimpleORMap
             'foreign_key' => 'author_id',
             'assoc_foreign_key' => 'user_id'
         ];
+        $config['belongs_to']['mp_marketplace'] = [
+            'class_name' => \Marketplace\MarketplaceModel::class,
+            'foreign_key' => 'marketplace_id',
+            'assoc_foreign_key' => 'id'
+        ];
         $config['has_many']['mp_tag_demand'] = [
             'class_name' => \Marketplace\TagDemand::class,
             'assoc_func' => 'findByParent_id'

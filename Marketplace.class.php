@@ -52,7 +52,12 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         $default_marketplace->addSubNavigation('marketplace_search', $search_nav);
 
 
+        // $global_search = new Navigation(
+        //     'Search',
+        //     PluginEngine::getURL($this, [], 'search')
+        // );
 
+        // $root_nav->addSubNavigation('global_search', $global_search);
 
 
         if ($GLOBALS['user']->perms === 'root') {
@@ -69,13 +74,5 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         }
 
         $marketplaces = MarketplaceModel::findBySQL("1");
-
-        foreach ($marketplaces as $marketplace) {
-            $marketplace_nav = new Navigation(
-                $marketplace->name,
-                PluginEngine::getURL($this, [], 'overview', ['marketplace_id' => $marketplace->id])
-            );
-            $root_nav->addSubNavigation($marketplace->id, $marketplace_nav);
-        }
     }
 }

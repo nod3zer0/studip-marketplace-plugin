@@ -3,7 +3,7 @@
         <li v-for="(item, index) in properties" :key="index">
             <input v-model="properties[index].name">
             <button @click="deleteItem(index)">Delete</button>
-            <label for="type">Type (doesn't work at the moment):</label>
+            <label for="type">Type:</label>
             <select id="type" v-model="properties[index].type">
                 <option value="1">Short text</option>
                 <option value="5">Text area</option>

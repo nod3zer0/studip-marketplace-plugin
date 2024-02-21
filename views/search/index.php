@@ -33,6 +33,9 @@ use Studip\Button; ?>
             <th data-sort="text">Title</th>
             <th data-sort="text">Author</th>
             <th data-sort="digit">Created on</th>
+            <? if (!$marketplace_id) : ?>
+                <th data-sort="text">Marketplace</th>
+            <? endif; ?>
             <th data-sort="text">Edit</th>
         </tr>
     </thead>
@@ -45,6 +48,9 @@ use Studip\Button; ?>
                     </td>
                     <td><?= htmlReady($demand_obj->author->getFullName()) ?></td>
                     <td> <?= strftime('%x', $demand_obj->mkdate) ?></td>
+                    <? if (!$marketplace_id) : ?>
+                        <td><?= htmlReady($demand_obj->marketplace_id->name) ?></td>
+                    <? endif; ?>
                     <td>
                         <? if ($demand_obj->hasPermission()) : ?>
                             <? $actions = ActionMenu::get(); ?>

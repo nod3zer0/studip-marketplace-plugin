@@ -9,6 +9,10 @@ class MarketplaceModel extends SimpleORMap
     protected static function configure($config = [])
     {
         $config['db_table'] = 'mp_marketplace';
+        $config['has_many']['mp_demand'] = [
+            'class_name' => \Marketplace\Demand::class,
+            'assoc_func' => 'findByParent_id'
+        ];
         parent::configure($config);
     }
 
