@@ -3,6 +3,35 @@
 use Studip\Form;
 use Studip\Button; ?>
 
+<script>
+    STUDIP.Vue.load().then(({
+        Vue,
+        createApp,
+        eventBus,
+        store
+    }) => {
+        new Vue({
+            el: '#tags',
+            data: {
+                tags: []
+            },
+            created() {
+                this.loadTags();
+            },
+            methods: {
+                addItem: function() {
+                    this.tags.push('');
+                },
+                deleteItem: function(index) {
+                    this.tags.splice(index, 1);
+                },
+                loadTags: function() {
+                    this.tags = '<?php echo $tagsString; ?>'.split(',');
+                }
+            }
+        });
+    });
+</script>
 
 <form class="default collapsable" action="<?= $controller->link_for('overview/store_demand', $marketplace_id, $demand_obj->id) ?>" method="post">
     <?= CSRFProtection::tokenTag() ?>
