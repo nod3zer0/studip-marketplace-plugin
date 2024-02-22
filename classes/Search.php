@@ -382,6 +382,8 @@ class SqlGenerator
             $output .= $this->generateOpen($parser);
         } else if ($token instanceof CloseToken) {
             $output .= $this->generateClose($parser);
+        } else if ($token instanceof NotToken) {
+            $output .= $this->generateNot($parser);
         } else if (!$token) {
             return $output;
         } else {
@@ -417,7 +419,7 @@ class SqlGenerator
         } else if ($token instanceof OrToken) {
             $output .= $this->generateOr($parser);
         } else if ($token instanceof NotToken) {
-            $output .= $this->generateNot($parser);
+            $output .= "AND " . $this->generateNot($parser);
         } else if ($token instanceof OpenToken) {
             $output .= $this->generateOpen($parser);
         } else if ($token instanceof CloseToken) {
@@ -765,7 +767,7 @@ $f = fopen('php://stdin', 'r');
 
 while ($line = fgets($f)) {
     $generator = new SqlGenerator();
-    $result = $generator->generateSQL($line, ["test3"]);
+    $result = $generator->generateSQL($line, ["test3" => 3]);
     echo $result[0];
     echo "\n";
     foreach ($result[1] as $value) {
