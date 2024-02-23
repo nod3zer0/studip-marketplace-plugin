@@ -236,8 +236,8 @@ class Parser
     public function tokenize()
     {
 
-        $charactersToReplace = ["(", ")", "&", "|", "!", ">", "<", ">=", "<=", "=", ":"];
-        $replaceWith = [" ( ", " ) ", " & ", " | ", " ! ", " > ", " < ", " >= ", " <= ", " = ", " : "];
+        $charactersToReplace = ["(", ")", "&", "|", "!", ">=", "<=", ">", "<", "=", ":"];
+        $replaceWith = [" ( ", " ) ", " & ", " | ", " ! ", " GE ", " LE ", " G ", " L ", " E ", " : "];
         $result = str_replace($charactersToReplace, $replaceWith, $this->query);
         $tokens =  explode(" ", $result);
 
@@ -264,13 +264,13 @@ class Parser
             } else if (substr($tokens[$i][0], 0, 1) == "#") //tags
             {
                 $this->tokenObjects[] = new TagToken(substr($tokens[$i], 1));
-            } else if ($tokens[$i] == "AND" || $tokens[$i] == "&") //ADN
+            } else if (strtolower($tokens[$i]) == "and" || $tokens[$i] == "&") //ADN
             {
                 $this->tokenObjects[] = new AndToken();
-            } else if ($tokens[$i] == "OR" || $tokens[$i] == "|") //OR
+            } else if (strtolower($tokens[$i]) == "or" || $tokens[$i] == "|") //OR
             {
                 $this->tokenObjects[] = new OrToken();
-            } else if ($tokens[$i] == "NOT" || $tokens[$i] == "!") //NOT
+            } else if (strtolower($tokens[$i]) == "not" || $tokens[$i] == "!") //NOT
             {
                 $this->tokenObjects[] = new NotToken();
             } else if ($tokens[$i] == "(") //(
@@ -279,21 +279,21 @@ class Parser
             } else if ($tokens[$i] == ")") //)
             {
                 $this->tokenObjects[] = new CloseToken();
-            } else if ($tokens[$i] == "=") //=
+            } else if ($tokens[$i] == "E") //=
             {
                 $this->tokenObjects[] = new EqualToken();
             } else if ($tokens[$i] == ":") {
                 $this->tokenObjects[] = new ColonToken();
-            } else if ($tokens[$i] == ">") //>
+            } else if ($tokens[$i] == "G") //>
             {
                 $this->tokenObjects[] = new GreaterToken();
-            } else if ($tokens[$i] == "<") //<
+            } else if ($tokens[$i] == "L") //<
             {
                 $this->tokenObjects[] = new LessToken();
-            } else if ($tokens[$i] == ">=") //>=
+            } else if ($tokens[$i] == "GE") //>=
             {
                 $this->tokenObjects[] = new GreaterEqualToken();
-            } else if ($tokens[$i] == "<=") //<=
+            } else if ($tokens[$i] == "LE") //<=
             {
                 $this->tokenObjects[] = new LessEqualToken();
             } else if (preg_match('/^[0-9]+$/', $tokens[$i])) //int
@@ -305,8 +305,8 @@ class Parser
             } else if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $tokens[$i])) //date
             {
                 $this->tokenObjects[] = new DateToken($tokens[$i]);
-            } else if (count($tokens) > ($i) && ($tokens[$i + 1] == ":" || $tokens[$i + 1] == "=" || $tokens[$i + 1] == ">" ||
-                $tokens[$i + 1] == "<" || $tokens[$i + 1] == "<=" || $tokens[$i + 1] == ">=")) //string
+            } else if (count($tokens) > ($i) && ($tokens[$i + 1] == ":" || $tokens[$i + 1] == "E" || $tokens[$i + 1] == "G" ||
+                $tokens[$i + 1] == "L" || $tokens[$i + 1] == "LE" || $tokens[$i + 1] == "GE")) //string
             {
                 if (isset($this->default_properties[$tokens[$i]])) {
                     $this->tokenObjects[] = new DefaultPropertyToken($tokens[$i], $this->default_properties[$tokens[$i]]);
@@ -354,7 +354,7 @@ class SqlGenerator
 
     public function generateStart($parser, $marketplace_id)
     {
-        $output = "LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id LEFT JOIN mp_property ON mp_property.demand_id=mp_demand.id LEFT JOIN mp_custom_property ON mp_custom_property.id=mp_property.custom_property_id WHERE ";
+        $output = "LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
 
         if ($marketplace_id != "") {
             $output .= "mp_marketplace.id = ? AND ";
@@ -395,7 +395,15 @@ class SqlGenerator
     // return "mp_tag.name LIKE ?";
     public function generateTag($parser)
     {
-        $output = "mp_tag.name LIKE ? ";
+
+
+
+        $output = "EXISTS (
+            SELECT 1
+            FROM mp_tag_demand
+            LEFT JOIN mp_tag ON mp_tag_demand.tag_id = mp_tag.id
+            WHERE mp_tag.name LIKE ? AND mp_demand.id = mp_tag_demand.demand_id
+        ) ";
         $this->values[] = $parser->getNextToken()->getValue();
 
         if ($parser->peekNextToken() instanceof LogicToken) {
@@ -495,7 +503,11 @@ class SqlGenerator
 
     public function generateCustomPropertyString($parser)
     {
-        $output = "( mp_custom_property.name LIKE ?  AND MATCH(mp_property.value) AGAINST(?) )";
+        $output = "EXISTS (
+            SELECT 1
+            FROM mp_property
+            LEFT JOIN mp_custom_property ON mp_property.custom_property_id = mp_custom_property.id
+            WHERE ( mp_custom_property.name LIKE ?  AND MATCH(mp_property.value) AGAINST(?) ) AND mp_demand.id = mp_property.demand_id)";
         $this->values[] = $parser->getNextToken()->getValue();
 
         if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
@@ -522,7 +534,11 @@ class SqlGenerator
 
     public function generateCustomPropertyInt($parser)
     {
-        $output = "( mp_custom_property.name LIKE ?  AND mp_property.value ";
+        $output = "EXISTS (
+            SELECT 1
+            FROM mp_property
+            LEFT JOIN mp_custom_property ON mp_property.custom_property_id = mp_custom_property.id
+            WHERE mp_demand.id = mp_property.demand_id AND ( mp_custom_property.name LIKE ?  AND mp_property.value";
         $this->values[] = $parser->getNextToken()->getValue();
 
         if ($parser->peekNextToken() instanceof ColonToken) {
@@ -540,6 +556,9 @@ class SqlGenerator
         } else {
             throw new SearchException("Invalid token: " . $parser->peekNextToken());
         }
+        // close EXISTS
+
+        $output .= ")";
 
         $parser->getNextToken();
 
@@ -562,11 +581,17 @@ class SqlGenerator
 
     public function generateCustomPropertyDate($parser)
     {
-        $output = "( mp_custom_property.name LIKE ?  AND STR_TO_DATE(mp_property.value, \"%Y-%m-%d\")";
+
+        $output = "EXISTS (
+            SELECT 1
+            FROM mp_property
+            LEFT JOIN mp_custom_property ON mp_property.custom_property_id = mp_custom_property.id
+            WHERE mp_demand.id = mp_property.demand_id AND ( mp_custom_property.name LIKE ?  AND STR_TO_DATE(mp_property.value, \"%Y-%m-%d\")";
+
         $this->values[] = $parser->getNextToken()->getValue();
 
         if ($parser->peekNextToken() instanceof ColonToken) {
-            $output .= " = DATE(?)";
+            $output .= " = DATE(?))";
         } else if ($parser->peekNextToken() instanceof EqualToken) {
             $output .= " = DATE(?))";
         } else if ($parser->peekNextToken() instanceof GreaterToken) {
@@ -580,6 +605,8 @@ class SqlGenerator
         } else {
             throw new SearchException("Invalid token: " . $parser->peekNextToken());
         }
+        // close EXISTS
+        $output .= ")";
 
         $parser->getNextToken();
 
@@ -710,32 +737,6 @@ class SqlGenerator
             case 5:
                 $output = $this->generateDefaultPropertyString($parser);
                 break;
-        }
-
-        return $output;
-
-
-
-        $output = "mp_demand." . $parser->getNextToken()->getValue() . " LIKE ? ";
-
-
-        if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
-        }
-        $parser->getNextToken();
-
-        if ($parser->peekNextToken() instanceof ValueToken) {
-            $this->values[] =  $parser->getNextToken()->getValue();
-        } else {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
-        }
-
-        if ($parser->peekNextToken() instanceof LogicToken) {
-            $output .= $this->generateLogic($parser);
-        } else if (!$parser->peekNextToken()) { // check NULL
-            return $output;
-        } else {
-            $output .= " AND " . $this->generateExpression($parser);
         }
 
         return $output;
