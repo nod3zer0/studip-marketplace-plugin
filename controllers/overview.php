@@ -77,7 +77,7 @@ class OverviewController extends \Marketplace\Controller
         }
         if (!$this->demand_obj->hasPermission()) {
             PageLayout::postError('You do not have permission to customize the text');
-            $this->redirect('overview/index');
+            $this->redirect('overview/index/' . $marketplace_id);
             return;
         }
 
@@ -87,7 +87,7 @@ class OverviewController extends \Marketplace\Controller
             } else {
                 PageLayout::postError('An error occurred while deleting the demand');
             }
-            $this->redirect('overview/index');
+            $this->redirect('overview/index/' . $marketplace_id);
             return;
         }
 
