@@ -11,7 +11,9 @@ class InitTagdemand extends Migration
             latin1_bin NOT NULL,
             tag_id CHAR(32) CHARACTER SET latin1 COLLATE
             latin1_bin NOT NULL,
-            PRIMARY KEY (id)
+            PRIMARY KEY (id),
+            FOREIGN KEY (demand_id) REFERENCES mp_demand(id) ON DELETE CASCADE,
+            FOREIGN KEY (tag_id) REFERENCES mp_tag(id)
             )";
         $db->exec($query);
     }

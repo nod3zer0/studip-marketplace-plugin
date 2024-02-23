@@ -12,7 +12,8 @@ class InitCustomproperties extends Migration
             name TEXT NOT NULL,
             type TINYINT(2) NOT NULL DEFAULT 1,
             required BOOL NOT NULL DEFAULT 1,
-            PRIMARY KEY (id)
+            PRIMARY KEY (id),
+            FOREIGN KEY (marketplace_id) REFERENCES mp_marketplace(id) ON DELETE CASCADE
             )";
         $db->exec($query);
     }

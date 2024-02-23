@@ -13,7 +13,8 @@ class InitProperty extends Migration
             latin1_bin NOT NULL,
             value TEXT,
             PRIMARY KEY (id),
-            FULLTEXT (value)
+            FULLTEXT (value),
+            FOREIGN KEY (custom_property_id) REFERENCES mp_custom_property(id) ON DELETE CASCADE
             )";
         $db->exec($query);
     }

@@ -17,7 +17,8 @@ class InitDemand extends Migration
             latin1_bin NOT NULL,
             PRIMARY KEY (id),
             FULLTEXT (title),
-            FULLTEXT (description)
+            FULLTEXT (description),
+            FOREIGN KEY (marketplace_id) REFERENCES mp_marketplace(id) ON DELETE CASCADE
             )";
         $db->exec($query);
     }
