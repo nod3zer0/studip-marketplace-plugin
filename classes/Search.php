@@ -349,6 +349,11 @@ class SqlGenerator
 
         $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id";
 
+
+        if ($this->numberOfBrackets != 0) {
+            throw new SearchException("Invalid number of brackets!");
+        }
+
         return [$output, $this->values];
     }
 
@@ -480,8 +485,8 @@ class SqlGenerator
 
     public function generateClose($parser)
     {
-        if ($this->numberOfBrackets == 0) {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken()->getValue());
+        if ($this->numberOfBrackets <= 0) {
+            throw new SearchException("Invalid number of brackets!");
         }
         $this->numberOfBrackets--;
         $output = "";
