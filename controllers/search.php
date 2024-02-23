@@ -22,7 +22,7 @@ class SearchController extends \Marketplace\Controller
 
         $this->marketplace_id = $marketplace_id;
         Navigation::activateItem('default_marketplace/marketplace_search');
-        PageLayout::setTitle('Search');
+        PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
         $db = DBManager::get();
         $query = Request::get('search-query');
         if ($query != '') {

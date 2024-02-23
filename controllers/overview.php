@@ -21,7 +21,7 @@ class OverviewController extends \Marketplace\Controller
     public function index_action(string $marketplace_id)
     {
         Navigation::activateItem('default_marketplace/marketplace_overview');
-        PageLayout::setTitle('Demands');
+        PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
         OverviewController::buildSidebar($marketplace_id);
 
         $navigation = Navigation::getItem('default_marketplace/marketplace_search');

@@ -19,7 +19,7 @@ class ConfigController extends \Marketplace\Controller
         $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'overview/index/', []) . $marketplace_id);
         $this->marketplace_id = $marketplace_id;
         Navigation::activateItem('default_marketplace/marketplace_config');
-        PageLayout::setTitle('Configuration');
+        PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
     }
 
     public function save_config_action($marketplace_id)
