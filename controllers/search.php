@@ -9,6 +9,8 @@ class SearchController extends \Marketplace\Controller
 
     public function index_action($marketplace_id = '')
     {
+        PageLayout::addScript($this->plugin->getPluginURL() . '/assets/autocomplete.js');
+        PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
         //TODO move $navigations in all controlers somewhere else (DRY)
         $navigation = Navigation::getItem('default_marketplace/marketplace_search');
         $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'search/index/', []) . $marketplace_id);

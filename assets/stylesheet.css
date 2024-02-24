@@ -1,6 +1,6 @@
 .autocomplete {
-            position: relative;
-        }
+    position: relative;
+}
 
 .autocomplete-results {
     padding: 0;
@@ -8,7 +8,8 @@
     border: 1px solid #eeeeee;
     height: 120px;
     min-height: 1em;
-    max-height: 6em;
+    max-height: 18em;
+    width: 30%;
     overflow: auto;
 }
 
