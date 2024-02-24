@@ -305,9 +305,10 @@ class Parser
             } else if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $tokens[$i])) //date
             {
                 $this->tokenObjects[] = new DateToken($tokens[$i]);
-            } else if (count($tokens) > ($i) && ($tokens[$i + 1] == ":" || $tokens[$i + 1] == "E" || $tokens[$i + 1] == "G" ||
+            } else if ($tokens[$i][0] == '.'  && count($tokens) > ($i) && ($tokens[$i + 1] == ":" || $tokens[$i + 1] == "E" || $tokens[$i + 1] == "G" ||
                 $tokens[$i + 1] == "L" || $tokens[$i + 1] == "LE" || $tokens[$i + 1] == "GE")) //string
             {
+                $tokens[$i] = substr($tokens[$i], 1); //remove starting dot
                 if (isset($this->default_properties[$tokens[$i]])) {
                     $this->tokenObjects[] = new DefaultPropertyToken($tokens[$i], $this->default_properties[$tokens[$i]]);
                 } else if (isset($custom_properties_dict[$tokens[$i]])) {

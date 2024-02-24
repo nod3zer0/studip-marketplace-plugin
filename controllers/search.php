@@ -61,4 +61,18 @@ class SearchController extends \Marketplace\Controller
             //    $this->st = $db->fetchAll("SELECT * FROM mp_demand LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id", []);
         }
     }
+
+    public function get_attributes_action($marketplace_id)
+    {
+        $db = DBManager::get();
+        $custom_properties = $db->fetchAll("SELECT name, type FROM mp_custom_property WHERE marketplace_id = ?", [$marketplace_id]);
+        $this->render_text('' . json_encode($custom_properties));
+    }
+
+    public function get_tags_action()
+    {
+        $db = DBManager::get();
+        $tags = $db->fetchAll("SELECT name FROM mp_tag", []);
+        $this->render_text('' . json_encode($tags));
+    }
 }
