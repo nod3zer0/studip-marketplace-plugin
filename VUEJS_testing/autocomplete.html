@@ -1,0 +1,222 @@
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</head>
+
+<!-- inspired by https://www.digitalocean.com/community/tutorials/vuejs-vue-autocomplete-component-->
+
+<body>
+
+    <style>
+        .autocomplete {
+            position: relative;
+        }
+        
+        .autocomplete-results {
+            padding: 0;
+            margin: 0;
+            border: 1px solid #eeeeee;
+            height: 120px;
+            min-height: 1em;
+            max-height: 6em;
+            overflow: auto;
+        }
+        
+        .autocomplete-result {
+            list-style: none;
+            text-align: left;
+            padding: 4px 2px;
+            cursor: pointer;
+        }
+        
+        .autocomplete-result.is-active,
+        .autocomplete-result:hover {
+            background-color: #4AAE9B;
+            color: white;
+        }
+    </style>
+
+    <div id="search">
+        <input type="text" v-model="search" @input="OnChange" @keydown.enter="OnTab" @keydown.down="onArrowDown" @keydown.up="onArrowUp">
+        <ul v-show="isOpen" class="autocomplete-results">
+            <li :class="{ 'is-active': i === arrowCounter }" v-for="(result, i) in results_render" :key="i" class="autocomplete-result">
+                {{ result }}
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#search',
+            data: {
+                attributes: [{
+                    name: 'test1',
+                    type: 'int'
+                }, {
+                    name: 'test2',
+                    type: 'string'
+                }, {
+                    name: 'test3',
+                    type: 'int'
+                }, {
+                    name: 'test4',
+                    type: 'date'
+                }, {
+                    name: 'test5',
+                    type: 'string'
+                }],
+                tags: [{
+                    name: 'tag1',
+                    type: 'tag'
+                }, {
+                    name: 'tag2',
+                    type: 'tag'
+                }, {
+                    name: 'tag3',
+                    type: 'tag'
+                }, {
+                    name: 'tag4',
+                    type: 'tag'
+                }, {
+                    name: 'tag5',
+                    type: 'tag'
+                }],
+                number_operators: [{
+                    name: '=',
+                    type: 'number_operator'
+                }, {
+                    name: '>',
+                    type: 'number_operator'
+                }, {
+                    name: '<',
+                    type: 'number_operator'
+                }, {
+                    name: '>=',
+                    type: 'number_operator'
+                }, {
+                    name: '<=',
+                    type: 'number_operator'
+                }, {
+                    name: '!=',
+                    type: 'number_operator'
+                }],
+                string_operators: [{
+                    name: '=',
+                    type: 'string_operator'
+                }],
+                results: [],
+                results_render: [],
+                isOpen: false,
+                last_type: '',
+                search: '',
+                arrowCounter: 0,
+                mode: 'attribute'
+            },
+            methods: {
+                filterResults() {
+                    keys = this.search.split(' ');
+                    last_key = keys.slice(-1)[0];
+                    this.results = [];
+                    if (last_key.length == 0) {
+                        this.isOpen = false;
+                        return;
+                    }
+
+                    this.results = this.attributes.filter(item => {
+                        //cut item
+                        cuted_item = item.name.slice(0, last_key.length - 1);
+                        if ('.'.concat(cuted_item) == last_key.toLowerCase()) {
+                            return item;
+                        }
+                    });
+
+                    this.results.push(...this.tags.filter(item => {
+                        //cut item
+                        cuted_item = item.name.slice(0, last_key.length - 1);
+                        if ('#'.concat(cuted_item) == last_key.toLowerCase()) {
+                            return item;
+                        }
+                    }));
+
+                    this.results_render = this.results.map(item => item.name);
+
+                    //this.results.push(this.tags.filter(item => '#'.concat(item).toLowerCase().indexOf(last_key[0].toLowerCase()) > -1));
+                },
+                OnTab() {
+                    if (this.mode == 'attribute') {
+
+                        keys = this.search.split(' ');
+                        last_key = keys.slice(-1)[0];
+
+                        if (last_key.length == 0) {
+                            this.isOpen = false;
+                            return;
+                        }
+
+                        selected = this.results[this.arrowCounter];
+
+
+
+                        this.search = this.search.slice(0, this.search.length - last_key.length + 1);
+                        this.search = this.search.concat(selected.name);
+
+
+
+                        switch (selected.type) {
+                            case 'int':
+                                this.results = this.number_operators;
+                                this.results_render = this.number_operators.map(item => item.name);
+                                this.mode = 'operator';
+                                break;
+                            case 'string':
+                                this.results = this.string_operators;
+                                this.results_render = this.string_operators.map(item => item.name);
+                                this.mode = 'operator';
+                                break;
+                            case 'date':
+                                this.results = this.number_operators;
+                                this.results_render = this.number_operators.map(item => item.name);
+                                this.mode = 'operator';
+                                break;
+                        }
+
+                    } else if (this.mode == 'operator') {
+
+                        selected = this.results[this.arrowCounter];
+                        this.search = this.search.concat(' ', selected.name, ' ');
+
+
+                        this.mode = 'attribute';
+                    }
+
+                },
+                handleClickOutside(event) {
+                    if (!this.$el.contains(event.target)) {
+                        this.arrowCounter = -1;
+                        this.isOpen = false;
+                    }
+                },
+                onArrowDown() {
+                    if (this.arrowCounter < this.results.length) {
+                        this.arrowCounter = this.arrowCounter + 1;
+                    }
+                    if (this.arrowCounter >= this.results.length) {
+                        this.arrowCounter = 0;
+                    }
+
+                },
+                onArrowUp() {
+                    if (this.arrowCounter > 0) {
+                        this.arrowCounter = this.arrowCounter - 1;
+                    }
+                    if (this.arrowCounter < 0) {
+                        this.arrowCounter = this.results.length - 1;
+                    }
+                },
+                OnChange() {
+                    this.filterResults();
+                    this.isOpen = true;
+                }
+            }
+        });
+    </script>
+</body>
