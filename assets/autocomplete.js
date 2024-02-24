@@ -70,9 +70,9 @@ STUDIP.Vue.load().then(({
             arrowCounter: 0,
             mode: 'attribute'
         },
-        created() {
-            this.loadAttributes();
+        async created() {
             this.loadTags();
+            await this.loadAttributes();
         },
         mounted() {
             document.addEventListener('click', this.handleClickOutside);
@@ -100,7 +100,8 @@ STUDIP.Vue.load().then(({
                         console.error('Error fetching properties:', error);
                     });
             },
-            loadAttributes() {
+            async loadAttributes() {
+                await this.$nextTick();
                 fetch(document.getElementById('attributes_url').value)
                     .then(response => response.json())
                     .then(data => {
@@ -166,20 +167,24 @@ STUDIP.Vue.load().then(({
                         return item;
                     }
                 }));
+                if (this.results.length > 0) {
+                    this.results_render = this.results.map(item => item.name);
+                    this.isOpen = true;
+                }
 
-                this.results_render = this.results.map(item => item.name);
-                this.isOpen = true;
                 //this.results.push(this.tags.filter(item => '#'.concat(item).toLowerCase().indexOf(last_key[0].toLowerCase()) > -1));
             },
             InsertAtIndex(str, substring, index) {
                 return str.slice(0, index) + substring + str.slice(index);
             },
-            OnTab(event) {
+            PickSelected(selected) {
+                var search_input = document.getElementById('search_input');
+
                 if (this.mode == 'attribute') {
 
                     keys = this.search.split(' ');
 
-                    word_index = this.getIndexOfWord(keys, event.target.selectionStart);
+                    word_index = this.getIndexOfWord(keys, search_input.selectionStart);
                     last_key = keys[word_index];
 
                     if (last_key.length == 0) {
@@ -187,21 +192,19 @@ STUDIP.Vue.load().then(({
                         return;
                     }
 
-                    selected = this.results[this.arrowCounter];
-
                     switch (selected.type) {
                         case 1: //short text
                         case 2: //number
                         case 3: //date
                         case 5: //text area
-                            this.search = this.InsertAtIndex(this.search, '.'.concat(selected.name).slice(last_key.length).concat(' '), event.target.selectionStart);
+                            this.search = this.InsertAtIndex(this.search, '.'.concat(selected.name).slice(last_key.length).concat(' '), search_input.selectionStart);
                             this.isOpen = false;
-                            this.SetCursorPos(event.target.selectionStart + '#'.concat(selected.name).slice(last_key.length).length + 1);
+                            this.SetCursorPos(search_input.selectionStart + '#'.concat(selected.name).slice(last_key.length).length + 1);
                             break;
                         case 'tag':
-                            this.search = this.InsertAtIndex(this.search, '#'.concat(selected.name).slice(last_key.length).concat(' '), event.target.selectionStart);
+                            this.search = this.InsertAtIndex(this.search, '#'.concat(selected.name).slice(last_key.length).concat(' '), search_input.selectionStart);
                             this.isOpen = false;
-                            this.SetCursorPos(event.target.selectionStart + '#'.concat(selected.name).slice(last_key.length).length + 1);
+                            this.SetCursorPos(search_input.selectionStart + '#'.concat(selected.name).slice(last_key.length).length + 1);
                             break;
                     }
 
@@ -228,17 +231,19 @@ STUDIP.Vue.load().then(({
                     }
 
                 } else if (this.mode == 'operator') {
-
-                    selected = this.results[this.arrowCounter];
-                    this.search = this.InsertAtIndex(this.search, ' '.concat(selected.name, ' '), event.target.selectionStart);
+                    this.search = this.InsertAtIndex(this.search, ' '.concat(selected.name, ' '), search_input.selectionStart);
                     this.mode = 'attribute';
                     this.isOpen = false;
-                    this.SetCursorPos(event.target.selectionStart + selected.name.length + 2);
+                    this.SetCursorPos(search_input.selectionStart + selected.name.length + 2);
                 }
-
-
-
-
+            },
+            OnTab() {
+                selected = this.results[this.arrowCounter];
+                this.PickSelected(selected);
+            },
+            setResult(result) {
+                selected = this.results.filter(item => item.name == result)[0];
+                this.PickSelected(selected);
             },
             SetCursorPos(pos) {
                 var search_input = document.getElementById('search_input');
