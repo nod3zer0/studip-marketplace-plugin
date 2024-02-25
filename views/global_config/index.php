@@ -13,12 +13,13 @@
     <h2>Tags</h2>
     <ul>
         <li v-for="(tag, index) in tags" :key="index">
-            <input v-model="tags[index].name">
+
+            <input v-model="tags[index].name"> Number of references: {{ tags[index].number_of_references }}
             <button @click="deleteTag(index)">Delete</button>
         </li>
     </ul>
     <button @click="addTag">Add tag</button>
-    <button @click="submitConfig">Submit</button>
+    <div> <button @click="submitConfig">Save config</button> </div>
 </div>
 
 <script>
@@ -68,7 +69,8 @@
                                 // Update tags with data from the response
                                 this.tags = data.map(tag => ({
                                     name: tag.name,
-                                    id: tag.id
+                                    id: tag.id,
+                                    number_of_references: tag.number_of_references
                                 }));
                             } else {
                                 console.error('Invalid tags data received:', data);
