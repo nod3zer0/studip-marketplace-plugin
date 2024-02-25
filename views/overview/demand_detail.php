@@ -2,6 +2,9 @@
 
 use Studip\Button; ?>
 <?= CSRFProtection::tokenTag() ?>
+
+
+
 <fieldset data-open="bd_basicsettings">
     <section class="contentbox">
         <header>

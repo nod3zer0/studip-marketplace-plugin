@@ -6,9 +6,11 @@ require_once __DIR__ . '/models/tag.php';
 require_once __DIR__ . '/models/tag_demand.php';
 require_once __DIR__ . '/models/custom_property.php';
 require_once __DIR__ . '/models/marketplace.php';
+require_once __DIR__ . '/models/bookmark.php';
 require_once __DIR__ . '/classes/Controller.php';
 require_once __DIR__ . '/classes/Plugin.php';
 require_once __DIR__ . '/classes/Search.php';
+
 
 use \Marketplace\MarketplaceModel;
 
@@ -104,6 +106,11 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
                 PluginEngine::getURL($this, [], 'my_demands/index/', []) . $marketplace->id
             );
             $marketplace_nav->addSubNavigation('marketplace_my_demands', $my_demands);
+            $my_demands = new Navigation(
+                'My bookmarks',
+                PluginEngine::getURL($this, [], 'my_bookmarks/index/', []) . $marketplace->id
+            );
+            $marketplace_nav->addSubNavigation('marketplace_my_bookmarks', $my_demands);
             if ($GLOBALS['user']->perms === 'root') {
                 $config_nav = new Navigation(
                     'Config',
