@@ -73,6 +73,7 @@ STUDIP.Vue.load().then(({
         async created() {
             this.loadTags();
             await this.loadAttributes();
+            this.loadAttributes();
         },
         mounted() {
             document.addEventListener('click', this.handleClickOutside);
@@ -115,10 +116,12 @@ STUDIP.Vue.load().then(({
                         } else {
                             console.error('Invalid properties data received:', data);
                         }
+                        this.attributes.push(...[{ name: 'title', type: 1 }, { name: 'created', type: 3 }, { name: 'date', type: 3 }, { name: 'description', type: 5 }]);
                     })
                     .catch(error => {
                         console.error('Error fetching properties:', error);
                     });
+
             },
             getIndexOfWord(wordlist, cursorPosition) {
                 var index = 0;
