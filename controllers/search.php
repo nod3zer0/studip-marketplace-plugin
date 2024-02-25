@@ -20,7 +20,8 @@ class SearchController extends \Marketplace\Controller
         }
         $navigation = Navigation::getItem('default_marketplace/marketplace_overview');
         $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'overview/index/', []) . $marketplace_id);
-
+        $navigation = Navigation::getItem('default_marketplace/marketplace_my_demands');
+        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'my_demands/index/', []) . $marketplace_id);
 
         $this->marketplace_id = $marketplace_id;
         Navigation::activateItem('default_marketplace/marketplace_search');
