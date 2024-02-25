@@ -1,4 +1,6 @@
 <div id="global_config">
+    <h1>Marketplace Configuration</h1>
+    <h2>Marketplaces</h2>
     <ul>
         <li v-for="(item, index) in marketplaces" :key="index">
             <input v-model="marketplaces[index].name">
@@ -8,7 +10,15 @@
         </li>
     </ul>
     <button @click="addItem">Add marketplace</button>
-    <button @click="submitProperties">Submit</button>
+    <h2>Tags</h2>
+    <ul>
+        <li v-for="(tag, index) in tags" :key="index">
+            <input v-model="tags[index].name">
+            <button @click="deleteTag(index)">Delete</button>
+        </li>
+    </ul>
+    <button @click="addTag">Add tag</button>
+    <button @click="submitConfig">Submit</button>
 </div>
 
 <script>
@@ -21,10 +31,12 @@
         new Vue({
             el: '#global_config',
             data: {
-                marketplaces: []
+                marketplaces: [],
+                tags: []
             },
             created() {
                 this.loadProperties();
+                this.loadTags();
             },
             methods: {
                 loadProperties: function() {
@@ -47,6 +59,25 @@
                             console.error('Error fetching properties:', error);
                         });
                 },
+                loadTags: function() {
+                    fetch('<?= $controller->link_for('global_config/get_tags') ?>')
+                        .then(response => response.json())
+                        .then(data => {
+                            // Check if data is an array
+                            if (Array.isArray(data)) {
+                                // Update tags with data from the response
+                                this.tags = data.map(tag => ({
+                                    name: tag.name,
+                                    id: tag.id
+                                }));
+                            } else {
+                                console.error('Invalid tags data received:', data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching tags:', error);
+                        });
+                },
                 addItem: function() {
                     this.marketplaces.push({
                         name: '',
@@ -56,14 +87,25 @@
                 deleteItem: function(index) {
                     this.marketplaces.splice(index, 1);
                 },
-                submitProperties: function() {
+                addTag: function() {
+                    this.tags.push({
+                        name: ''
+                    });
+                },
+                deleteTag: function(index) {
+                    this.tags.splice(index, 1);
+                },
+                submitConfig: function() {
                     // TODO: make url dynamic
                     fetch('<?= $controller->link_for('global_config/save_config') ?>', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify(this.marketplaces)
+                            body: JSON.stringify({
+                                marketplaces: this.marketplaces,
+                                tags: this.tags
+                            })
                         })
                         .then(response => {
                             // Handle response
