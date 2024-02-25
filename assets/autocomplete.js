@@ -116,7 +116,7 @@ STUDIP.Vue.load().then(({
                         } else {
                             console.error('Invalid properties data received:', data);
                         }
-                        this.attributes.push(...[{ name: 'title', type: 1 }, { name: 'created', type: 3 }, { name: 'date', type: 3 }, { name: 'description', type: 5 }]);
+                        this.attributes.push(...[{ name: 'title', type: 1 }, { name: 'description', type: 5 }]);
                     })
                     .catch(error => {
                         console.error('Error fetching properties:', error);
