@@ -19,6 +19,8 @@
         </li>
     </ul>
     <button @click="addTag">Add tag</button>
+    <button @click="deleteUnusedTags">Delete unused tags</button>
+    <br>
     <div> <button @click="submitConfig">Save config</button> </div>
 </div>
 
@@ -96,6 +98,17 @@
                 },
                 deleteTag: function(index) {
                     this.tags.splice(index, 1);
+                },
+                deleteUnusedTags: function() {
+                    fetch('<?= $controller->link_for('global_config/delete_unused_tags') ?>')
+                        .then(response => response.text())
+                        .then(data => {
+                            console.log('Response:', data);
+                            this.loadTags();
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 },
                 submitConfig: function() {
                     // TODO: make url dynamic

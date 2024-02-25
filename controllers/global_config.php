@@ -46,4 +46,11 @@ class GlobalConfigController extends \Marketplace\Controller
         $old_marketplaces = $db->fetchAll("SELECT * FROM mp_marketplace");
         $this->render_text('' . json_encode($old_marketplaces));
     }
+
+    public function delete_unused_tags_action()
+    {
+        $db = DBManager::get();
+        $db->execute("DELETE FROM mp_tag WHERE id NOT IN (SELECT tag_id FROM mp_tag_demand)");
+        $this->render_text('' . "Tags deleted successfully");
+    }
 }
