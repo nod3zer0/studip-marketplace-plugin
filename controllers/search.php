@@ -11,20 +11,9 @@ class SearchController extends \Marketplace\Controller
     {
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/autocomplete.js');
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
-        //TODO move $navigations in all controlers somewhere else (DRY)
-        $navigation = Navigation::getItem('default_marketplace/marketplace_search');
-        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'search/index/', []) . $marketplace_id);
-        if ($GLOBALS['user']->perms === 'root') {
-            $navigation = Navigation::getItem('default_marketplace/marketplace_config');
-            $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'config/index/', []) . $marketplace_id);
-        }
-        $navigation = Navigation::getItem('default_marketplace/marketplace_overview');
-        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'overview/index/', []) . $marketplace_id);
-        $navigation = Navigation::getItem('default_marketplace/marketplace_my_demands');
-        $navigation->setURL(PluginEngine::getURL($this->plugin, [], 'my_demands/index/', []) . $marketplace_id);
 
         $this->marketplace_id = $marketplace_id;
-        Navigation::activateItem('default_marketplace/marketplace_search');
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
         $db = DBManager::get();
         $query = Request::get('search-query');

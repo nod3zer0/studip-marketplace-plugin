@@ -82,5 +82,35 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         }
 
         $marketplaces = MarketplaceModel::findBySQL("1");
+
+        foreach ($marketplaces as $marketplace) {
+            $marketplace_nav = new Navigation(
+                $marketplace->name,
+                PluginEngine::getURL($this, [], 'overview/index/', []) . $marketplace->id
+            );
+            Navigation::addItem('/marketplace_' . $marketplace->id, $marketplace_nav);
+            $marketplace_nav_item = new Navigation(
+                'Overview',
+                PluginEngine::getURL($this, [], 'overview/index/', []) . $marketplace->id
+            );
+            $marketplace_nav->addSubNavigation('marketplace_overview', $marketplace_nav_item);
+            $search_nav = new Navigation(
+                'Search',
+                PluginEngine::getURL($this, [], 'search/index/', []) . $marketplace->id
+            );
+            $marketplace_nav->addSubNavigation('marketplace_search', $search_nav);
+            $my_demands = new Navigation(
+                'My demands',
+                PluginEngine::getURL($this, [], 'my_demands/index/', []) . $marketplace->id
+            );
+            $marketplace_nav->addSubNavigation('marketplace_my_demands', $my_demands);
+            if ($GLOBALS['user']->perms === 'root') {
+                $config_nav = new Navigation(
+                    'Config',
+                    PluginEngine::getURL($this, [], 'config/index/', []) . $marketplace->id
+                );
+                $marketplace_nav->addSubNavigation('marketplace_config', $config_nav);
+            }
+        }
     }
 }
