@@ -13,19 +13,32 @@ class MyBookmarksController extends \Marketplace\Controller
         $this->all_demands = \Marketplace\Bookmark::getByMarketplace($marketplace_id, $GLOBALS['user']->id);
     }
 
-    public function set_bookmark_action($demand_id)
+    public function add_bookmark_action($demand_id)
     {
         \Marketplace\Bookmark::setBookmark($demand_id, $GLOBALS['user']->id, true);
+        $this->render_text('');
     }
 
     public function remove_bookmark_action($demand_id)
     {
         \Marketplace\Bookmark::setBookmark($demand_id, $GLOBALS['user']->id, false);
+        $this->render_text('');
     }
 
-    public function get_bookmarks($demand_id)
+    public function set_bookmark_action($demand_id, $bookmark_status)
     {
-        $bookmark = \Marketplace\Bookmark::getByDemand($demand_id, $GLOBALS['user']->id);
-        $this->render_text('' . json_encode($bookmark));
+        \Marketplace\Bookmark::setBookmark($demand_id, $GLOBALS['user']->id, $bookmark_status == 'true' ? true : false);
+        $this->render_text('');
+    }
+
+    public function get_bookmark_action($demand_id)
+    {
+        $bookmark = \Marketplace\Bookmark::getBookmarkByDemand($demand_id, $GLOBALS['user']->id);
+        $bookmarked = false;
+        if ($bookmark) {
+            $bookmarked = true;
+        }
+
+        $this->render_text('' . json_encode(['bookmarked' => $bookmarked]));
     }
 }

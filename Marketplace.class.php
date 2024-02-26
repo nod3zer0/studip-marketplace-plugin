@@ -20,8 +20,8 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
     {
         parent::__construct();
 
-        // $this->addScript('assets/autocomplete.js');
-
+        // $this->addScript('assets/bookmark_component.js');
+        // PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
         $root_nav = new Navigation(
             'Marketplace',
             PluginEngine::getURL($this, [], 'marketplaces')

@@ -27,11 +27,14 @@ class Bookmark extends SimpleORMap
         $bookmark = self::findOneBySQL("demand_id = ? AND author_id = ?", [$demand_id, $author_id]);
         if ($bookmark_status) {
             if (!$bookmark) {
-                $this->addBookmark($demand_id, $author_id);
+                $bookmark = new Bookmark();
+                $bookmark->demand_id = $demand_id;
+                $bookmark->author_id = $author_id;
+                $bookmark->store();
             }
         } else {
             if ($bookmark) {
-                $this->removeBookmark($demand_id, $author_id);
+                $bookmark->delete();
             }
         }
     }
