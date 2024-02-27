@@ -38,6 +38,12 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         );
         $root_nav->addSubNavigation('marketplaces', $marketplaces);
 
+        $my_global_bookmarks = new Navigation(
+            'My bookmarks',
+            PluginEngine::getURL($this, [], 'my_bookmarks/index/')
+        );
+        $root_nav->addSubNavigation('marketplace_my_bookmarks', $my_global_bookmarks);
+
 
         $default_marketplace = new Navigation(
             'Default marketplace',

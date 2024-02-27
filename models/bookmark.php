@@ -63,4 +63,9 @@ class Bookmark extends SimpleORMap
     {
         return self::findOneBySQL("demand_id = ? AND author_id = ?", [$demand_id, $author_id]);
     }
+
+    public function getAllBookmarks($author_id)
+    {
+        return \Marketplace\Demand::findBySQL("RIGHT JOIN mp_bookmark ON mp_bookmark.demand_id = mp_demand.id WHERE mp_bookmark.author_id = ?", [$author_id]);
+    }
 }
