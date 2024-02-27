@@ -207,7 +207,7 @@ class Parser
         "title" => 1,
         "created" => 3,
         "date" => 3,
-        "description" => 2,
+        "description" => 5,
     ];
 
     private $custom_properties = [];
@@ -338,6 +338,7 @@ class SqlGenerator
         "title" => "title",
         "created" => "mkdate",
         "date" => "mkdate",
+        "description" => "description",
     ];
     public function generateSQL($query, $custom_properties, $marketplace_id = "")
     {
@@ -658,7 +659,7 @@ class SqlGenerator
 
     public function generateDefaultPropertyString($parser)
     {
-        $output = "MATCH(mp_demand." . $parser->getNextToken()->getValue() . ") AGAINST(?)";
+        $output = "MATCH(mp_demand." . $this->default_properties_map[$parser->getNextToken()->getValue()] . ") AGAINST(?) ";
 
 
         if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {

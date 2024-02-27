@@ -4,9 +4,20 @@ STUDIP.Vue.load().then(({
     eventBus,
     store
 }) => {
-    new Vue({
-        el: '#search',
-        data: {
+
+    Vue.component('search_input', {
+        template: `
+        <span>
+        <input type="text" name="search-query" required value="" ref="search_input" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp">
+        <ul v-show="isOpen" class="autocomplete-results">
+            <li :class="{ 'is-active': i === arrowCounter }" @click="setResult(result)" v-for="(result, i) in results_render" :key="i" class="autocomplete-result">
+                {{ result }}
+            </li>
+        </ul>
+        </span>
+        `,
+        props: ['attributes_url'],
+        data: () => ({
             attributes: [{
                 name: 'test1',
                 type: 1
@@ -54,9 +65,6 @@ STUDIP.Vue.load().then(({
             }, {
                 name: '<=',
                 type: 'number_operator'
-            }, {
-                name: '!=',
-                type: 'number_operator'
             }],
             string_operators: [{
                 name: '=',
@@ -69,7 +77,7 @@ STUDIP.Vue.load().then(({
             search: '',
             arrowCounter: 0,
             mode: 'attribute'
-        },
+        }),
         async created() {
             this.loadTags();
             await this.loadAttributes();
@@ -102,7 +110,6 @@ STUDIP.Vue.load().then(({
                     });
             },
             async loadAttributes() {
-                await this.$nextTick();
                 fetch(document.getElementById('attributes_url').value)
                     .then(response => response.json())
                     .then(data => {
@@ -181,7 +188,7 @@ STUDIP.Vue.load().then(({
                 return str.slice(0, index) + substring + str.slice(index);
             },
             PickSelected(selected) {
-                var search_input = document.getElementById('search_input');
+                var search_input = this.$refs.search_input;
 
                 if (this.mode == 'attribute') {
 
@@ -249,7 +256,7 @@ STUDIP.Vue.load().then(({
                 this.PickSelected(selected);
             },
             SetCursorPos(pos) {
-                var search_input = document.getElementById('search_input');
+                var search_input = this.$refs.search_input;
                 this.$nextTick(() => {
                     search_input.focus();
                     search_input.setSelectionRange(pos, pos);
@@ -288,5 +295,8 @@ STUDIP.Vue.load().then(({
                 this.filterResults(event);
             }
         }
+    });
+    new Vue({
+        el: '#search_input'
     });
 });

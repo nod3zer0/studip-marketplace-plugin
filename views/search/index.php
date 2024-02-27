@@ -7,17 +7,23 @@ use Studip\Button; ?>
 <form class="default collapsable" action="<?= $controller->link_for('search/index', $marketplace_id) ?>" method="post">
     <?= CSRFProtection::tokenTag() ?>
     <fieldset data-open="bd_basicsettings">
-        <div id="search">
+        <div>
             <label class="required">
                 search
             </label>
-            <input type="text" name="search-query" required value="" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp">
+            <div id="search_input">
+                <search_input :attributes_url="'<?= $controller->link_for('search/get_attributes', $marketplace_id) ?>'" />
+
+                <!-- <input type="text" name="search-query" required value="" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp"> -->
+
+                <!-- <ul v-show="isOpen" class="autocomplete-results">
+                    <li :class="{ 'is-active': i === arrowCounter }" @click="setResult(result)" v-for="(result, i) in results_render" :key="i" class="autocomplete-result">
+                        {{ result }}
+                    </li>
+                </ul>  -->
+
+            </div>
             <?= Button::create('Search') ?>
-            <ul v-show="isOpen" class="autocomplete-results">
-                <li :class="{ 'is-active': i === arrowCounter }" @click="setResult(result)" v-for="(result, i) in results_render" :key="i" class="autocomplete-result">
-                    {{ result }}
-                </li>
-            </ul>
         </div>
     </fieldset>
 
