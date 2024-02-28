@@ -1,0 +1,30 @@
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+</head>
+
+
+<body>
+    <script>
+    </script>
+
+    <div id="app">
+        <Cats msg="Meow...">
+        </Cats>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                tags: []
+            }
+        });
+        Vue.component('Cats', {
+            props: ['msg'],
+            template: '<h3>{{ msg }}</h3>'
+        });
+    </script>
+
+
+
+</body>
