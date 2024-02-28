@@ -20,7 +20,8 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
     {
         parent::__construct();
 
-        // $this->addScript('assets/bookmark_component.js');
+        //$this->addScript('assets/bookmark_component.js');
+        $this->addStylesheet('assets/stylesheet.css');
         // PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
         $root_nav = new Navigation(
             'Marketplace',
@@ -44,6 +45,11 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         );
         $root_nav->addSubNavigation('marketplace_my_bookmarks', $my_global_bookmarks);
 
+        $user_config = new Navigation(
+            'User config',
+            PluginEngine::getURL($this, [], 'user_config')
+        );
+        $root_nav->addSubNavigation('user_config', $user_config);
 
         $default_marketplace = new Navigation(
             'Default marketplace',

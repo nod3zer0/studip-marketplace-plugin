@@ -1,10 +1,10 @@
 <?php
-class InitTagnotifications extends Migration
+class InitTagNotifications extends Migration
 {
     public function up()
     {
         $db = DBManager::get();
-        $query = "CREATE TABLE IF NOT EXISTS mp_tag_notifications (
+        $query = "CREATE TABLE IF NOT EXISTS mp_tag_notification (
             id CHAR(32) CHARACTER SET latin1 COLLATE
             latin1_bin NOT NULL,
             author_id CHAR(32) CHARACTER SET latin1 COLLATE
@@ -20,6 +20,6 @@ class InitTagnotifications extends Migration
     public function down()
     {
         // drop new tables
-        DBManager::get()->exec("DROP TABLE IF EXISTS mp_tag_notifications");
+        DBManager::get()->exec("DROP TABLE IF EXISTS mp_tag_notification");
     }
 }
