@@ -25,3 +25,49 @@
     background-color: #4AAE9B;
     color: white;
 }
+
+.mp_autocomplete {
+    position: relative;
+}
+
+.mp_autocomplete-results {
+    padding: 0;
+    margin: 0;
+    border: 1px solid #eeeeee;
+    height: 120px;
+    min-height: 1em;
+    max-height: 6em;
+    overflow: auto;
+}
+
+.mp_autocomplete-result {
+    list-style: none;
+    text-align: left;
+    padding: 4px 2px;
+    cursor: pointer;
+}
+
+.mp_autocomplete-result.is-active,
+.mp_autocomplete-result:hover {
+    background-color: #4AAE9B;
+    color: white;
+}
+
+.mp_tag {
+    display: inline-block;
+    background-color: #e2e2e2;
+    color: #333;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-right: 8px;
+}
+
+.mp_remove-tag {
+    cursor: pointer;
+    margin-left: 4px;
+    color: #888;
+}
+
+.mp_remove-tag:hover {
+    color: #555;
+}

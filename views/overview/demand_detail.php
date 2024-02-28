@@ -85,7 +85,7 @@ use Studip\Button; ?>
             </dt>
 
             <? foreach ($tags as $tag) : ?>
-                <dd><?= $tag->mp_tag->name ?></dd>
+                <span class="mp_tag"><?= $tag->mp_tag->name ?></span>
             <? endforeach; ?>
 
             <? foreach ($properties as $property) : ?>
