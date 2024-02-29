@@ -27,6 +27,14 @@ class TagNotification extends SimpleORMap
         return self::findBySQL("author_id = ?", [$user_id]);
     }
 
+    public static function getUserIDsByTag($tag_id)
+    {
+        $tag_notifications = self::findBySQL("tag_id = ?", [$tag_id]);
+        return array_map(function ($tag_notification) {
+            return $tag_notification->author_id;
+        }, $tag_notifications);
+    }
+
     public static function setSubscribedTags($user_id, $tags)
     {
         $current_tags = self::getSubscribedTags($user_id);

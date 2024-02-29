@@ -4,6 +4,7 @@ use Marketplace\TagDemand;
 use \Marketplace\CustomProperty;
 use \Marketplace\Property;
 
+
 class OverviewController extends \Marketplace\Controller
 {
     private function buildSidebar(string $marketplace_id)
@@ -99,17 +100,19 @@ saving the demand');
         $demand_id = $this->demand_obj->id;
 
         $tags = explode(",", Request::get('tags'));
-        $previous_tags = explode(",", Request::get('tags_previous'));
-        foreach ($previous_tags as $tag) {
-            if (!in_array($tag, $tags)) {
-                TagDemand::deleteTag($tag, $this->demand_obj->id);
-            }
-        }
-        foreach ($tags as $tag) {
-            if (!in_array($tag, $previous_tags)) {
-                TagDemand::addTag($tag, $this->demand_obj->id);
-            }
-        }
+        TagDemand::updateTags($tags, $demand_id);
+
+        // $previous_tags = explode(",", Request::get('tags_previous'));
+        // foreach ($previous_tags as $tag) {
+        //     if (!in_array($tag, $tags)) {
+        //         TagDemand::deleteTag($tag, $this->demand_obj->id);
+        //     }
+        // }
+        // foreach ($tags as $tag) {
+        //     if (!in_array($tag, $previous_tags)) {
+        //         TagDemand::addTag($tag, $this->demand_obj->id);
+        //     }
+        // }
         $request = Request::getInstance();
         Property::update_custom_properties($request['custom_properties'], $demand_id);
         $this->redirect('overview/index/' . $marketplace_id);

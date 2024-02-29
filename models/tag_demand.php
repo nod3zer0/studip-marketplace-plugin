@@ -3,6 +3,7 @@
 namespace Marketplace;
 
 use SimpleORMap;
+use \Marketplace\TagNotification;
 
 class TagDemand extends SimpleORMap
 {
@@ -52,6 +53,50 @@ class TagDemand extends SimpleORMap
             if ($tag_demand_obj) {
                 $tag_demand_obj->delete();
             }
+        }
+    }
+
+    public function updateTags($tags, $demand_id)
+    {
+        $old_tags = TagDemand::findBySQL("demand_id = ?", [$demand_id]);
+        $new_tags_obj = [];
+        $i = 0;
+        foreach ($tags as $tag) {
+            $tag_obj = \Marketplace\Tag::findByName($tag);
+            if (!$tag_obj) {
+                $tag_obj = new \Marketplace\Tag();
+                $tag_obj->name = $tag;
+                $tag_obj->store();
+            }
+            $new_tags_obj[$i] = new \Marketplace\TagDemand();
+            $new_tags_obj[$i]->demand_id = $demand_id;
+            $new_tags_obj[$i]->tag_id = $tag_obj->id;
+            $i++;
+        }
+
+        $to_delete = array_udiff($old_tags, $new_tags_obj, function ($a, $b) {
+            return strcmp($a->tag_id, $b->tag_id);
+        });
+        $to_insert = array_udiff($new_tags_obj, $old_tags, function ($a, $b) {
+            return strcmp($a->tag_id, $b->tag_id);
+        });
+
+        foreach ($to_delete as $tag) {
+            TagDemand::find($tag->id)->delete();
+        }
+        foreach ($to_insert as $tag) {
+            $tag->store();
+            //notify users
+            $users = TagNotification::getUserIDsByTag($tag->tag_id);
+
+            \PersonalNotifications::add(
+                $users, //id of user A or array of 'multiple user_ids
+                \PluginEngine::getLink('marketplace/overview/demand_detail/' . $demand_id), //when user A clicks this URL he/she should jump directly to the changed wiki-page
+                "New demand with tag: '" . $tag->mp_tag->name  . "'", //a small text that describes the notification
+                "",
+                \Icon::create("wiki", "clickable"),
+                true
+            );
         }
     }
 }
