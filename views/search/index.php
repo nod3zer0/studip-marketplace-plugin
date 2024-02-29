@@ -4,7 +4,7 @@ use Studip\Button; ?>
 
 <input type="hidden" id="attributes_url" value="<?= $controller->link_for('search/get_attributes', $marketplace_id) ?>">
 
-<form class="default collapsable" action="<?= $controller->link_for('search/index', $marketplace_id) ?>" method="post">
+<form class="default collapsable" action="<?= $controller->link_for('search/index', $marketplace_id) ?>" method="get">
     <?= CSRFProtection::tokenTag() ?>
     <fieldset data-open="bd_basicsettings">
         <div>
