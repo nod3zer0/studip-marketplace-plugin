@@ -53,32 +53,45 @@ STUDIP.Vue.load().then(({
                 fetch(this.get_picked_tags_url)
                     .then(response => response.json())
                     .then(data => {
-                        this.picked_tags = data.picked_tags;
+                        this.picked_tags = data.tags;
                     })
                     .catch(error => {
                         console.error('Error fetching picked tags:', error);
                     });
             },
             set_picked_tags() {
-                fetch(this.set_picked_tags_url)
-                    .then(response => response.json())
-                    .then(data => {
-                        this.picked_tags = data.picked_tags;
+                fetch(this.set_picked_tags_url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            tags: this.picked_tags
+                        })
+                    })
+                    .then(response => {
+                        // Handle response
+                        console.log('Response:', response.text());
+                        //reload page
+                        location.reload();
                     })
                     .catch(error => {
-                        console.error('Error setting picked tags:', error);
+                        // Handle error
+                        console.error('Error:', error);
                     });
             },
             filterResults(event) {
 
                 this.results = this.tags.filter(tag => tag.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1);
                 //remove already picked tags
-                this.results = this.results.filter(tag => !this.picked_tags.includes(tag));
+                this.results = this.results.filter(tag => !this.picked_tags.find(picked_tag => picked_tag.id === tag.id));
             },
             OnTab() {
                 this.isOpen = false;
-                this.picked_tags.push(this.results[this.arrowCounter]);
-                this.arrowCounter = -1;
+                if (this.arrowCounter > -1) {
+                    this.picked_tags.push(this.results[this.arrowCounter]);
+                    this.arrowCounter = -1;
+                }
             },
             handleClickOutside(event) {
                 if (!this.$el.contains(event.target)) {

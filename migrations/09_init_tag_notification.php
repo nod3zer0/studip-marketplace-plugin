@@ -1,5 +1,5 @@
 <?php
-class InitTagNotifications extends Migration
+class InitTagNotification extends Migration
 {
     public function up()
     {
