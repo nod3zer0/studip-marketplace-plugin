@@ -5,6 +5,7 @@ use Marketplace\TagDemand;
 use Marketplace\SqlGenerator;
 use \Marketplace\TagNotification;
 use \Marketplace\Tag;
+use \Marketplace\SearchNotification;
 
 class UserConfigController extends \Marketplace\Controller
 {
@@ -48,5 +49,24 @@ class UserConfigController extends \Marketplace\Controller
         $tags = json_decode(file_get_contents('php://input'), true);
         TagNotification::setSubscribedTags($GLOBALS['user']->id, $tags["tags"]);
         $this->render_text('' .  print_r($tags));
+    }
+
+    public function get_search_notifications_action()
+    {
+        $notifications = SearchNotification::getSubscribedSearches($GLOBALS['user']->id);
+        $notifications = array_map(function ($notification) {
+            return [
+                'name' => $notification->search_query,
+                'id' => $notification->id
+            ];
+        }, $notifications);
+        $this->render_text('' . json_encode(["notifications" => $notifications]));
+    }
+
+    public function set_search_notifications_action()
+    {
+        $notifications = json_decode(file_get_contents('php://input'), true);
+        SearchNotification::setSearchNotifications($notifications["notifications"], $GLOBALS['user']->id);
+        $this->render_text('' .  print_r($notifications));
     }
 }
