@@ -3,6 +3,7 @@
 use Marketplace\SearchException;
 use Marketplace\TagDemand;
 use Marketplace\SqlGenerator;
+use \Marketplace\SearchNotification;
 
 class SearchController extends \Marketplace\Controller
 {
@@ -66,5 +67,26 @@ class SearchController extends \Marketplace\Controller
         $db = DBManager::get();
         $tags = $db->fetchAll("SELECT name FROM mp_tag", []);
         $this->render_text('' . json_encode($tags));
+    }
+
+    public function save_search_action()
+    {
+        $search_notification = json_decode(file_get_contents('php://input'), true);
+        $search_query = $search_notification["query"];
+        $marketplace_id = $search_notification["marketplace_id"];
+        $user_id = $GLOBALS['user']->id;
+        $generator = new SqlGenerator();
+        $db = DBManager::get();
+        $custom_properties = $db->fetchAll("SELECT name, type FROM mp_custom_property", []);
+        try {
+            $sql = $generator->generateSQL($search_query, $custom_properties, $marketplace_id);
+            $demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
+            SearchNotification::subscribeToSearch($user_id, $search_query, $demands, $marketplace_id);
+            $this->render_text('');
+        } catch (SearchException $e) {
+            $this->render_text('' . json_encode([error => $e->getMessage()]));
+            http_response_code(500);
+            return;
+        }
     }
 }

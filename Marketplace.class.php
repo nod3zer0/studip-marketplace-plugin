@@ -8,9 +8,12 @@ require_once __DIR__ . '/models/custom_property.php';
 require_once __DIR__ . '/models/marketplace.php';
 require_once __DIR__ . '/models/tag_notification.php';
 require_once __DIR__ . '/models/bookmark.php';
+require_once __DIR__ . '/models/search_notification.php';
+require_once __DIR__ . '/models/search_demand.php';
 require_once __DIR__ . '/classes/Controller.php';
 require_once __DIR__ . '/classes/Plugin.php';
 require_once __DIR__ . '/classes/Search.php';
+
 
 
 use \Marketplace\MarketplaceModel;
