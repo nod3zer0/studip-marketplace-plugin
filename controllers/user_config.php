@@ -54,19 +54,47 @@ class UserConfigController extends \Marketplace\Controller
     public function get_search_notifications_action()
     {
         $notifications = SearchNotification::getSubscribedSearches($GLOBALS['user']->id);
-        $notifications = array_map(function ($notification) {
-            return [
-                'name' => $notification->search_query,
-                'id' => $notification->id
-            ];
-        }, $notifications);
-        $this->render_text('' . json_encode(["notifications" => $notifications]));
-    }
 
+        //remap to other format
+        $remapped_notifications = [];
+        foreach ($notifications as $item) {
+            $marketplace = $item->mp_marketplace->name;
+            $marketplaceId = $item->mp_marketplace->id;
+
+            // Create a new search query entry
+            $searchQuery = [
+                'query' => $item->search_query,
+                'id' => $item->id,
+            ];
+
+            // Check if the marketplace already exists in the converted data
+            if (isset($remapped_notifications[$marketplaceId])) {
+                // If it does, add the search query to the existing marketplace
+                $remapped_notifications[$marketplaceId]['queries'][] = $searchQuery;
+            } else {
+                // If not, create a new marketplace entry
+                $remapped_notifications[$marketplaceId] = [
+                    'marketplace' => $marketplace,
+                    'id' => $marketplaceId,
+                    'queries' => [$searchQuery]
+                ];
+            }
+        }
+
+        $this->render_text('' . json_encode(["notifications" => array_values($remapped_notifications)]));
+    }
     public function set_search_notifications_action()
     {
         $notifications = json_decode(file_get_contents('php://input'), true);
-        SearchNotification::setSearchNotifications($notifications["notifications"], $GLOBALS['user']->id);
-        $this->render_text('' .  print_r($notifications));
+
+        $remapped_notifications = [];
+        foreach ($notifications["notifications"] as $item) {
+            foreach ($item["queries"] as $query) {
+                $remapped_notifications[] = $query["query"];
+            }
+        }
+
+        SearchNotification::setSearchNotifications($remapped_notifications, $GLOBALS['user']->id);
+        $this->render_text('');
     }
 }

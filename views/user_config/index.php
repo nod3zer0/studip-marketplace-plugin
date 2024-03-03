@@ -1,16 +1,10 @@
 <div id="notification_settings">
-    <notification_settings :get_tags_url="'<?= $controller->link_for('user_config/get_tags') ?>'" :get_picked_tags_url="'<?= $controller->link_for('user_config/get_subscribed_tags') ?>'" :set_picked_tags_url="'<?= $controller->link_for('user_config/set_tags') ?>'" />
+    <h1> Subscribe to tags </h1>
+    <tag_settings :get_tags_url="'<?= $controller->link_for('user_config/get_tags') ?>'" :get_picked_tags_url="'<?= $controller->link_for('user_config/get_subscribed_tags') ?>'" :set_picked_tags_url="'<?= $controller->link_for('user_config/set_tags') ?>'"> </tag_settings>
+    <h1> Subscribe to searches </h1>
+    <search_notification_settings> </search_notification_settings>
 </div>
-<!-- <div id="search_notification_settings">
-    <ul>
-        <li v-for="(item, index) in searches" :key="index">
-            <input v-model="searches[index].name">
-            <button @click="deleteItem(index)">Delete</button>
-        </li>
-    </ul>
-    <button @click="addItem">Add search notification</button>
-    <button @click="submitSearches">Submit</button>
-</div> -->
+
 
 <script>
     // STUDIP.Vue.load().then(({

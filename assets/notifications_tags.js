@@ -6,7 +6,11 @@ $(document).ready(function() {
         store
     }) => {
 
-        Vue.component('notification_settings', {
+
+
+
+        // tag settings component
+        Vue.component('tag_settings', {
             template: `<div>
         <span>
             <input type="text" name="search-query" required value="" ref="search_input" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp">
@@ -136,7 +140,67 @@ $(document).ready(function() {
                     this.picked_tags = this.picked_tags.filter(item => item !== tag);
                 },
             },
-        })
+        });
+
+        //search notification settings component
+
+        Vue.component('search_notification_settings', {
+            template: `
+            <div>
+                <div v-for="notification in notifications" :key="notification.id">
+                    <h2>{{ notification.marketplace }}</h2>
+                    <ul>
+                        <li v-for="query in notification.queries" :key="query.id">
+                            <input type="text" v-model="query.query">
+                            <button @click="deleteQuery(notification.id, query.id)">Delete</button>
+                        </li>
+                    </ul>
+                </div>
+                <input type="button" value="Save" @click="saveNotifications">
+            </div>`,
+
+            data: () => ({
+                notifications: [],
+            }),
+            mounted() {
+                this.getNotifications();
+            },
+            methods: {
+                deleteQuery(notificationId, queryId) {
+                    const notification = this.notifications.find(notification => notification.id === notificationId);
+                    notification.queries = notification.queries.filter(query => query.id !== queryId);
+                },
+                getNotifications() {
+                    fetch(STUDIP.URLHelper.getURL('plugins.php/marketplace/user_config/get_search_notifications'))
+                        .then(response => response.json())
+                        .then(data => {
+                            this.notifications = data.notifications;
+                        })
+                        .catch(error => {
+                            console.error('Error fetching notifications:', error);
+                        });
+                },
+                saveNotifications() {
+                    fetch(STUDIP.URLHelper.getURL('plugins.php/marketplace/user_config/set_search_notifications'), {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                notifications: this.notifications
+                            })
+                        })
+                        .then(response => {
+                            // Handle response
+                            console.log('Response:', response.text());
+                        })
+                        .catch(error => {
+                            // Handle error
+                            console.error('Error:', error);
+                        });
+                }
+            }
+        });
 
         new Vue({
             el: '#notification_settings',
