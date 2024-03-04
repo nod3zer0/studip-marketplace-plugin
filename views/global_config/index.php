@@ -7,6 +7,9 @@
             <button @click="deleteItem(index)">Delete</button>
             <label for="type">Enabled</label>
             <input type="checkbox" id="enabled" v-model="marketplaces[index].enabled">
+            <span v-if="marketplaces[index].hasOwnProperty('id')">
+                <a :href="'<?= $controller->link_for('config/index/') ?>' + marketplaces[index].id">configure</a>
+            </span>
         </li>
     </ul>
     <button @click="addItem">Add marketplace</button>
