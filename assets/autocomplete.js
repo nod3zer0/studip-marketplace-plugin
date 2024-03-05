@@ -9,7 +9,7 @@ $(document).ready(function() {
         Vue.component('search_input', {
             template: `
         <span>
-        <input type="text" name="search-query" required value="" ref="search_input" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp">
+        <input type="text" name="search-query" value="" ref="search_input" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp">
         <ul v-show="isOpen" class="autocomplete-results">
             <li :class="{ 'is-active': i === arrowCounter }" @click="setResult(result)" v-for="(result, i) in results_render" :key="i" class="autocomplete-result">
                 {{ result }}
@@ -18,7 +18,7 @@ $(document).ready(function() {
         <input type="button" value="Notify on new demands" @click="SetNotification()">
         </span>
         `,
-            props: ['attributes_url', 'marketplace_id'],
+            props: ['attributes_url', 'marketplace_id', 'value'],
             data: () => ({
                 attributes: [{
                     name: 'test1',
@@ -87,6 +87,7 @@ $(document).ready(function() {
             },
             mounted() {
                 document.addEventListener('click', this.handleClickOutside);
+                this.search = this.value;
             },
             destroyed() {
                 document.removeEventListener('click', this.handleClickOutside);

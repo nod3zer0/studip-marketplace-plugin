@@ -18,6 +18,7 @@ class SearchController extends \Marketplace\Controller
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
         $db = DBManager::get();
         $query = Request::get('search-query');
+        $this->query = $query;
         if ($query != '') {
 
 
