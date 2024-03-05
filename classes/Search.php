@@ -2,7 +2,6 @@
 
 namespace Marketplace;
 
-
 class SearchException extends \Exception
 {
     // Redefine the exception so message isn't optional
@@ -94,6 +93,10 @@ class DefaultPropertyToken extends PropertyToken
     public $value;
     public int $type;
 
+    /**
+     * @param string $value
+     * @param int $type 1 - string, 2 - int, 3 - date, 4 - bool, 5 - text
+     */
     public function __construct(string $value, int $type)
     {
         $this->value = $value;
@@ -314,7 +317,7 @@ class Parser
                 } else if (isset($custom_properties_dict[$tokens[$i]])) {
                     $this->tokenObjects[] = new CustomPropertyToken($tokens[$i], $custom_properties_dict[$tokens[$i]]);
                 }
-            } else if (preg_match('/^[a-zA-Z0-9_]+$/', $tokens[$i])) {
+            } else if (preg_match('/^[a-zA-Z0-9_*+]+$/', $tokens[$i])) {
                 if (
                     $this->tokenObjects[array_key_last($this->tokenObjects)] instanceof StringToken
                 ) {
@@ -514,7 +517,7 @@ class SqlGenerator
             SELECT 1
             FROM mp_property
             LEFT JOIN mp_custom_property ON mp_property.custom_property_id = mp_custom_property.id
-            WHERE ( mp_custom_property.name LIKE ?  AND MATCH(mp_property.value) AGAINST(?) ) AND mp_demand.id = mp_property.demand_id)";
+            WHERE ( mp_custom_property.name LIKE ?  AND MATCH(mp_property.value) AGAINST(? IN BOOLEAN MODE) ) AND mp_demand.id = mp_property.demand_id)";
         $this->values[] = $parser->getNextToken()->getValue();
 
         if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
@@ -659,7 +662,7 @@ class SqlGenerator
 
     public function generateDefaultPropertyString($parser)
     {
-        $output = "MATCH(mp_demand." . $this->default_properties_map[$parser->getNextToken()->getValue()] . ") AGAINST(?) ";
+        $output = "MATCH(mp_demand." . $this->default_properties_map[$parser->getNextToken()->getValue()] . ") AGAINST(? IN BOOLEAN MODE) ";
 
 
         if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
@@ -689,17 +692,17 @@ class SqlGenerator
         $output = "(mp_demand." . $this->default_properties_map[$parser->getNextToken()->getValue()];
 
         if ($parser->peekNextToken() instanceof ColonToken) {
-            $output .= " = DATE(?)";
+            $output .= " = UNIX_TIMESTAMP(?)";
         } else if ($parser->peekNextToken() instanceof EqualToken) {
-            $output .= " = DATE(?))";
+            $output .= " = UNIX_TIMESTAMP(?))";
         } else if ($parser->peekNextToken() instanceof GreaterToken) {
-            $output .= " > DATE(?))";
+            $output .= " > UNIX_TIMESTAMP(?))";
         } else if ($parser->peekNextToken() instanceof LessToken) {
-            $output .= " < DATE(?))";
+            $output .= " < UNIX_TIMESTAMP(?))";
         } else if ($parser->peekNextToken() instanceof GreaterEqualToken) {
-            $output .= " >= DATE(?))";
+            $output .= " >= UNIX_TIMESTAMP(?))";
         } else if ($parser->peekNextToken() instanceof LessEqualToken) {
-            $output .= " <= DATE(?))";
+            $output .= " <= UNIX_TIMESTAMP(?))";
         } else {
             throw new SearchException("Invalid token: " . $parser->peekNextToken());
         }
