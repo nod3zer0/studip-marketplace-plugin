@@ -151,7 +151,7 @@ $(document).ready(function() {
                     <h2>{{ notification.marketplace }}</h2>
                     <ul>
                         <li v-for="query in notification.queries" :key="query.id">
-                            <input type="text" v-model="query.query">
+                        {{query.query}}
                             <button @click="deleteQuery(notification.id, query.id)">Delete</button>
                         </li>
                     </ul>
