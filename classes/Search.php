@@ -308,6 +308,9 @@ class Parser
             } else if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $tokens[$i])) //date
             {
                 $this->tokenObjects[] = new DateToken($tokens[$i]);
+            } else if (preg_match('/^[0-9]{2}\/[0-9]{2}\/[0-9]{2}$/', $tokens[$i])) {
+
+                $this->tokenObjects[] = new DateToken((\DateTime::createFromFormat('d/m/y', $tokens[$i])->format('Y-m-d')));
             } else if ($tokens[$i][0] == '.'  && count($tokens) > ($i) && ($tokens[$i + 1] == ":" || $tokens[$i + 1] == "E" || $tokens[$i + 1] == "G" ||
                 $tokens[$i + 1] == "L" || $tokens[$i + 1] == "LE" || $tokens[$i + 1] == "GE")) //string
             {
@@ -326,7 +329,7 @@ class Parser
                     $this->tokenObjects[] = new StringToken($tokens[$i]);
                 }
             } else {
-                throw new SearchException("Invalid token: " . $tokens[$i]);
+                throw new SearchException("Invalid symbol: " . $tokens[$i]);
             }
         }
     }
@@ -397,7 +400,7 @@ class SqlGenerator
         } else if (!$token) {
             return $output;
         } else {
-            throw new SearchException("Invalid token: " . get_class($parser->peekNextToken()));
+            throw new SearchException("Invalid symbol: " . get_class($parser->peekNextToken()));
         }
         return $output;
     }
@@ -443,7 +446,7 @@ class SqlGenerator
         } else if ($token instanceof CloseToken) {
             $output .= $this->generateClose($parser);
         } else {
-            throw new SearchException("Invalid token: " . $token->getValue());
+            throw new SearchException("Invalid placement of symbol: " . get_class($token->getValue()));
         }
 
         return $output;
@@ -521,14 +524,14 @@ class SqlGenerator
         $this->values[] = $parser->getNextToken()->getValue();
 
         if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("After property must follow `:` or `=`!");
         }
         $parser->getNextToken();
 
         if ($parser->peekNextToken() instanceof ValueToken) {
             $this->values[] =  $parser->getNextToken()->getValue();
         } else {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("After `:` must follow searched key word!");
         }
 
         if ($parser->peekNextToken() instanceof LogicToken) {
@@ -564,7 +567,7 @@ class SqlGenerator
         } else if ($parser->peekNextToken() instanceof LessEqualToken) {
             $output .= " <= ? )";
         } else {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("After property must follow comparison symbol (= , < , >, etc...)!");
         }
         // close EXISTS
 
@@ -575,7 +578,7 @@ class SqlGenerator
         if ($parser->peekNextToken() instanceof IntToken || $parser->peekNextToken() instanceof FloatToken) {
             $this->values[] =  $parser->getNextToken()->getValue();
         } else {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("Number properties only accept numbers!");
         }
 
         if ($parser->peekNextToken() instanceof LogicToken) {
@@ -613,7 +616,7 @@ class SqlGenerator
         } else if ($parser->peekNextToken() instanceof LessEqualToken) {
             $output .= " <= DATE(?))";
         } else {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("After date property must follow comparison symbol (= , < , >, etc...)!");
         }
         // close EXISTS
         $output .= ")";
@@ -623,7 +626,7 @@ class SqlGenerator
         if ($parser->peekNextToken() instanceof DateToken) {
             $this->values[] =  $parser->getNextToken()->getValue();
         } else {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("After date property must follow date!");
         }
         //SELECT * FROM mp_demand LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id LEFT JOIN mp_property ON mp_property.demand_id=mp_demand.id LEFT JOIN mp_custom_property ON mp_custom_property.id=mp_property.custom_property_id WHERE (mp_custom_property.name LIKE "prop4" AND STR_TO_DATE(mp_property.value, "%Y-%m-%d") = DATE("2024-02-20"))
         if ($parser->peekNextToken() instanceof LogicToken) {
@@ -666,14 +669,14 @@ class SqlGenerator
 
 
         if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("After string property must follow `:` or `=` !");
         }
         $parser->getNextToken();
 
         if ($parser->peekNextToken() instanceof ValueToken) {
             $this->values[] =  $parser->getNextToken()->getValue();
         } else {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("After string property must follow string!");
         }
 
         if ($parser->peekNextToken() instanceof LogicToken) {
@@ -689,22 +692,22 @@ class SqlGenerator
 
     public function generateDefaultPropertyDate($parser)
     {
-        $output = "(mp_demand." . $this->default_properties_map[$parser->getNextToken()->getValue()];
+        $output = "(DATE(FROM_UNIXTIME(mp_demand." . $this->default_properties_map[$parser->getNextToken()->getValue()] . "))";
 
         if ($parser->peekNextToken() instanceof ColonToken) {
-            $output .= " = UNIX_TIMESTAMP(?)";
+            $output .= " = DATE(?)";
         } else if ($parser->peekNextToken() instanceof EqualToken) {
-            $output .= " = UNIX_TIMESTAMP(?))";
+            $output .= " = DATE(?))";
         } else if ($parser->peekNextToken() instanceof GreaterToken) {
-            $output .= " > UNIX_TIMESTAMP(?))";
+            $output .= " > DATE(?))";
         } else if ($parser->peekNextToken() instanceof LessToken) {
-            $output .= " < UNIX_TIMESTAMP(?))";
+            $output .= " < DATE(?))";
         } else if ($parser->peekNextToken() instanceof GreaterEqualToken) {
-            $output .= " >= UNIX_TIMESTAMP(?))";
+            $output .= " >= DATE(?))";
         } else if ($parser->peekNextToken() instanceof LessEqualToken) {
-            $output .= " <= UNIX_TIMESTAMP(?))";
+            $output .= " <= DATE(?))";
         } else {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("After date property must follow comparison symbol (=, >, <, etc..)!" . $parser->peekNextToken());
         }
 
         $parser->getNextToken();
@@ -712,7 +715,7 @@ class SqlGenerator
         if ($parser->peekNextToken() instanceof DateToken) {
             $this->values[] =  $parser->getNextToken()->getValue();
         } else {
-            throw new SearchException("Invalid token: " . $parser->peekNextToken());
+            throw new SearchException("After date property must follow date!" . $parser->peekNextToken());
         }
 
         if ($parser->peekNextToken() instanceof LogicToken) {
