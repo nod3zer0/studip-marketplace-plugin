@@ -1,6 +1,31 @@
-<div id="app">
+<style>
+    #properties_settings ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    #properties_settings li {
+        margin-bottom: 5px;
+        padding: 5px;
+        background-color: #f0f0f0;
+        border: 1px solid #ddd;
+        cursor: move;
+        /* Change cursor to indicate draggable */
+        transition: background-color 0.3s ease;
+        /* Add transition effect */
+    }
+
+    #properties_settings li.draggable {
+        background-color: #e0e0e0;
+        /* Change background color when dragging */
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        /* Add shadow effect */
+    }
+</style>
+
+<div id="properties_settings">
     <ul>
-        <li v-for="(item, index) in properties" :key="index">
+        <li v-for="(item, index) in properties" :key="index" :draggable="true" @dragstart="onDragStart(index)" @dragover.prevent="onDragOver" @drop.prevent="onDrop(index)" @dragenter="onDragEnter(index)" @dragleave="onDragLeave(index)" :class="{ 'draggable': isDragging === index }">
             <input v-model="properties[index].name">
             <button @click="deleteItem(index)">Delete</button>
             <label for="type">Type:</label>
@@ -26,9 +51,10 @@
         store
     }) => {
         new Vue({
-            el: '#app',
+            el: '#properties_settings',
             data: {
-                properties: []
+                properties: [],
+                isDragging: null
             },
             created() {
                 this.loadProperties();
@@ -84,6 +110,35 @@
                             // Handle error
                             console.error('Error:', error);
                         });
+                },
+                onDragStart: function(index) {
+                    // Set the drag data to the index of the dragged item
+                    event.dataTransfer.setData('text/plain', index);
+                },
+                onDragOver: function() {
+                    // Allow drops
+                    event.preventDefault();
+                },
+                onDrop: function(index) {
+                    // Get the index of the item being dragged
+                    const draggedIndex = event.dataTransfer.getData('text/plain');
+                    // Move the item to the new index
+                    const draggedProperty = this.properties[draggedIndex];
+                    this.properties.splice(draggedIndex, 1); // Remove the item from the original position
+                    this.properties.splice(index, 0, draggedProperty); // Insert the item at the new position
+                },
+                onDragEnter: function(index) {
+                    if (this.isDragging !== null && index !== this.isDragging) {
+                        // Apply styles to the target element
+                        event.target.classList.add('draggable');
+                    }
+                },
+                // Remove the highlight when dragging leaves
+                onDragLeave: function(index) {
+                    if (this.isDragging !== null && index !== this.isDragging) {
+                        // Remove styles from the target element
+                        event.target.classList.remove('draggable');
+                    }
                 }
             }
 

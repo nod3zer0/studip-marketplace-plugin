@@ -29,6 +29,7 @@ class CustomProperty extends SimpleORMap
             $new_properties_obj[$i]->required = $property["required"];
             $new_properties_obj[$i]->id = $property["id"];
             $new_properties_obj[$i]->marketplace_id = $marketplace_id;
+            $new_properties_obj[$i]->order_index = $i;
             $i++;
         }
 
@@ -51,6 +52,7 @@ class CustomProperty extends SimpleORMap
             $property_to_insert->type = $property->type;
             $property_to_insert->required = $property->required;
             $property_to_insert->marketplace_id = $marketplace_id;
+            $property_to_insert->order_index = $property->order_index;
             $property_to_insert->store();
         }
         foreach ($to_update as $property) {
@@ -58,6 +60,7 @@ class CustomProperty extends SimpleORMap
             $old_property->name = $property->name;
             $old_property->type = $property->type;
             $old_property->required = $property->required;
+            $old_property->order_index = $property->order_index;
             $old_property->store();
         }
     }

@@ -37,7 +37,7 @@ class OverviewController extends \Marketplace\Controller
         PageLayout::setTitle($this->demand_obj->title);
         $this->tags = \Marketplace\TagDemand::findBySQL("demand_id = ?", [$demand_id]);
         $db = DBManager::get();
-        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id WHERE mp_custom_property.marketplace_id = ?", [$demand_id, $this->demand_obj->marketplace_id]);
+        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id WHERE mp_custom_property.marketplace_id = ? ORDER BY mp_custom_property.order_index", [$demand_id, $this->demand_obj->marketplace_id]);
     }
 
     public function create_demand_action(string $marketplace_id, string $demand_id = '')
@@ -55,7 +55,7 @@ class OverviewController extends \Marketplace\Controller
         }
         $this->tagsString = rtrim($this->tagsString, ",");
         $db = DBManager::get();
-        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id WHERE mp_custom_property.marketplace_id = ?", [$demand_id, $marketplace_id]);
+        $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id WHERE mp_custom_property.marketplace_id = ? ORDER BY mp_custom_property.order_index", [$demand_id, $marketplace_id]);
     }
 
 

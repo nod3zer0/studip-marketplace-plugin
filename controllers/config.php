@@ -32,7 +32,7 @@ class ConfigController extends \Marketplace\Controller
     public function get_properties_action($marketplace_id)
     {
         $db = DBManager::get();
-        $old_properties = $db->fetchAll("SELECT * FROM mp_custom_property WHERE marketplace_id = ?", [$marketplace_id]);
+        $old_properties = $db->fetchAll("SELECT * FROM mp_custom_property WHERE marketplace_id = ? ORDER BY mp_custom_property.order_index", [$marketplace_id]);
         $this->render_text('' . json_encode($old_properties));
     }
 }

@@ -11,7 +11,8 @@ class InitCustomproperties extends Migration
             latin1_bin NOT NULL,
             name TEXT NOT NULL,
             type TINYINT(2) NOT NULL DEFAULT 1,
-            required BOOL NOT NULL DEFAULT 1,
+            order_index TINYINT(2) NOT NULL DEFAULT 0,
+            required BOOL NOT NULL DEFAULT 0,
             PRIMARY KEY (id),
             FOREIGN KEY (marketplace_id) REFERENCES mp_marketplace(id) ON DELETE CASCADE
             )";
