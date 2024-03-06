@@ -135,6 +135,16 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
                     PluginEngine::getURL($this, [], 'config/index/', []) . $marketplace->id
                 );
                 $marketplace_nav->addSubNavigation('marketplace_config', $config_nav);
+                $categories_config = new Navigation(
+                    'Categories',
+                    PluginEngine::getURL($this, [], 'config/categories/', []) . $marketplace->id
+                );
+                $config_nav->addSubNavigation('categories', $categories_config);
+                $properties_config = new Navigation(
+                    'Properties',
+                    PluginEngine::getURL($this, [], 'config/index/', []) . $marketplace->id
+                );
+                $config_nav->addSubNavigation('properties', $properties_config);
             }
         }
     }

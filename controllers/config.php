@@ -10,7 +10,7 @@ class ConfigController extends \Marketplace\Controller
     public function index_action($marketplace_id = '')
     {
         $this->marketplace_id = $marketplace_id;
-        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_config');
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_config/properties');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
     }
 
@@ -34,5 +34,12 @@ class ConfigController extends \Marketplace\Controller
         $db = DBManager::get();
         $old_properties = $db->fetchAll("SELECT * FROM mp_custom_property WHERE marketplace_id = ? ORDER BY mp_custom_property.order_index", [$marketplace_id]);
         $this->render_text('' . json_encode($old_properties));
+    }
+
+    public function categories_action($marketplace_id = '')
+    {
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_config/categories');
+        PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
+        PageLayout::addScript($this->plugin->getPluginURL() . '/assets/categories_config.js');
     }
 }
