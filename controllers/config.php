@@ -3,6 +3,7 @@
 use Marketplace\TagDemand;
 use Marketplace\SqlGenerator;
 use \Marketplace\CustomProperty;
+use \Marketplace\Category;
 
 class ConfigController extends \Marketplace\Controller
 {
@@ -41,5 +42,18 @@ class ConfigController extends \Marketplace\Controller
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_config/categories');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/categories_config.js');
+        $this->marketplace_id = $marketplace_id;
+    }
+
+    public function get_categories_action($marketplace_id)
+    {
+        $categories = Category::get_categories($marketplace_id);
+        $this->render_text('' . json_encode($categories));
+    }
+
+    public function set_categories_action($marketplace_id)
+    {
+        Category::set_categories(json_decode(file_get_contents('php://input'), true)["categories"], $marketplace_id);
+        $this->render_nothing();
     }
 }

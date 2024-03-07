@@ -33,9 +33,19 @@ $(document).ready(function() {
             }
         });
 
-        new Vue({
-            el: '#categories_config',
-            data: {
+        Vue.component('categories_config', {
+            props: ['marketplace_id'],
+            template: `
+            <div>
+            <div>
+            <category :categories="categories"></category>
+            <button @click="addCategory">Add Category</button>
+            </div>
+            <div>
+            <button @click="saveCategories">Save</button>
+            </div>
+            </div>`,
+            data: () => ({
                 categories: [{
                     name: 'Category 1',
                     subcategories: [{
@@ -49,6 +59,9 @@ $(document).ready(function() {
                     name: 'Category 2',
                     subcategories: []
                 }]
+            }),
+            mounted() {
+                this.get_categories();
             },
             methods: {
                 addCategory() {
@@ -56,8 +69,41 @@ $(document).ready(function() {
                         name: 'New Category',
                         subcategories: []
                     });
+                },
+                saveCategories() {
+                    fetch(STUDIP.URLHelper.getURL('plugins.php/marketplace/config/set_categories/').concat(this.marketplace_id), {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                categories: this.categories
+                            })
+                        })
+                        .then(response => {
+                            // Handle response
+                            console.log('Response:', response.text());
+                        })
+                        .catch(error => {
+                            // Handle error
+                            console.error('Error:', error);
+                        });
+                },
+                get_categories() {
+                    fetch(STUDIP.URLHelper.getURL('plugins.php/marketplace/config/get_categories/').concat(this.marketplace_id))
+                        .then(response => response.json())
+                        .then(data => {
+                            this.categories = data;
+                        })
+                        .catch(error => {
+                            console.error('Error fetching categories:', error);
+                        });
                 }
             }
+        });
+
+        new Vue({
+            el: '#categories_config',
         });
     });
 });
