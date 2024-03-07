@@ -33,6 +33,76 @@ use Studip\Button; ?>
     });
 </script>
 
+<script>
+    STUDIP.Vue.load().then(({
+        Vue,
+        createApp,
+        eventBus,
+        store
+    }) => {
+        Vue.component('category_picker', {
+            props: ['categories', 'selected_path'],
+            template: `
+            <div>
+            <template v-for="(select, index) in selects">
+            <span>/</span>
+            <select v-model="selectedCategories[index]" @change="categoryChanged(index)">
+                <option :value="null" v-if="index === 0">Select Category</option>
+                <option :value="null" v-else>Select Subcategory</option>
+                <option v-for="option in select" :value="option">{{ option.name }}</option>
+            </select>
+        </template>
+        <input type="hidden" name="selected_categories" :value="JSON.stringify(selectedCategories)">
+        </div>
+        `,
+            mounted() {
+                this.$emit('input', this.selectedCategories);
+                this.loadPath();
+            },
+            data: () => ({
+                selectedCategories: [null],
+                selects: []
+            }),
+            methods: {
+                categoryChanged(index) {
+                    // Remove subsequent selects if a category is changed
+                    this.selectedCategories.splice(index + 1);
+                    this.selects.splice(index + 1);
+
+                    const selectedCategory = this.selectedCategories[index];
+                    if (selectedCategory !== null) {
+                        if (selectedCategory.subcategories.length > 0) {
+                            this.selectedCategories.push(null);
+                            this.selects.push(selectedCategory.subcategories);
+                        }
+                    }
+                },
+                loadPath() {
+                    const path = this.selected_path.split('/');
+                    this.selectedCategories = path.map((name, index) => {
+                        const category = this.selects[index].find(category => category.name === name);
+                        if (category) {
+                            this.selects.push(category.subcategories);
+                            return category;
+                        }
+                        return null;
+                    });
+                }
+            },
+            created() {
+                if (this.categories.length > 0) {
+                    this.selects.push(this.categories);
+                }
+            }
+        });
+
+
+        new Vue({
+            el: '#categories',
+        });
+    });
+</script>
+
 <form class="default collapsable" action="<?= $controller->link_for('overview/store_demand', $marketplace_id, $demand_obj->id) ?>" method="post">
     <?= CSRFProtection::tokenTag() ?>
     <fieldset data-open="bd_basicsettings">
@@ -99,6 +169,12 @@ use Studip\Button; ?>
                 <!-- <? if ($property["required"])  echo "required"; ?> name="custom_properties[<?= $property['id'] ?>]" value="<?= $property['value'] ?>"> -->
             </div>
         <? endforeach; ?>
+
+        <div> Category </div>
+        <div id="categories">
+            <category_picker :categories="<?= str_replace("\"", "'", $categories) ?>" :selected_path="'<?= $selected_path ?>'"></category_picker>
+        </div>
+        </div>
 
     </fieldset>
 

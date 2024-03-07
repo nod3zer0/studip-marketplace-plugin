@@ -3,6 +3,8 @@
 use Marketplace\TagDemand;
 use \Marketplace\CustomProperty;
 use \Marketplace\Property;
+use \Marketplace\Category;
+use \Marketplace\CategoryDemand;
 
 
 class OverviewController extends \Marketplace\Controller
@@ -56,6 +58,9 @@ class OverviewController extends \Marketplace\Controller
         $this->tagsString = rtrim($this->tagsString, ",");
         $db = DBManager::get();
         $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id WHERE mp_custom_property.marketplace_id = ? ORDER BY mp_custom_property.order_index", [$demand_id, $marketplace_id]);
+
+        $this->selected_path = CategoryDemand::get_saved_path($demand_id);
+        $this->categories = json_encode(Category::get_categories($marketplace_id));
     }
 
 
@@ -102,17 +107,10 @@ saving the demand');
         $tags = explode(",", Request::get('tags'));
         TagDemand::updateTags($tags, $demand_id);
 
-        // $previous_tags = explode(",", Request::get('tags_previous'));
-        // foreach ($previous_tags as $tag) {
-        //     if (!in_array($tag, $tags)) {
-        //         TagDemand::deleteTag($tag, $this->demand_obj->id);
-        //     }
-        // }
-        // foreach ($tags as $tag) {
-        //     if (!in_array($tag, $previous_tags)) {
-        //         TagDemand::addTag($tag, $this->demand_obj->id);
-        //     }
-        // }
+        $categories =  json_decode(Request::get('selected_categories'), true);
+        print_r($categories);
+        CategoryDemand::set_category_demand($categories, $demand_id);
+
         $request = Request::getInstance();
         Property::update_custom_properties($request['custom_properties'], $demand_id);
         $this->redirect('overview/index/' . $marketplace_id);

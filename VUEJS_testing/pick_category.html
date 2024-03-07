@@ -3,8 +3,34 @@
 </head>
 
 <body>
-    <div id="app">
-        <template v-for="(select, index) in selects">
+    <div id="categories">
+        <category_picker :categories="[{
+            name: 'Category 1',
+            subcategories: [{
+                name: 'Subcategory 1-1',
+                subcategories: [{
+                    name: 'Subcategory 1-1-1',
+                    subcategories: [{
+                        name: 'Subcategory 1-1-1-1',
+                        subcategories: []
+                    }]
+                }, {
+                    name: 'Subcategory 1-1-2',
+                    subcategories: []
+                }]
+            }]
+        }, {
+            name: 'Category 2',
+            subcategories: []
+        }]" :selected_path="'Category 1/Subcategory 1-1/Subcategory 1-1-1'"></category_picker>
+    </div>
+
+    <script>
+        Vue.component('category_picker', {
+            props: ['categories', 'selected_path'],
+            template: `
+            <div>
+            <template v-for="(select, index) in selects">
             <span>/</span>
             <select v-model="selectedCategories[index]" @change="categoryChanged(index)">
                 <option :value="null" v-if="index === 0">Select Category</option>
@@ -13,36 +39,18 @@
             </select>
         </template>
         <div>
-            Selected Category Path: {{ selectedCategories.filter(category => category !== null).join(' / ') }}
+            {{ JSON.stringify(selectedCategories) }}
         </div>
-    </div>
-
-    <script>
-        new Vue({
-            el: '#app',
-            data: {
-                categories: [{
-                    name: 'Category 1',
-                    subcategories: [{
-                        name: 'Subcategory 1-1',
-                        subcategories: [{
-                            name: 'Subcategory 1-1-1',
-                            subcategories: [{
-                                name: 'Subcategory 1-1-1-1',
-                                subcategories: []
-                            }]
-                        }, {
-                            name: 'Subcategory 1-1-2',
-                            subcategories: []
-                        }]
-                    }]
-                }, {
-                    name: 'Category 2',
-                    subcategories: []
-                }],
+        </div>
+        `,
+            mounted() {
+                this.$emit('input', this.selectedCategories);
+                this.loadPath();
+            },
+            data: () => ({
                 selectedCategories: [null],
                 selects: []
-            },
+            }),
             methods: {
                 categoryChanged(index) {
                     // Remove subsequent selects if a category is changed
@@ -56,6 +64,17 @@
                             this.selects.push(selectedCategory.subcategories);
                         }
                     }
+                },
+                loadPath() {
+                    const path = this.selected_path.split('/');
+                    this.selectedCategories = path.map((name, index) => {
+                        const category = this.selects[index].find(category => category.name === name);
+                        if (category) {
+                            this.selects.push(category.subcategories);
+                            return category;
+                        }
+                        return null;
+                    });
                 }
             },
             created() {
@@ -63,6 +82,11 @@
                     this.selects.push(this.categories);
                 }
             }
+        });
+
+
+        new Vue({
+            el: '#categories',
         });
     </script>
 </body>
