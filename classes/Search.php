@@ -211,6 +211,7 @@ class Parser
         "created" => 3,
         "date" => 3,
         "description" => 5,
+        "category" => 6,
     ];
 
     private $custom_properties = [];
@@ -320,7 +321,7 @@ class Parser
                 } else if (isset($custom_properties_dict[$tokens[$i]])) {
                     $this->tokenObjects[] = new CustomPropertyToken($tokens[$i], $custom_properties_dict[$tokens[$i]]);
                 }
-            } else if (preg_match('/^[a-zA-Z0-9_*+]+$/', $tokens[$i])) {
+            } else if (preg_match('/^[a-zA-Z0-9_*+\/]+$/', $tokens[$i])) {
                 if (
                     $this->tokenObjects[array_key_last($this->tokenObjects)] instanceof StringToken
                 ) {
@@ -339,6 +340,7 @@ class SqlGenerator
 {
     private $values = [];
     private $numberOfBrackets = 0;
+    private $categories = [];
 
     private $default_properties_map = [
         "title" => "title",
@@ -346,8 +348,10 @@ class SqlGenerator
         "date" => "mkdate",
         "description" => "description",
     ];
-    public function generateSQL($query, $custom_properties, $marketplace_id = "")
+    public function generateSQL($query, $custom_properties, $marketplace_id = "", $categories)
     {
+
+        $this->categories = $categories;
 
         $parser = new Parser($query, $custom_properties);
 
@@ -750,6 +754,72 @@ class SqlGenerator
             case 5:
                 $output = $this->generateDefaultPropertyString($parser);
                 break;
+            case 6:
+                $output = $this->generateDefaultPropertyCategory($parser);
+                break;
+        }
+
+        return $output;
+    }
+
+    public function parseCategoryId($path)
+    {
+        $path_array = explode("/", $path);
+        $categories_copy = $this->categories;
+        $categories_pointer = 0;
+        $path_pointer = 0;
+        $id = "";
+        while ($categories_copy) {
+            if ($categories_copy[$categories_pointer]["name"] == $path_array[$path_pointer]) {
+                if ($path_pointer == count($path_array) - 1) {
+
+                    $id = $categories_copy[$categories_pointer]["id"];
+                    break;
+                } else if ($path_pointer > count($path_array) - 1) {
+                    throw new SearchException("Category doesn't exist!");
+                }
+
+                $categories_copy = $categories_copy[$categories_pointer]["subcategories"];
+                $path_pointer++;
+                $categories_pointer = 0;
+                continue;
+            }
+            if ($categories_pointer >= count($path_array)) {
+                throw new SearchException("Category doesn't exist!");
+            }
+            $categories_pointer++;
+        }
+
+        return $id;
+    }
+
+    public function generateDefaultPropertyCategory($parser)
+    {
+        $output = "EXISTS (
+            SELECT 1
+            FROM mp_category_demand
+            WHERE mp_category_demand.demand_id = mp_demand.id
+            AND mp_category_demand.category_id LIKE ?
+        ) ";
+        //remove category token
+        $parser->getNextToken();
+        if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
+            throw new SearchException("After category property must follow `:` or `=` !");
+        }
+        $parser->getNextToken(); // remove colon
+
+        if ($parser->peekNextToken() instanceof ValueToken) {
+            $this->values[] =  self::parseCategoryId($parser->getNextToken()->getValue());
+        } else {
+            throw new SearchException("After string property must follow string!");
+        }
+
+        if ($parser->peekNextToken() instanceof LogicToken) {
+            $output .= $this->generateLogic($parser);
+        } else if (!$parser->peekNextToken()) { // check NULL
+            return $output;
+        } else {
+            $output .= " AND " . $this->generateExpression($parser);
         }
 
         return $output;

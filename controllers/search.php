@@ -4,6 +4,7 @@ use Marketplace\SearchException;
 use Marketplace\TagDemand;
 use Marketplace\SqlGenerator;
 use \Marketplace\SearchNotification;
+use \Marketplace\Category;
 
 class SearchController extends \Marketplace\Controller
 {
@@ -19,6 +20,9 @@ class SearchController extends \Marketplace\Controller
         $db = DBManager::get();
         $query = Request::get('search-query');
         $this->query = $query;
+
+        $categories = Category::get_categories($marketplace_id);
+
         if ($query != '') {
 
 
@@ -31,7 +35,7 @@ class SearchController extends \Marketplace\Controller
 
             $generator = new SqlGenerator();
             try {
-                $sql = $generator->generateSQL($query, $custom_properties, $marketplace_id);
+                $sql = $generator->generateSQL($query, $custom_properties, $marketplace_id,  $categories);
 
                 $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
             } catch (SearchException $e) {
@@ -79,8 +83,9 @@ class SearchController extends \Marketplace\Controller
         $generator = new SqlGenerator();
         $db = DBManager::get();
         $custom_properties = $db->fetchAll("SELECT name, type FROM mp_custom_property", []);
+        $categories = Category::get_categories($marketplace_id);
         try {
-            $sql = $generator->generateSQL($search_query, $custom_properties, $marketplace_id);
+            $sql = $generator->generateSQL($search_query, $custom_properties, $marketplace_id,  $categories);
             $demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
             SearchNotification::subscribeToSearch($user_id, $search_query, $demands, $marketplace_id);
             $this->render_text('');
