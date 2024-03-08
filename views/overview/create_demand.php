@@ -46,7 +46,7 @@ use Studip\Button; ?>
             <div>
             <template v-for="(select, index) in selects">
             <span>/</span>
-            <select v-model="selectedCategories[index]" @change="categoryChanged(index)">
+            <select style="width:20%;" v-model="selectedCategories[index]" @change="categoryChanged(index)">
                 <option :value="null" v-if="index === 0">Select Category</option>
                 <option :value="null" v-else>Select Subcategory</option>
                 <option v-for="option in select" :value="option">{{ option.name }}</option>
