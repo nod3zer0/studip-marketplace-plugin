@@ -7,15 +7,16 @@ $(document).ready(function() {
     }) => {
 
         Vue.component('category', {
-            props: ['categories'],
+            props: ['categories', 'errors'],
             template: `
             <div class="category-box">
                 <template v-for="(category, index) in categories">
                     <div>
-                        <input type="text" v-model="category.name">
+                        <input type="text" v-model="category.name" @change="checkUniqueName(category,categories)">
                         <button @click="addSubcategory(category)">Add Subcategory</button>
                         <button @click="deleteCategory(index)">Delete</button>
-                        <category v-if="category.subcategories.length > 0" :categories="category.subcategories"></category>
+                        <category v-if="category.subcategories.length > 0" :categories="category.subcategories" v-on:error="onError"></category>
+                        <div v-if="category.error" style="color: red;">{{ category.error }}</div>
                     </div>
                 </template>
             </div>
@@ -29,6 +30,21 @@ $(document).ready(function() {
                 },
                 deleteCategory(index) {
                     this.categories.splice(index, 1);
+                },
+                checkUniqueName(category, categories) {
+                    const countOccurrences = categories.filter(cat => cat.name === category.name).length;
+                    const isUnique = countOccurrences <= 1;
+                    if (!isUnique) {
+                        Vue.set(category, 'error', 'Name must be unique within the category');
+                        this.$emit('error', 1);
+                    } else {
+                        Vue.set(category, 'error', null);
+                        this.$emit('error', -1);
+
+                    }
+                },
+                onError(error) {
+                    this.$emit('error', error);
                 }
             }
         });
@@ -38,11 +54,11 @@ $(document).ready(function() {
             template: `
             <div>
             <div>
-            <category :categories="categories"></category>
+            <category v-on:error="onError" :error="errors" :categories="categories"></category>
             <button @click="addCategory">Add Category</button>
             </div>
             <div>
-            <button @click="saveCategories">Save</button>
+            <button  :disabled="hasErrors" @click="saveCategories">Save</button>
             </div>
             </div>`,
             data: () => ({
@@ -58,12 +74,21 @@ $(document).ready(function() {
                 }, {
                     name: 'Category 2',
                     subcategories: []
-                }]
+                }],
+                errors: 0
             }),
             mounted() {
                 this.get_categories();
             },
+            computed: {
+                hasErrors() {
+                    return this.errors > 0;
+                }
+            },
             methods: {
+                onError(error) {
+                    this.errors += error;
+                },
                 addCategory() {
                     this.categories.push({
                         name: 'New Category',
