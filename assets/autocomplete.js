@@ -127,6 +127,11 @@ $(document).ready(function() {
                                 console.error('Invalid properties data received:', data);
                             }
                             this.attributes.push(...[{ name: 'title', type: 1 }, { name: 'description', type: 5 }, { name: 'created', type: 3 }]);
+                            //replace spaces with _ in attribute names
+                            this.attributes = this.attributes.map(attribute => {
+                                attribute.name = attribute.name.replace(/ /g, '_');
+                                return attribute;
+                            });
                         })
                         .catch(error => {
                             console.error('Error fetching properties:', error);

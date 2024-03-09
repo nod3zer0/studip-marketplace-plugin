@@ -312,8 +312,7 @@ class Parser
             } else if (preg_match('/^[0-9]{2}\/[0-9]{2}\/[0-9]{2}$/', $tokens[$i])) {
 
                 $this->tokenObjects[] = new DateToken((\DateTime::createFromFormat('d/m/y', $tokens[$i])->format('Y-m-d')));
-            } else if ($tokens[$i][0] == '.'  && count($tokens) > ($i) && ($tokens[$i + 1] == ":" || $tokens[$i + 1] == "E" || $tokens[$i + 1] == "G" ||
-                $tokens[$i + 1] == "L" || $tokens[$i + 1] == "LE" || $tokens[$i + 1] == "GE")) //string
+            } else if ($tokens[$i][0] == '.'  && count($tokens) > ($i)) //string
             {
                 $tokens[$i] = substr($tokens[$i], 1); //remove starting dot
                 if (isset($this->default_properties[$tokens[$i]])) {
@@ -353,6 +352,10 @@ class SqlGenerator
 
         $this->categories = $categories;
 
+        //replace spaces in custom_properties with _
+        foreach ($custom_properties as $key => $value) {
+            $custom_properties[$key]["name"] = str_replace(" ", "_", $value["name"]);
+        }
         $parser = new Parser($query, $custom_properties);
 
         $output = "";

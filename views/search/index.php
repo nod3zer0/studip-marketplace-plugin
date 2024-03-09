@@ -13,7 +13,7 @@ use Studip\Button; ?>
                 search
             </label>
             <div id="search_input">
-                <search_input :value="'<?= $query ?>'" :marketplace_id="'<?= $marketplace_id ?>'" :attributes_url="'<?= $controller->link_for('search/get_attributes', $marketplace_id) ?>'" />
+                <search_input :categories="<?= str_replace("\"", "'", $categories) ?>" :value="'<?= $query ?>'" :marketplace_id="'<?= $marketplace_id ?>'" :attributes_url="'<?= $controller->link_for('search/get_attributes', $marketplace_id) ?>'" />
 
                 <!-- <input type="text" name="search-query" required value="" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp"> -->
 
@@ -25,7 +25,6 @@ use Studip\Button; ?>
 
             </div>
             <?= Button::create('Search') ?>
-
         </div>
     </fieldset>
 

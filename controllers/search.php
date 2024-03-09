@@ -22,6 +22,7 @@ class SearchController extends \Marketplace\Controller
         $this->query = $query;
 
         $categories = Category::get_categories($marketplace_id);
+        $this->categories = json_encode($categories);
 
         if ($query != '') {
 
