@@ -121,6 +121,11 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
                 PluginEngine::getURL($this, [], 'search/index/', []) . $marketplace->id
             );
             $marketplace_nav->addSubNavigation('marketplace_search', $search_nav);
+            $advanced_search_nav = new Navigation(
+                'Advanced search',
+                PluginEngine::getURL($this, [], 'advanced_search/index/', []) . $marketplace->id
+            );
+            $search_nav->addSubNavigation('marketplace_advanced_search', $advanced_search_nav);
             $my_demands = new Navigation(
                 'My demands',
                 PluginEngine::getURL($this, [], 'my_demands/index/', []) . $marketplace->id

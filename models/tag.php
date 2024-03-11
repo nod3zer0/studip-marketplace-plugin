@@ -21,6 +21,17 @@ class Tag extends SimpleORMap
         return \Marketplace\Tag::findOneBySQL("name = ?", [$name]);
     }
 
+    public static function get_all_tags_csv()
+    {
+        $tags = self::findBySQL("1");
+
+        $tagsString = "";
+        foreach ($tags as $tag) {
+            $tagsString .= $tag->name . ",";
+        }
+        return rtrim($tagsString, ",");
+    }
+
     public function update_tags($new_tags)
     {
         $old_tags = \Marketplace\Tag::findBySQL("1");

@@ -1,0 +1,53 @@
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <style>
+        .tag {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            background-color: #eee;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        
+        .tag.selected {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div id="app">
+        <div>
+            <div class="tags">
+                <div class="tag" v-for="(tag, index) in tags" :key="index" @click="toggleTag(index)" :class="{ selected: selectedTags.includes(tag) }">
+                    {{ tag }}
+                </div>
+            </div>
+            <input type="hidden" name="selectedTags" v-model="selectedTags.join(',')">
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                tags: ['Vue.js', 'React', 'Angular', 'JavaScript', 'HTML', 'CSS'],
+                selectedTags: []
+            },
+            methods: {
+                toggleTag(index) {
+                    const tag = this.tags[index];
+                    const selectedIndex = this.selectedTags.indexOf(tag);
+                    if (selectedIndex === -1) {
+                        this.selectedTags.push(tag);
+                    } else {
+                        this.selectedTags.splice(selectedIndex, 1);
+                    }
+                }
+            }
+        });
+    </script>
+</body>
