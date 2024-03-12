@@ -339,6 +339,8 @@ class AdvancedSearch
 {
     private $values = [];
 
+    private $categories = [];
+
     private $default_properties_map = [
         "title" => "title",
         "created" => "mkdate",
@@ -346,8 +348,9 @@ class AdvancedSearch
         "description" => "description",
     ];
 
-    public function generateSQL($custom_properties, $tags, $default_properties, $selected_categories, $marketplace_id = "")
+    public function generateSQL($custom_properties, $tags, $default_properties, $selected_category_path, $categories, $marketplace_id = "")
     {
+        $this->categories = $categories;
         $output = "LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
 
         if ($marketplace_id != "") {
@@ -369,8 +372,10 @@ class AdvancedSearch
             $output .= $this->generateTag($tag);
             $output .= " AND ";
         }
-        //TODO category
-
+        if ($selected_category_path != "") {
+            $category_id = $this->parseCategoryId($selected_category_path);
+            $output .= $this->generateCategory($category_id);
+        }
 
         // Check if the string ends with "AND"
         if (substr($output, -4) === "AND ") {
@@ -381,6 +386,36 @@ class AdvancedSearch
 
         $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id";
         return [$output, $this->values];
+    }
+
+    public function parseCategoryId($path)
+    {
+        $path_array = explode("/", trim($path, '/'));
+        $categories_copy = $this->categories;
+        $categories_pointer = 0;
+        $path_pointer = 0;
+        $id = "";
+        while ($categories_copy) {
+            if ($categories_copy[$categories_pointer]["name"] == $path_array[$path_pointer]) {
+                if ($path_pointer == count($path_array) - 1) {
+                    $id = $categories_copy[$categories_pointer]["id"];
+                    break;
+                } else if ($path_pointer > count($path_array) - 1) {
+                    throw new SearchException("Category doesn't exist!");
+                }
+
+                $categories_copy = $categories_copy[$categories_pointer]["subcategories"];
+                $path_pointer++;
+                $categories_pointer = 0;
+                continue;
+            }
+            if ($categories_pointer >= count($categories_copy)) {
+                throw new SearchException("Category doesn't exist!");
+            }
+            $categories_pointer++;
+        }
+
+        return $id;
     }
 
     private function getCustomPropertySQL($custom_property)
@@ -564,10 +599,12 @@ class AdvancedSearch
 
     private function generateCategory($category_id)
     {
+
         $output = "EXISTS (
             SELECT 1
-            FROM mp_demand_category
-            WHERE mp_demand_category.demand_id = mp_demand.id AND mp_demand_category.category_id = ?
+            FROM mp_category_demand
+            WHERE mp_category_demand.demand_id = mp_demand.id
+            AND mp_category_demand.category_id LIKE ?
         ) ";
         $this->values[] = $category_id;
         return $output;
@@ -1006,7 +1043,7 @@ class SqlGenerator
 
     public function parseCategoryId($path)
     {
-        $path_array = explode("/", $path);
+        $path_array = explode("/", trim($path, '/'));
         $categories_copy = $this->categories;
         $categories_pointer = 0;
         $path_pointer = 0;
@@ -1014,7 +1051,6 @@ class SqlGenerator
         while ($categories_copy) {
             if ($categories_copy[$categories_pointer]["name"] == $path_array[$path_pointer]) {
                 if ($path_pointer == count($path_array) - 1) {
-
                     $id = $categories_copy[$categories_pointer]["id"];
                     break;
                 } else if ($path_pointer > count($path_array) - 1) {
@@ -1026,7 +1062,7 @@ class SqlGenerator
                 $categories_pointer = 0;
                 continue;
             }
-            if ($categories_pointer >= count($path_array)) {
+            if ($categories_pointer >= count($categories_copy)) {
                 throw new SearchException("Category doesn't exist!");
             }
             $categories_pointer++;

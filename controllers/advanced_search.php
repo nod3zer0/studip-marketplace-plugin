@@ -22,7 +22,8 @@ class AdvancedSearchController extends \Marketplace\Controller
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search/marketplace_advanced_search');
         PageLayout::setTitle(MarketplaceModel::find($marketplace_id)->name);
         $this->marketplace_id = $marketplace_id;
-        $this->categories = json_encode(Category::get_categories($marketplace_id));
+        $categories = Category::get_categories($marketplace_id);
+        $this->categories = json_encode($categories);
         $this->properties = CustomProperty::findBySQL("marketplace_id = ?", [$marketplace_id]);
         $this->tags = Tag::get_all_tags_csv();
         //$query = Request::get('search-query');
@@ -36,7 +37,7 @@ class AdvancedSearchController extends \Marketplace\Controller
         $this->selected_tags = $request_data["selected_tags"];
         $this->selected_categories = $request_data["selected_categories"];
         $advanced_search = new AdvancedSearch();
-        $sql = $advanced_search->generateSQL($this->custom_property_data, $this->tag_data, $this->default_property_data, $this->selected_categories, $marketplace_id);
+        $sql = $advanced_search->generateSQL($this->custom_property_data, $this->tag_data, $this->default_property_data, $this->selected_categories,   $categories, $marketplace_id);
         $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
     }
 
