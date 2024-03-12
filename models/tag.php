@@ -32,6 +32,11 @@ class Tag extends SimpleORMap
         return rtrim($tagsString, ",");
     }
 
+    public static function get_all_tags()
+    {
+        return self::findBySQL("1");
+    }
+
     public function update_tags($new_tags)
     {
         $old_tags = \Marketplace\Tag::findBySQL("1");

@@ -2,7 +2,7 @@
 
 use Marketplace\SearchException;
 use Marketplace\TagDemand;
-use Marketplace\SqlGenerator;
+use Marketplace\AdvancedSearch;
 use \Marketplace\SearchNotification;
 use \Marketplace\Category;
 use \Marketplace\MarketplaceModel;
@@ -31,40 +31,50 @@ class AdvancedSearchController extends \Marketplace\Controller
         //     $properties[] =  Request::get(str_replace(" ", "_", $property->name));
         // }
         $this->custom_property_data = $this->get_custom_property_data($request_data, $this->properties);
-        $this->tag_data = $this->get_tag_data($request_data, $this->tags);
+        $this->tag_data = $this->get_tag_data($request_data, Tag::get_all_tags());
         $this->default_property_data = $this->get_default_property_data($request_data);
         $this->selected_tags = $request_data["selected_tags"];
         $this->selected_categories = $request_data["selected_categories"];
-        print_r($this->default_property_data);
+        $advanced_search = new AdvancedSearch();
+        $sql = $advanced_search->generateSQL($this->custom_property_data, $this->tag_data, $this->default_property_data, $this->selected_categories, $marketplace_id);
+        $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
+        print_r($this->all_demands);
+        print_r($sql);
     }
 
     public function get_default_property_data($RequestData)
     {
-        $title = [
-            "name" => "title",
-            "type" => 1,
-            "compare_type" => $RequestData["title"]["compare_type"],
-            "value" => $RequestData["title"]["value"]
-        ];
-        $description = [
-            "name" => "description",
-            "type" => 5,
-            "compare_type" => $RequestData["description"]["compare_type"],
-            "value" => $RequestData["description"]["value"]
-        ];
-        $created = [
-            "name" => "created",
-            "type" => 3,
-            "compare_type" => $RequestData["created"]["compare_type"],
-            "value" => $RequestData["created"]["value"],
-            "value_from" => $RequestData["created"]["range_value_from"],
-            "value_to" => $RequestData["created"]["range_value_to"]
-        ];
-        $data = [
-            "title" => $title,
-            "description" => $description,
-            "created" => $created
-        ];
+        $data = [];
+        if ($RequestData["title"]["value"] != "") {
+            $title = [
+                "name" => "title",
+                "type" => 1,
+                "compare_type" => $RequestData["title"]["compare_type"],
+                "value" => $RequestData["title"]["value"]
+            ];
+            $data["title"] = $title;
+        }
+        if ($RequestData["description"]["value"] != "") {
+            $description = [
+                "name" => "description",
+                "type" => 5,
+                "compare_type" => $RequestData["description"]["compare_type"],
+                "value" => $RequestData["description"]["value"]
+            ];
+            $data["description"] = $description;
+        }
+        if ($RequestData["created"]["value"] != "") {
+            $created = [
+                "name" => "created",
+                "type" => 3,
+                "compare_type" => $RequestData["created"]["compare_type"],
+                "value" => $RequestData["created"]["value"],
+                "value_from" => $RequestData["created"]["range_value_from"],
+                "value_to" => $RequestData["created"]["range_value_to"]
+            ];
+            $data["created"] = $created;
+        }
+
         return $data;
     }
 
@@ -104,7 +114,7 @@ class AdvancedSearchController extends \Marketplace\Controller
     public function get_tag_data($RequestData, $tags)
     {
 
-        $split_tags = explode(",", $RequestData["tags"]);
+        $split_tags = explode(",", $RequestData["selected_tags"]);
 
         $tag_data = [];
 

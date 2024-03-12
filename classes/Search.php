@@ -335,6 +335,245 @@ class Parser
     }
 }
 
+class AdvancedSearch
+{
+    private $values = [];
+
+    private $default_properties_map = [
+        "title" => "title",
+        "created" => "mkdate",
+        "date" => "mkdate",
+        "description" => "description",
+    ];
+
+    public function generateSQL($custom_properties, $tags, $default_properties, $selected_categories, $marketplace_id = "")
+    {
+        $output = "LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
+
+        if ($marketplace_id != "") {
+            $output .= "mp_marketplace.id = ? AND ";
+            $this->values[] = $marketplace_id;
+        }
+
+        foreach ($default_properties as $default_property) {
+            $output .= $this->getDefaultPropertySQL($default_property);
+            $output .= " AND ";
+        }
+
+        foreach ($custom_properties as $custom_property) {
+            $output .= $this->getCustomPropertySQL($custom_property);
+            $output .= " AND ";
+        }
+
+        foreach ($tags as $tag) {
+            $output .= $this->generateTag($tag);
+            $output .= " AND ";
+        }
+        //TODO category
+
+
+        // Check if the string ends with "AND"
+        if (substr($output, -4) === "AND ") {
+            // Remove "AND" from the end of the string
+            $output = substr($output, 0, -4);
+        }
+
+
+        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id";
+        return [$output, $this->values];
+    }
+
+    private function getCustomPropertySQL($custom_property)
+    {
+        $output = "";
+        switch ($custom_property["type"]) {
+            case 1:
+                $output = $this->generateCustomPropertyString($custom_property);
+                break;
+            case 2:
+                $output = $this->generateCustomPropertyInt($custom_property);
+                break;
+            case 3:
+                $output = $this->generateCustomPropertyDate($custom_property);
+                break;
+            case 4:
+                //$this->generateCustomPropertyBool($parser); TODOs
+                break;
+            case 5:
+                $output = $this->generateCustomPropertyString($custom_property);
+                break;
+        }
+
+        return $output;
+    }
+
+    private function getDefaultPropertySQL($default_property)
+    {
+        $output = "";
+        switch ($default_property["type"]) {
+            case 1:
+                $output = $this->generateDefaultPropertyString($default_property);
+                break;
+            case 2:
+                $output = $this->generateDefaultPropertyInt($default_property);
+                break;
+            case 3:
+                $output = $this->generateDefaultPropertyDate($default_property);
+                break;
+            case 4:
+                //$this->generateCustomPropertyBool($parser); TODOs
+                break;
+            case 5:
+                $output = $this->generateDefaultPropertyString($default_property);
+                break;
+        }
+
+        return $output;
+    }
+
+    private function generateDefaultPropertyString($default_property)
+    {
+        $output = "mp_demand." . $this->default_properties_map[$default_property["name"]] . " LIKE ?";
+        $this->values[] = $default_property["value"];
+        return $output;
+    }
+
+    private function generateDefaultPropertyInt($default_property)
+    {
+        $output = "mp_demand." . $this->default_properties_map[$default_property["name"]];
+        if ($default_property["compare_type"] == "equal") {
+            $output .= " = ?";
+        } else if ($default_property["compare_type"] == "greater") {
+            $output .= " > ?";
+        } else if ($default_property["compare_type"] == "less") {
+            $output .= " < ?";
+        } else if ($default_property["compare_type"] == "greater_equal") {
+            $output .= " >= ?";
+        } else if ($default_property["compare_type"] == "less_equal") {
+            $output .= " <= ?";
+        }
+        $this->values[] = $default_property["value"];
+        return $output;
+    }
+
+    private function generateDefaultPropertyDate($default_property)
+    {
+        $output = "(DATE(FROM_UNIXTIME(mp_demand." . $this->default_properties_map[$default_property["name"]] .  "))";
+        if ($default_property["compare_type"] == "equal") {
+            $output .= " = DATE(?))";
+        } else if ($default_property["compare_type"] == "to") {
+            $output .= " < DATE(?))";
+        } else if ($default_property["compare_type"] == "from") {
+            $output .= " > DATE(?))";
+        } else if ($default_property["compare_type"] == "range") {
+            $output .= " BETWEEN DATE(?) AND DATE(?))";
+        }
+
+        if ($default_property["compare_type"] == "range") {
+            $this->values[] = $default_property["value_from"];
+            $this->values[] = $default_property["value_to"];
+        } else {
+
+            $this->values[] = $default_property["value"];
+        }
+
+        return $output;
+    }
+
+    private function generateCustomPropertyString($custom_property)
+    {
+        $output = "EXISTS (
+            SELECT 1
+            FROM mp_property
+            LEFT JOIN mp_custom_property ON mp_property.custom_property_id = mp_custom_property.id
+            WHERE ( mp_custom_property.name LIKE ?  AND MATCH(mp_property.value) AGAINST(? IN BOOLEAN MODE) ) AND mp_demand.id = mp_property.demand_id)";
+        $this->values[] = $custom_property["name"];
+        $this->values[] = $custom_property["value"];
+        return $output;
+    }
+
+    private function generateCustomPropertyInt($custom_property)
+    {
+        $output = "EXISTS (
+            SELECT 1
+            FROM mp_property
+            LEFT JOIN mp_custom_property ON mp_property.custom_property_id = mp_custom_property.id
+            WHERE mp_demand.id = mp_property.demand_id AND ( mp_custom_property.name LIKE ?  AND mp_property.value";
+        $this->values[] = $custom_property["name"];
+
+        if ($custom_property["compare_type"] == "equal") {
+            $output .= " = ? ))";
+        } else if ($custom_property["compare_type"] == "greater") {
+            $output .= " > ? ))";
+        } else if ($custom_property["compare_type"] == "less") {
+            $output .= " < ? ))";
+        } else if ($custom_property["compare_type"] == "greater_equal") {
+            $output .= " >= ? ))";
+        } else if ($custom_property["compare_type"] == "less_equal") {
+            $output .= " <= ? ))";
+        }
+
+        $this->values[] = $custom_property["value"];
+
+        return $output;
+    }
+
+
+    private function generateCustomPropertyDate($custom_property)
+    {
+        $output = "EXISTS (
+            SELECT 1
+            FROM mp_property
+            LEFT JOIN mp_custom_property ON mp_property.custom_property_id = mp_custom_property.id
+            WHERE mp_demand.id = mp_property.demand_id AND ( mp_custom_property.name LIKE ?  AND STR_TO_DATE(mp_property.value, \"%Y-%m-%d\")";
+
+        $this->values[] = $custom_property["name"];
+
+        if ($custom_property["compare_type"] == "equal") {
+            $output .= " = DATE(?)))";
+        } else if ($custom_property["compare_type"] == "to") {
+            $output .= " < DATE(?)))";
+        } else if ($custom_property["compare_type"] == "from") {
+            $output .= " > DATE(?)))";
+        } else if ($custom_property["compare_type"] == "range") {
+            $output .= " BETWEEN DATE(?) AND DATE(?)))";
+        }
+
+        if ($custom_property["compare_type"] == "range") {
+            $this->values[] = $custom_property["value_from"];
+            $this->values[] = $custom_property["value_to"];
+        } else {
+
+            $this->values[] = $custom_property["value"];
+        }
+
+        return $output;
+    }
+
+    private function generateTag($tag)
+    {
+        $output = "EXISTS (
+            SELECT 1
+            FROM mp_tag_demand
+            LEFT JOIN mp_tag ON mp_tag_demand.tag_id = mp_tag.id
+            WHERE mp_tag.id LIKE ? AND mp_demand.id = mp_tag_demand.demand_id
+        ) ";
+        $this->values[] = $tag["id"];
+        return $output;
+    }
+
+    private function generateCategory($category_id)
+    {
+        $output = "EXISTS (
+            SELECT 1
+            FROM mp_demand_category
+            WHERE mp_demand_category.demand_id = mp_demand.id AND mp_demand_category.category_id = ?
+        ) ";
+        $this->values[] = $category_id;
+        return $output;
+    }
+}
+
 class SqlGenerator
 {
     private $values = [];
@@ -702,7 +941,7 @@ class SqlGenerator
         $output = "(DATE(FROM_UNIXTIME(mp_demand." . $this->default_properties_map[$parser->getNextToken()->getValue()] . "))";
 
         if ($parser->peekNextToken() instanceof ColonToken) {
-            $output .= " = DATE(?)";
+            $output .= " = DATE(?))";
         } else if ($parser->peekNextToken() instanceof EqualToken) {
             $output .= " = DATE(?))";
         } else if ($parser->peekNextToken() instanceof GreaterToken) {

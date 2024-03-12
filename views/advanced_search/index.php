@@ -46,7 +46,7 @@
     </div>
     <div>
         <label for="description">Description</label>
-        <input type="text" name="description[value]" value="<?= $default_property_data["title"]["value"] ?>">
+        <input type="text" name="description[value]" value="<?= $default_property_data["description"]["value"] ?>">
     </div>
     <div>
         <label for="created">created</label>
