@@ -15,7 +15,10 @@ class SearchController extends \Marketplace\Controller
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
 
         $this->marketplace_id = $marketplace_id;
-        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search');
+
+
+
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search/marketplace_advanced_search_plus');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
         $db = DBManager::get();
         $query = Request::get('search-query');

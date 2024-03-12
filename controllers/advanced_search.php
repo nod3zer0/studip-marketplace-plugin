@@ -38,8 +38,6 @@ class AdvancedSearchController extends \Marketplace\Controller
         $advanced_search = new AdvancedSearch();
         $sql = $advanced_search->generateSQL($this->custom_property_data, $this->tag_data, $this->default_property_data, $this->selected_categories, $marketplace_id);
         $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
-        print_r($this->all_demands);
-        print_r($sql);
     }
 
     public function get_default_property_data($RequestData)
