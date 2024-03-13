@@ -11,8 +11,27 @@ class ConfigController extends \Marketplace\Controller
     public function index_action($marketplace_id = '')
     {
         $this->marketplace_id = $marketplace_id;
-        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_config/properties');
-        PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_config/general');
+        $markeplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
+        $this->marketplace_name = $markeplace_obj->name;
+        PageLayout::setTitle($this->marketplace_name);
+        $this->enabled =  $markeplace_obj->enabled;
+        $this->comodity_name = $markeplace_obj->comodity_name_singular;
+        $this->comodity_name_plural = $markeplace_obj->comodity_name_plural;
+    }
+
+    public function save_general_config_action($marketplace_id)
+    {
+        $marketplace = \Marketplace\MarketplaceModel::find($marketplace_id);
+
+
+        $marketplace->enabled = Request::submitted('enabled');
+        $marketplace->comodity_name_singular = Request::get('comodity_name');
+        $marketplace->comodity_name_plural = Request::get('comodity_name_plural');
+        $marketplace_id->name = Request::get('marketplace_name');
+        $marketplace->store();
+        PageLayout::postSuccess('Configuration save successfully.');
+        $this->redirect('config/index/' . $marketplace_id);
     }
 
     public function save_config_action($marketplace_id)
@@ -43,6 +62,13 @@ class ConfigController extends \Marketplace\Controller
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/categories_config.js');
         $this->marketplace_id = $marketplace_id;
+    }
+
+    public function properties_action($marketplace_id = '')
+    {
+        $this->marketplace_id = $marketplace_id;
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_config/properties');
+        PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
     }
 
     public function get_categories_action($marketplace_id)

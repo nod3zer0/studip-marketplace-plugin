@@ -46,6 +46,8 @@ class MarketplaceModel extends SimpleORMap
             $marketplace_to_insert = new MarketplaceModel();
             $marketplace_to_insert->name = $marketplace->name;
             $marketplace_to_insert->enabled = $marketplace->enabled;
+            $marketplace_to_insert->comodity_name_singular = "Demand";
+            $marketplace_to_insert->comodity_name_plural = "Demands";
             $marketplace_to_insert->store();
         }
         foreach ($to_update as $marketplace) {

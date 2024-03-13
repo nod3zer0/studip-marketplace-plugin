@@ -7,12 +7,12 @@ use Marketplace\SqlGenerator;
 class MyDemandsController extends \Marketplace\Controller
 {
 
-    private function buildSidebar(string $marketplace_id)
+    private function buildSidebar(string $marketplace_id, string $comodity_name_singular)
     {
         $sidebar = Sidebar::Get();
         $actionWidget = $sidebar->addWidget(new ActionsWidget());
         $actionWidget->addLink(
-            'Create demand',
+            'Create ' . $comodity_name_singular,
             $this->url_for('overview/create_demand/', []) . $marketplace_id,
             Icon::create('add'),
             ['data-dialog' => true]
@@ -21,6 +21,7 @@ class MyDemandsController extends \Marketplace\Controller
 
     public function index_action($marketplace_id = '')
     {
+        $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_my_demands');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
         if ($marketplace_id) {
@@ -28,7 +29,7 @@ class MyDemandsController extends \Marketplace\Controller
         } else {
             $this->all_demands = \Marketplace\Demand::findBySQL("author_id = ?", [$GLOBALS['user']->id]);
         }
-
-        MyDemandsController::buildSidebar($marketplace_id);
+        $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;
+        MyDemandsController::buildSidebar($marketplace_id, $marketplace_obj->comodity_name_singular);
     }
 }

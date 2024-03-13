@@ -9,12 +9,12 @@ use \Marketplace\CategoryDemand;
 
 class OverviewController extends \Marketplace\Controller
 {
-    private function buildSidebar(string $marketplace_id)
+    private function buildSidebar(string $marketplace_id, string $comodity_name_singular)
     {
         $sidebar = Sidebar::Get();
         $actionWidget = $sidebar->addWidget(new ActionsWidget());
         $actionWidget->addLink(
-            'Create demand',
+            'Create ' . $comodity_name_singular,
             $this->url_for('overview/create_demand/', []) . $marketplace_id,
             Icon::create('add'),
             ['data-dialog' => true]
@@ -23,11 +23,13 @@ class OverviewController extends \Marketplace\Controller
 
     public function index_action(string $marketplace_id)
     {
+        $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview');
-        PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
-        OverviewController::buildSidebar($marketplace_id);
+        PageLayout::setTitle($marketplace_obj->name);
+        OverviewController::buildSidebar($marketplace_id, $marketplace_obj->comodity_name_singular);
 
         $this->marketplace_id = $marketplace_id;
+        $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;
         $this->all_demands = \Marketplace\Demand::findBySQL("marketplace_id = ?", [$marketplace_id]);
     }
 

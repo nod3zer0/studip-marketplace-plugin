@@ -9,6 +9,8 @@ class InitMarketplace extends Migration
             latin1_bin NOT NULL,
             name TEXT NOT NULL,
             enabled BOOL NOT NULL DEFAULT 1,
+            comodity_name_singular TEXT NOT NULL,
+            comodity_name_plural TEXT NOT NULL,
             PRIMARY KEY (id)
             )";
         $db->exec($query);

@@ -27,7 +27,7 @@ use Studip\Button; ?>
 
 <table class="default sortable-table">
     <caption>
-        Demands
+        <?= $marketplace_comodity_name_plural ?>
     </caption>
     <colgroup>
         <col>

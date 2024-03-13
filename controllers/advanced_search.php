@@ -21,6 +21,9 @@ class AdvancedSearchController extends \Marketplace\Controller
 
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search/marketplace_advanced_search');
         PageLayout::setTitle(MarketplaceModel::find($marketplace_id)->name);
+
+        $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
+        $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;
         $this->marketplace_id = $marketplace_id;
         $categories = Category::get_categories($marketplace_id);
         $this->categories = json_encode($categories);

@@ -9,9 +9,12 @@ class MyBookmarksController extends \Marketplace\Controller
     public function index_action($marketplace_id = '')
     {
         if ($marketplace_id) {
+            $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
+            $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;
             Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_my_bookmarks');
             $this->all_demands = \Marketplace\Bookmark::getByMarketplace($marketplace_id, $GLOBALS['user']->id);
         } else {
+            $this->marketplace_comodity_name_plural = 'Commodities';
             Navigation::activateItem('/marketplace_root/marketplace_my_bookmarks');
             $this->all_demands = \Marketplace\Bookmark::getAllBookmarks($GLOBALS['user']->id);
         }
