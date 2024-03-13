@@ -15,7 +15,7 @@ $(document).ready(function() {
                 {{ result }}
             </li>
         </ul>
-        <input type="button" value="Notify on new demands" @click="SetNotification()">
+        <!--  <input type="button" value="Notify on new demands" @click="SetNotification()"> -->
         </span>
         `,
             props: ['attributes_url', 'marketplace_id', 'value'],
