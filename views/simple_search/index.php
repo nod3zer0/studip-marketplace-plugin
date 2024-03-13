@@ -1,3 +1,30 @@
+<?
+
+use Studip\Button; ?>
+
+
+<input type="hidden" id="attributes_url" value="<?= $controller->link_for('search/get_attributes', $marketplace_id) ?>">
+
+<form class="default collapsable" action="<?= $controller->link_for('simple_search/index', $marketplace_id) ?>" method="get">
+    <?= CSRFProtection::tokenTag() ?>
+    <fieldset data-open="bd_basicsettings">
+        <div>
+            <label class="required">
+                search
+            </label>
+            <div id="search_input">
+                <input type="text" name="search-query" value="">
+            </div>
+            <?= Button::create('Search') ?>
+        </div>
+    </fieldset>
+
+
+    <footer data-dialog-button>
+
+    </footer>
+</form>
+
 <table class="default sortable-table">
     <caption>
         Demands
@@ -13,6 +40,9 @@
             <th data-sort="text">Title</th>
             <th data-sort="text">Author</th>
             <th data-sort="digit">Created on</th>
+            <? if (!$marketplace_id) : ?>
+                <th data-sort="text">Marketplace</th>
+            <? endif; ?>
             <th data-sort="text">Edit</th>
         </tr>
     </thead>
@@ -25,6 +55,9 @@
                     </td>
                     <td><?= htmlReady($demand_obj->author->getFullName()) ?></td>
                     <td> <?= strftime('%x', $demand_obj->mkdate) ?></td>
+                    <? if (!$marketplace_id) : ?>
+                        <td><?= htmlReady($demand_obj->marketplace_id->name) ?></td>
+                    <? endif; ?>
                     <td>
                         <? if ($demand_obj->hasPermission()) : ?>
                             <? $actions = ActionMenu::get(); ?>
@@ -47,19 +80,4 @@
 
         <? endif; ?>
     </tbody>
-    <!-- <tfoot>
-        <tr>
-            <td colspan="7" style="text-align: right">
-                <?= $GLOBALS['template_factory']->render(
-                    'shared/pagechooser',
-                    [
-                        'perPage'      => get_config('ENTRIES_PER_PAGE'),
-                        'num_postings' => 100,
-                        'page'         => 1,
-                        'pagelink'     => 'dispatch.php/score/%u'
-                    ]
-                ) ?>
-            </td>
-        </tr>
-    </tfoot> -->
 </table>

@@ -335,6 +335,28 @@ class Parser
     }
 }
 
+class SimpleSearch
+{
+
+    public function generateSQL($query, $marketplace_id)
+    {
+        $output = "LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
+        $values = [];
+        if ($marketplace_id != "") {
+            $output .= "mp_marketplace.id = ? AND ";
+            $values[] = $marketplace_id;
+        }
+
+        $output .= "MATCH(mp_demand.title) AGAINST(? IN BOOLEAN MODE) ";
+        $values[] = $query;
+        $output .= " OR MATCH(mp_demand.description) AGAINST(? IN BOOLEAN MODE) ";
+        $values[] = $query;
+
+        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id";
+        return [$output, $values];
+    }
+}
+
 class AdvancedSearch
 {
     private $values = [];

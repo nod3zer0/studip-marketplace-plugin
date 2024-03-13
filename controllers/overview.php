@@ -40,6 +40,7 @@ class OverviewController extends \Marketplace\Controller
         $this->tags = \Marketplace\TagDemand::findBySQL("demand_id = ?", [$demand_id]);
         $db = DBManager::get();
         $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id WHERE mp_custom_property.marketplace_id = ? ORDER BY mp_custom_property.order_index", [$demand_id, $this->demand_obj->marketplace_id]);
+        $this->selected_path = CategoryDemand::get_saved_path($demand_id);
     }
 
     public function create_demand_action(string $marketplace_id, string $demand_id = '')
@@ -108,7 +109,6 @@ saving the demand');
         TagDemand::updateTags($tags, $demand_id);
 
         $categories =  json_decode(Request::get('selected_categories'), true);
-        print_r($categories);
         CategoryDemand::set_category_demand($categories, $demand_id);
 
         $request = Request::getInstance();

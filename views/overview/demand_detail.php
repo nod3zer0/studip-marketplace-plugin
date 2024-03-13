@@ -95,6 +95,12 @@ use Studip\Button; ?>
                 <dd><?= $property['value'] ?></dd>
             <? endforeach; ?>
 
+            <dt>
+                Category
+            </dt>
+            <dd>
+                <?= $selected_path ?>
+            </dd>
         </dl>
 
         <div id="bookmark">
