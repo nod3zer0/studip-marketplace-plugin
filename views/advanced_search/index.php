@@ -49,11 +49,11 @@ use Studip\Button; ?>
             <tbody>
                 <tr>
                     <td> Title</td>
-                    <td> <input type="text" name="title[value]" value="<?= $default_property_data["title"]["value"] ?>"> </td>
+                    <td> <input type="text" name="title[value]" value="<?= htmlReady($default_property_data["title"]["value"]) ?>"> </td>
                 </tr>
                 <tr>
                     <td> Description</td>
-                    <td> <input type="text" name="description[value]" value="<?= $default_property_data["description"]["value"] ?>"> </td>
+                    <td> <input type="text" name="description[value]" value="<?= htmlReady($default_property_data["description"]["value"]) ?>"> </td>
                 </tr>
                 <tr>
                     <td>created</td>
@@ -70,13 +70,13 @@ use Studip\Button; ?>
                         </select>
 
                         <span class="date_span">
-                            <input type="date" name="created[value]" value="<?= $default_property_data["created"]["value"] ?>">
+                            <input type="date" name="created[value]" value="<?= htmlReady($default_property_data["created"]["value"]) ?>">
                         </span>
                         <span class="date_span_range hidden">
                             from:
-                            <input type="date" name="created[range_value_from]" min="0" max="100" value="<?= $default_property_data["created"]["value_from"] ?>">
+                            <input type="date" name="created[range_value_from]" min="0" max="100" value="<?= htmlReady($default_property_data["created"]["value_from"]) ?>">
                             to:
-                            <input type="date" name="created[range_value_to]" min="0" max="100" value="<?= $default_property_data["created"]["value_to"] ?>">
+                            <input type="date" name="created[range_value_to]" min="0" max="100" value="<?= htmlReady($default_property_data["created"]["value_to"]) ?>">
                         </span>
                     </td>
                     <?php foreach ($properties as $property) : ?>
@@ -86,7 +86,7 @@ use Studip\Button; ?>
                     <td>
                         <?php if ($property['type'] === '2') : //number
                         ?>
-                            <select name="<?php echo str_replace(" ", "_", $property['name']) . "[compare_type]" ?>" value="<?= $custom_property_data[$property['name']]["compare_type"] ?>">
+                            <select name="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "[compare_type]" ?>" value="<?= htmlReady($custom_property_data[$property['name']]["compare_type"]) ?>">
                                 <option value="greater" <? if ($custom_property_data[$property['name']]["compare_type"] == "greater") : echo "selected";
                                                         endif; ?>>&gt;</option>
                                 <option value="less" <? if ($custom_property_data[$property['name']]["compare_type"] == "less") : echo "selected";
@@ -100,10 +100,10 @@ use Studip\Button; ?>
                                 <option value="greater_equal" <? if ($custom_property_data[$property['name']]["compare_type"] == "greater_equal") : echo "selected";
                                                                 endif; ?>>&gt;=</option>
                             </select>
-                            <input type="number" name="<?php echo str_replace(" ", "_", $property['name']) . "[value]"; ?>" value="<?= $custom_property_data[$property['name']]["value"] ?>">
+                            <input type="number" name="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "[value]"; ?>" value="<?= htmlReady($custom_property_data[$property['name']]["value"]) ?>">
                         <?php elseif ($property['type'] === '3') : //date
                         ?>
-                            <select class="date_select" name="<?php echo str_replace(" ", "_", $property['name']) . "[compare_type]"; ?>">
+                            <select class="date_select" name="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "[compare_type]"; ?>">
                                 <option value="to" <? if ($custom_property_data[$property['name']]["compare_type"] == "to") : echo "selected";
                                                     endif; ?>>to</option>
                                 <option value="from" <? if ($custom_property_data[$property['name']]["compare_type"] == "from") : echo "selected";
@@ -115,16 +115,16 @@ use Studip\Button; ?>
                             </select>
 
                             <span class="date_span">
-                                <input type="date" name="<?php echo str_replace(" ", "_", $property['name']) . "[value]"; ?>" value="<?= $custom_property_data[$property['name']]["value"] ?>">
+                                <input type="date" name="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "[value]"; ?>" value="<?= $custom_property_data[$property['name']]["value"] ?>">
                             </span>
                             <span class="date_span_range hidden">
                                 from:
-                                <input type="date" id="<?php echo str_replace(" ", "_", $property['name']) . "_rangeValue"; ?>" name="<?php echo str_replace(" ", "_", $property['name']) . "[range_value_from]"; ?>" min="0" max="100" value="<?= $custom_property_data[$property['name']]["value_from"] ?>">
+                                <input type="date" id="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "_rangeValue"; ?>" name="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "[range_value_from]"; ?>" min="0" max="100" value="<?= $custom_property_data[$property['name']]["value_from"] ?>">
                                 to:
-                                <input type="date" id="<?php echo str_replace(" ", "_", $property['name']) . "_rangeValue"; ?>" name="<?php echo str_replace(" ", "_", $property['name']) . "[range_value_to]"; ?>" min="0" max="100" value="<?= $custom_property_data[$property['name']]["value_to"] ?>">
+                                <input type="date" id="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "_rangeValue"; ?>" name="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "[range_value_to]"; ?>" min="0" max="100" value="<?= $custom_property_data[$property['name']]["value_to"] ?>">
                             </span>
                         <?php else : ?>
-                            <input type="text" name="<?php echo str_replace(" ", "_", $property['name']) . "[value]"; ?>" value="<?= $custom_property_data[$property['name']]["value"] ?>">
+                            <input type="text" name="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "[value]"; ?>" value="<?= $custom_property_data[$property['name']]["value"] ?>">
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -133,11 +133,11 @@ use Studip\Button; ?>
         </table>
         <h2> Tags </h2>
         <div id="search_tag_select">
-            <search_tag_select :selected_tags="'<?= $selected_tags ?>'" :tags_input="'<?= $tags ?>'"></search_tag_select>
+            <search_tag_select :selected_tags="'<?= htmlReady($selected_tags) ?>'" :tags_input="'<?= htmlReady($tags) ?>'"></search_tag_select>
         </div>
         <h2> Categories </h2>
         <div id="search_category_select">
-            <search_category_select :selected_path="'<?= $selected_categories ?>'" :categories="<?= str_replace("\"", "'", $categories)  ?>"></search_category_select>
+            <search_category_select :selected_path="'<?= htmlReady($selected_categories) ?>'" :categories="<?= str_replace("\"", "'", htmlReady($categories))  ?>"></search_category_select>
         </div>
         <?= Button::create('Search') ?>
     </fieldset>

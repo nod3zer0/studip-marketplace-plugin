@@ -72,7 +72,7 @@ use Studip\Button; ?>
                 <?= $avatar->getImageTag(Avatar::MEDIUM) ?>
             </dd>
             <dd>
-                <?= htmlReady($demand_obj->author->getFullName()) ?>
+                <?= htmlReady(htmlReady($demand_obj->author->getFullName())) ?>
             </dd>
             <dt>
                 Description
@@ -90,16 +90,16 @@ use Studip\Button; ?>
 
             <? foreach ($properties as $property) : ?>
                 <dt>
-                    <?= $property['name'] ?>
+                    <?= htmlReady($property['name']) ?>
                 </dt>
-                <dd><?= $property['value'] ?></dd>
+                <dd><?= htmlReady($property['value']) ?></dd>
             <? endforeach; ?>
 
             <dt>
                 Category
             </dt>
             <dd>
-                <?= $selected_path ?>
+                <?= htmlReady($selected_path) ?>
             </dd>
         </dl>
 

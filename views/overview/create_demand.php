@@ -110,7 +110,7 @@ use Studip\Button; ?>
             <label class="required">
                 Title
             </label>
-            <input name="title" required value="<?= $demand_obj->title ?>">
+            <input name="title" required value="<?= htmlReady($demand_obj->title) ?>">
         </div>
 
         <div>
@@ -150,23 +150,23 @@ use Studip\Button; ?>
                 }
                 switch ($property['type']) {
                     case 1:
-                        $property_html = ('<input type="text" ' . $required . ' name="custom_properties[' . $property['id'] . ']" value="' . $property['value'] . '">');
+                        $property_html = ('<input type="text" ' . $required . ' name="custom_properties[' . $property['id'] . ']" value="' . htmlReady($property['value']) . '">');
                         break;
                     case 2:
-                        $property_html = ('<input type="number" '  . $required . ' name="custom_properties[' . $property['id'] . ']" value="' . $property['value'] . '">');
+                        $property_html = ('<input type="number" '  . $required . ' name="custom_properties[' . $property['id'] . ']" value="' . htmlReady($property['value']) . '">');
                         break;
                     case 3:
-                        $property_html = ('<input type="date" '  . $required .  ' name="custom_properties[' . $property['id'] . ']" value="' . $property['value'] . '">');
+                        $property_html = ('<input type="date" '  . $required .  ' name="custom_properties[' . $property['id'] . ']" value="' . htmlReady($property['value']) . '">');
                         break;
                     case 4:
                         //TODO boolean
                     case 5:
-                        $property_html = ('<textarea class="add_toolbar wysiwyg"'  . $required .  ' name="custom_properties[' . $property['id'] . ']">' . $property['value'] . '</textarea>');
+                        $property_html = ('<textarea class="add_toolbar wysiwyg"'  . $required .  ' name="custom_properties[' . $property['id'] . ']">' . htmlReady($property['value']) . '</textarea>');
                         break;
                 }
                 echo $property_html;
                 ?>
-                <!-- <? if ($property["required"])  echo "required"; ?> name="custom_properties[<?= $property['id'] ?>]" value="<?= $property['value'] ?>"> -->
+                <!-- <? if ($property["required"])  echo "required"; ?> name="custom_properties[<?= $property['id'] ?>]" value="<?= htmlReady($property['value']) ?>"> -->
             </div>
         <? endforeach; ?>
 

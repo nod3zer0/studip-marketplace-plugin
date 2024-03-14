@@ -21,10 +21,10 @@
             <? foreach ($all_demands as $demand_obj) : ?>
                 <tr>
                     <td>
-                        <a data-dialog href="<?= $controller->link_for('overview/demand_detail', $demand_obj->id) ?>"><?= $demand_obj->title ?></a>
+                        <a data-dialog href="<?= $controller->link_for('overview/demand_detail', $demand_obj->id) ?>"><?= htmlReady($demand_obj->title) ?></a>
                     </td>
                     <td><?= htmlReady($demand_obj->author->getFullName()) ?></td>
-                    <td> <?= strftime('%x', $demand_obj->mkdate) ?></td>
+                    <td> <?= htmlReady(strftime('%x', $demand_obj->mkdate)) ?></td>
                     <td>
                         <? if ($demand_obj->hasPermission()) : ?>
                             <? $actions = ActionMenu::get(); ?>

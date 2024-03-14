@@ -6,7 +6,7 @@
                     Name for comodity (singular)
                 </td>
                 <td>
-                    <input type="text" name="comodity_name" value="<?= $comodity_name ?>">
+                    <input type="text" name="comodity_name" value="<?= htmlReady($comodity_name) ?>">
                 </td>
             </tr>
             <tr>
@@ -14,7 +14,7 @@
                     Name for comodity (plural)
                 </td>
                 <td>
-                    <input type="text" name="comodity_name_plural" value="<?= $comodity_name_plural ?>">
+                    <input type="text" name="comodity_name_plural" value="<?= htmlReady($comodity_name_plural) ?>">
                 </td>
             </tr>
             </tr>
@@ -23,7 +23,7 @@
                     Name of marketplace
                 </td>
                 <td>
-                    <input type="text" name="marketplace_name" value="<?= $marketplace_name ?>">
+                    <input type="text" name="marketplace_name" value="<?= htmlReady($marketplace_name) ?>">
                 </td>
             </tr>
             <tr>
