@@ -101,6 +101,16 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
                 PluginEngine::getURL($this, [], 'global_config')
             );
             $root_nav->addSubNavigation('global_config', $global_config);
+            $global_config_general = new Navigation(
+                'General',
+                PluginEngine::getURL($this, [], 'global_config')
+            );
+            $global_config->addSubNavigation('general', $global_config_general);
+            $global_config_export = new Navigation(
+                'Export/Import',
+                PluginEngine::getURL($this, [], 'global_config/export')
+            );
+            $global_config->addSubNavigation('export', $global_config_export);
         }
 
         $marketplaces = MarketplaceModel::findBySQL("1");
