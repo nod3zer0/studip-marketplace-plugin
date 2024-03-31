@@ -8,11 +8,11 @@ use Studip\Button;
 <?= LinkButton::create('Export users', $controller->link_for('global_config/export_users'), []); ?>
 
 
-<form method="post" action="<?= $controller->link_for('global_config/import_data') ?>" enctype="multipart/form-data">
+<form class="default" method="post" action="<?= $controller->link_for('global_config/import_data') ?>" enctype="multipart/form-data">
 
-    <input name="backup" type="file">
+
     <label class="file-upload">
-
+        <input name="backup" type="file">
 
         Restore user generated data (local data will be lost).
     </label>

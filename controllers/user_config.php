@@ -15,6 +15,36 @@ class UserConfigController extends \Marketplace\Controller
         Navigation::activateItem('marketplace_root/user_config');
         PageLayout::setTitle('Configuration');
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/notifications_tags.js');
+
+        //load all tags
+        $tags =  Tag::findBySQL("1", []);
+
+        $tags = array_map(function ($tag) {
+            return [
+                'name' => htmlReady($tag->name), // escape html
+                'id' => $tag->id
+            ];
+        }, $tags);
+
+
+        $tags =  json_encode(["tags" => $tags]);
+
+        //replace double quotes with single quotes, so it can be rendered in html
+        $this->tags = str_replace("\"", "'", $tags);
+
+
+        //load subscribed tags
+        $picked_tags = TagNotification::getSubscribedTags($GLOBALS['user']->id);
+        $picked_tags = array_map(function ($tag) {
+            return [
+                'name' => htmlReady($tag->mp_tag->name),
+                'id' => $tag->mp_tag->id
+            ];
+        }, $picked_tags);
+
+        $picked_tags = json_encode(["tags" => $picked_tags]);
+
+        $this->picked_tags = str_replace("\"", "'", $picked_tags);
     }
 
     public function get_tags_action()
@@ -42,6 +72,15 @@ class UserConfigController extends \Marketplace\Controller
             ];
         }, $tags);
         $this->render_text('' . json_encode(["tags" => $tags]));
+    }
+
+    public function save_user_config_action()
+    {
+        //save tag configuration
+        $tags = json_decode(Request::get("picked_tags"), true);
+        TagNotification::setSubscribedTags($GLOBALS['user']->id, $tags["tags"]);
+        PageLayout::postSuccess('Configuration saved');
+        $this->redirect('user_config/index');
     }
 
     public function set_tags_action()

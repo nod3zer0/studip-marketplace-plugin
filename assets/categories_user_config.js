@@ -1,40 +1,11 @@
-<head>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-    <style>
-        .tag {
-            display: inline-block;
-            padding: 5px 10px;
-            margin: 5px;
-            background-color: #eee;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        
-        .tag.selected {
-            background-color: #007bff;
-            color: white;
-        }
-    </style>
-</head>
+$(document).ready(function() {
+    STUDIP.Vue.load().then(({
+        Vue,
+        createApp,
+        eventBus,
+        store
+    }) => {
 
-
-<body>
-
-    <style>
-        .category-box {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin: 10px;
-        }
-    </style>
-    <div id="app">
-        <category :categories="categories" :selected_categories="selected_categories" :parent="null"></category>
-        {{JSON.stringify( selected_categories) }}
-
-    </div>
-
-
-    <script>
         Vue.component('category', {
             props: ['categories', 'selected_categories', 'parent'],
             template: `
@@ -99,7 +70,7 @@
         });
 
         const app = new Vue({
-            el: '#app',
+            el: '#categories_user_config',
             data: {
                 categories: [{
                     name: 'Category 1',
@@ -137,5 +108,6 @@
                 }
             }
         });
-    </script>
-</body>
+
+    });
+});

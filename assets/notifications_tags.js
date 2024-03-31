@@ -13,7 +13,7 @@ $(document).ready(function() {
         Vue.component('tag_settings', {
             template: `<div>
         <span>
-            <input type="text" name="search-query" required value="" ref="search_input" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp">
+            <input type="text" name="search-query" @focus="OnChange" value="" ref="search_input" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp">
             <ul v-show="isOpen" class="mp_autocomplete-results">
                 <li :class="{ 'is-active': i === arrowCounter }" @click="setResult(result)" v-for="(result, i) in results" :key="i" class="mp_autocomplete-result">
                     {{ result.name }}
@@ -28,8 +28,11 @@ $(document).ready(function() {
                         </div>
                         </span>
                         <button @click="set_picked_tags">Save</button>
+                        <input type="hidden" name="picked_tags" :value="JSON.stringify({
+                            tags: this.picked_tags
+                        })">
                         </div>`,
-            props: ['get_tags_url', 'get_picked_tags_url', 'set_picked_tags_url'],
+            props: ['all_tags', 'picked_tags', 'set_picked_tags_url'],
             data: () => ({
                 results: [],
                 picked_tags: [],
@@ -45,24 +48,10 @@ $(document).ready(function() {
             },
             methods: {
                 get_tags() {
-                    fetch(this.get_tags_url)
-                        .then(response => response.json())
-                        .then(data => {
-                            this.tags = data.tags;
-                        })
-                        .catch(error => {
-                            console.error('Error fetching tags:', error);
-                        });
+                    this.tags = this.all_tags.tags;
                 },
                 get_picked_tags() {
-                    fetch(this.get_picked_tags_url)
-                        .then(response => response.json())
-                        .then(data => {
-                            this.picked_tags = data.tags;
-                        })
-                        .catch(error => {
-                            console.error('Error fetching picked tags:', error);
-                        });
+                    this.picked_tags = this.picked_tags.tags;
                 },
                 set_picked_tags() {
                     fetch(this.set_picked_tags_url, {
