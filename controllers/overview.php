@@ -38,6 +38,7 @@ class OverviewController extends \Marketplace\Controller
         $this->page = $page;
         $this->marketplace_id = $marketplace_id;
         $this->number_of_demands = \Marketplace\Demand::countBymarketplace_id($marketplace_id);
+        $this->pagination_url = 'overview/index/';
 
         $this->all_demands = \Marketplace\Demand::findBySQL("marketplace_id = ? ORDER BY chdate DESC LIMIT ?,?", [$marketplace_id, ($page - 1) * $entries_per_page, $entries_per_page]);
     }

@@ -370,7 +370,7 @@ class AdvancedSearch
         "description" => "description",
     ];
 
-    public function generateSQL($custom_properties, $tags, $default_properties, $selected_category_path, $categories, $marketplace_id = "")
+    public function generateSQL($custom_properties, $tags, $default_properties, $selected_category_path, $categories, $marketplace_id = "", $limit)
     {
         $this->categories = $categories;
         $output = "LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
@@ -405,8 +405,8 @@ class AdvancedSearch
             $output = substr($output, 0, -4);
         }
 
-
-        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id";
+        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id  ORDER BY chdate DESC LIMIT ?";
+        $this->values[] = intval($limit);
         return [$output, $this->values];
     }
 
