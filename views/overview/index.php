@@ -47,19 +47,19 @@
 
         <? endif; ?>
     </tbody>
-    <!-- <tfoot>
+    <tfoot>
         <tr>
             <td colspan="7" style="text-align: right">
                 <?= $GLOBALS['template_factory']->render(
                     'shared/pagechooser',
                     [
                         'perPage'      => get_config('ENTRIES_PER_PAGE'),
-                        'num_postings' => 100,
-                        'page'         => 1,
-                        'pagelink'     => 'dispatch.php/score/%u'
+                        'num_postings' => $number_of_demands,
+                        'page'         =>  $page,
+                        'pagelink'     =>  $controller->link_for('overview/index/', []) . $marketplace_id . '/?page=%u'
                     ]
                 ) ?>
             </td>
         </tr>
-    </tfoot> -->
+    </tfoot>
 </table>

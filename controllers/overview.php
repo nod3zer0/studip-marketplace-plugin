@@ -23,6 +23,7 @@ class OverviewController extends \Marketplace\Controller
 
     public function index_action(string $marketplace_id)
     {
+
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview');
         PageLayout::setTitle($marketplace_obj->name);
@@ -30,7 +31,15 @@ class OverviewController extends \Marketplace\Controller
 
         $this->marketplace_id = $marketplace_id;
         $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;
-        $this->all_demands = \Marketplace\Demand::findBySQL("marketplace_id = ?", [$marketplace_id]);
+
+        //pagination
+        $entries_per_page = get_config('ENTRIES_PER_PAGE');
+        $page = Request::get('page') ?: 1;
+        $this->page = $page;
+        $this->marketplace_id = $marketplace_id;
+        $this->number_of_demands = \Marketplace\Demand::countBymarketplace_id($marketplace_id);
+
+        $this->all_demands = \Marketplace\Demand::findBySQL("marketplace_id = ? ORDER BY chdate DESC LIMIT ?,?", [$marketplace_id, ($page - 1) * $entries_per_page, $entries_per_page]);
     }
 
     public function demand_detail_action(string $demand_id = '')
