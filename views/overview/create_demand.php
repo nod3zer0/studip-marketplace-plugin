@@ -103,7 +103,7 @@ use Studip\Button; ?>
     });
 </script>
 
-<form class="default collapsable" action="<?= $controller->link_for('overview/store_demand', $marketplace_id, $demand_obj->id) ?>" method="post">
+<form enctype="multipart/form-data" class="default collapsable" action="<?= $controller->link_for('overview/store_demand', $marketplace_id, $demand_obj->id) ?>" method="post">
     <?= CSRFProtection::tokenTag() ?>
     <fieldset data-open="bd_basicsettings">
         <div>
@@ -136,6 +136,13 @@ use Studip\Button; ?>
 
         </div>
         <input type="hidden" name="tags_previous" value="<?= $tagsString ?>">
+        <!-- <div>
+            <label class="file-upload">
+                <input name="images" type="file" multiple>
+
+                Upload Images
+            </label>
+        </div> -->
 
         <? foreach ($properties as $property) : ?>
             <div>
@@ -161,7 +168,7 @@ use Studip\Button; ?>
                     case 4:
                         //TODO boolean
                     case 5:
-                        $property_html = ('<textarea class="add_toolbar wysiwyg"'  . $required .  ' name="custom_properties[' . $property['id'] . ']">' . htmlReady($property['value']) . '</textarea>');
+                        $property_html = ('<textarea class="add_toolbar wysiwyg"'  . $required .  ' name="custom_properties[' . $property['id'] . ']">' . wysiwygReady($property['value']) . '</textarea>');
                         break;
                 }
                 echo $property_html;

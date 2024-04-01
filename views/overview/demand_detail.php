@@ -92,7 +92,11 @@ use Studip\Button; ?>
                 <dt>
                     <?= htmlReady($property['name']) ?>
                 </dt>
-                <dd><?= htmlReady($property['value']) ?></dd>
+                <? if ($property['type'] == 5) : ?>
+                    <dd><?= \Studip\Markup::markupToHtml($property['value']) ?></dd>
+                <? else : ?>
+                    <dd><?= htmlReady($property['value']) ?></dd>
+                <? endif; ?>
             <? endforeach; ?>
 
             <dt>
