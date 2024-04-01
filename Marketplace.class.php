@@ -12,6 +12,7 @@ require_once __DIR__ . '/models/search_notification.php';
 require_once __DIR__ . '/models/search_demand.php';
 require_once __DIR__ . '/models/category.php';
 require_once __DIR__ . '/models/category_demand.php';
+require_once __DIR__ . '/models/category_notification.php';
 require_once __DIR__ . '/classes/Controller.php';
 require_once __DIR__ . '/classes/Plugin.php';
 require_once __DIR__ . '/classes/Search.php';

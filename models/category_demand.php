@@ -5,6 +5,7 @@ namespace Marketplace;
 use SimpleORMap;
 use \Marketplace\Category;
 use \Marketplace\Demand;
+use \Marketplace\CategoryNotification;
 
 class CategoryDemand extends SimpleORMap
 {
@@ -62,6 +63,17 @@ class CategoryDemand extends SimpleORMap
 
         foreach ($to_insert as $category) {
             $category->store();
+
+            $users = CategoryNotification::getUserIDsByCategory($category->category_id);
+
+            \PersonalNotifications::add(
+                $users, //id of user A or array of 'multiple user_ids
+                \PluginEngine::getLink('marketplace/overview/demand_detail/' . $demand_id), //when user A clicks this URL he/she should jump directly to the changed wiki-page
+                "New demand with category: '" . $category->mp_category->name  . "'", //a small text that describes the notification
+                "",
+                \Icon::create("wiki", "clickable"),
+                true
+            );
         }
 
         foreach ($to_delete as $category) {

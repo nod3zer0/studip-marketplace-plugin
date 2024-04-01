@@ -3,6 +3,7 @@
 namespace Marketplace;
 
 use SimpleORMap;
+use \Marketplace\MarketplaceModel;
 
 class Category extends SimpleORMap
 {
@@ -31,6 +32,19 @@ class Category extends SimpleORMap
         $categories = Category::findBySQL("marketplace_id = ?", [$marketplace_id]);
 
         return self::convert_categories($categories);
+    }
+
+    public static function get_categories_with_marketplaces()
+    {
+        $marketplaces = MarketplaceModel::findBySQL("1");
+        $marketplace_category = [];
+        foreach ($marketplaces as $marketplace) {
+            $categories = Category::findBySQL("marketplace_id = ?", [$marketplace->id]);
+            $marketplace_category[$marketplace->id]["categories"]  = self::convert_categories($categories);
+            $marketplace_category[$marketplace->id]["marketplace_id"] = $marketplace->id;
+            $marketplace_category[$marketplace->id]["marketplace_name"] = $marketplace->name;
+        }
+        return $marketplace_category;
     }
 
     function convert_categories($categories, $parentId = null)

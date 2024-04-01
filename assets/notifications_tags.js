@@ -191,6 +191,7 @@ $(document).ready(function() {
             }
         });
 
+
         new Vue({
             el: '#notification_settings',
         });

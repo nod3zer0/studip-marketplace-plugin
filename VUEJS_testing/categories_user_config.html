@@ -28,7 +28,7 @@
         }
     </style>
     <div id="app">
-        <category :categories="categories" :selected_categories="selected_categories" :parent="null"></category>
+        <category_picker :categories="categories" :selected_categories="null" :php_export_variable="selected_categories[adasd]"></category_picker>
         {{JSON.stringify( selected_categories) }}
 
     </div>
@@ -98,6 +98,27 @@
             }
         });
 
+        Vue.component('category_picker', {
+            props: ['categories', 'selected_categories', 'php_export_variable'],
+            template: `
+            <div>
+                <category :categories="categories" :selected_categories="selected_categories_passed" :parent="null"></category>
+                <input type="text" :name="php_export_variable" :value="JSON.stringify(selected_categories_passed)">
+                </div>
+        `,
+            data() {
+                return {
+                    selected_categories_passed: []
+                }
+            },
+            mounted() {
+                // pass selected categories without woriing about null from parent
+                if (this.selected_categories) {
+                    this.selected_categories_passed = this.selected_categories;
+                }
+            }
+        });
+
         const app = new Vue({
             el: '#app',
             data: {
@@ -127,14 +148,6 @@
                     subcategories: []
                 }],
                 selected_categories: []
-            },
-            methods: {
-                addCategory() {
-                    this.categories.push({
-                        name: 'New Category',
-                        subcategories: []
-                    });
-                }
             }
         });
     </script>

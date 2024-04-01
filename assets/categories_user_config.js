@@ -9,10 +9,10 @@ $(document).ready(function() {
         Vue.component('category', {
             props: ['categories', 'selected_categories', 'parent'],
             template: `
-            <div class="category-box">
+            <div class="mp_category-box">
                 <template v-for="(category, index) in categories">
-                    <div class="tags">
-                        <div class="tag" @click="categorySwitch(index)" :class="{ selected: selected_categories.includes(category) }">
+                    <div class="mp_tags">
+                        <div class="mp_tag" @click="categorySwitch(index)" :class="{ selected: selected_categories.includes(category) }">
                             {{category.name }}
                         </div>
                         \
@@ -21,6 +21,9 @@ $(document).ready(function() {
                 </template>
             </div>
         `,
+            mounted() {
+                console.log(this.categories);
+            },
             methods: {
                 categorySwitch(index) {
                     if (this.selected_categories.includes(this.categories[index])) {
@@ -68,8 +71,44 @@ $(document).ready(function() {
                 }
             }
         });
+        /**
+         * Component for category picker
+         * categories - array of all categories for given marketplace
+         * selected_categories - array of selected categories
+         * php_export_variable - name of input field for export selected categories
+         */
+        Vue.component('category_picker', {
+            props: ['categories', 'selected_categories', 'php_export_variable'],
+            template: `
+            <div>
+                <category :categories="categories" :selected_categories="selected_categories_passed" :parent="null"></category>
+                <input type="hidden" v-bind:name="php_export_variable" :value="JSON.stringify( this.selected_categories_passed.map(category => category.id))">
+                </div>
+        `,
+            data() {
+                return {
+                    selected_categories_passed: []
+                }
+            },
+            mounted() {
+                //add categories found by id array from selected_categories from categories into selected_categories_passed
+                this.LoadCategoriesRecursively(this.categories, this.selected_categories);
+            },
+            methods: {
+                LoadCategoriesRecursively(categories, category_ids) {
+                    for (let category of categories) {
+                        if (category_ids.includes(category.id)) {
+                            this.selected_categories_passed.push(category);
+                        }
+                        if (category.subcategories) {
+                            this.LoadCategoriesRecursively(category.subcategories, category_ids);
+                        }
+                    }
+                }
+            }
+        });
 
-        const app = new Vue({
+        new Vue({
             el: '#categories_user_config',
             data: {
                 categories: [{
@@ -98,14 +137,6 @@ $(document).ready(function() {
                     subcategories: []
                 }],
                 selected_categories: []
-            },
-            methods: {
-                addCategory() {
-                    this.categories.push({
-                        name: 'New Category',
-                        subcategories: []
-                    });
-                }
             }
         });
 

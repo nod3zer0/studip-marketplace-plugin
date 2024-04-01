@@ -6,6 +6,8 @@ use Marketplace\SqlGenerator;
 use \Marketplace\TagNotification;
 use \Marketplace\Tag;
 use \Marketplace\SearchNotification;
+use \Marketplace\Category;
+use \Marketplace\CategoryNotification;
 
 class UserConfigController extends \Marketplace\Controller
 {
@@ -15,6 +17,7 @@ class UserConfigController extends \Marketplace\Controller
         Navigation::activateItem('marketplace_root/user_config');
         PageLayout::setTitle('Configuration');
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/notifications_tags.js');
+        PageLayout::addScript($this->plugin->getPluginURL() . '/assets/categories_user_config.js');
 
         //load all tags
         $tags =  Tag::findBySQL("1", []);
@@ -45,6 +48,9 @@ class UserConfigController extends \Marketplace\Controller
         $picked_tags = json_encode(["tags" => $picked_tags]);
 
         $this->picked_tags = str_replace("\"", "'", $picked_tags);
+
+        $this->marketplaces = Category::get_categories_with_marketplaces();
+        $this->selected_categories = str_replace("\"", "'", json_encode(CategoryNotification::getSubscribedCategories($GLOBALS['user']->id)));
     }
 
     public function get_tags_action()
@@ -80,7 +86,9 @@ class UserConfigController extends \Marketplace\Controller
         $tags = json_decode(Request::get("picked_tags"), true);
         TagNotification::setSubscribedTags($GLOBALS['user']->id, $tags["tags"]);
         PageLayout::postSuccess('Configuration saved');
+        CategoryNotification::setSubscribedCategoriesWithMarketplaces($GLOBALS['user']->id, Request::getArray("selected_categories"));
         $this->redirect('user_config/index');
+        // $this->render_text('');
     }
 
     public function set_tags_action()

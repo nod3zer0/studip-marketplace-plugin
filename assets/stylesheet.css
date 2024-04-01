@@ -77,6 +77,12 @@
     color: #555;
 }
 
+.mp_category-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+}
+
 .category-box {
     border: 1px solid #ccc;
     padding: 10px;
