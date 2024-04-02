@@ -140,6 +140,7 @@ use Studip\Button; ?>
             <search_category_select :selected_path="'<?= htmlReady($selected_categories) ?>'" :categories="<?= str_replace("\"", "'", htmlReady($categories))  ?>"></search_category_select>
         </div>
         <?= Button::create('Search') ?>
+        Number of results:
         <select name="limit">
             <option value="10" <? if ($limit == 10) : echo "selected";
                                 endif; ?>>10</option>
@@ -152,7 +153,6 @@ use Studip\Button; ?>
             <option value="1000" <? if ($limit == 1000) : echo "selected";
                                     endif; ?>>1000</option>
         </select>
-
     </fieldset>
 </form>
 

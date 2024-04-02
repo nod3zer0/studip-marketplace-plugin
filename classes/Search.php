@@ -379,6 +379,16 @@ class AdvancedSearch
         "description" => "description",
     ];
 
+    /***
+     * @param $custom_properties array of custom properties
+     * @param $tags array of tags
+     * @param $default_properties array of default properties
+     * @param $selected_category_path string path to selected category
+     * @param $categories array of categories
+     * @param $marketplace_id string id of marketplace
+     * @param $limit int limit of results
+     * @return array [sql, values]
+     */
     public function generateSQL($custom_properties, $tags, $default_properties, $selected_category_path, $categories, $marketplace_id = "", $limit)
     {
         $this->categories = $categories;
@@ -413,6 +423,7 @@ class AdvancedSearch
             // Remove "AND" from the end of the string
             $output = substr($output, 0, -4);
         }
+
 
         $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id  ORDER BY chdate DESC LIMIT ?";
         $this->values[] = intval($limit);
