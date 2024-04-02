@@ -148,7 +148,7 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
             );
             $search_nav->addSubNavigation('marketplace_advanced_search_plus', $advanced_search_plus_nav);
             $my_demands = new Navigation(
-                'My demands',
+                'My ' . $marketplace->comodity_name_plural,
                 PluginEngine::getURL($this, [], 'my_demands/index/', []) . $marketplace->id
             );
             $marketplace_nav->addSubNavigation('marketplace_my_demands', $my_demands);

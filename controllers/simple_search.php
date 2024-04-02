@@ -21,16 +21,28 @@ class SimpleSearchController extends \Marketplace\Controller
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;
 
-        $this->limit = Request::get('limit') ?: get_config('ENTRIES_PER_PAGE');
+        $this->limit = intval(Request::get('limit') ?: get_config('ENTRIES_PER_PAGE'));
+        $this->order = Request::get('order') ?: 'mkdate_desc';
         $request_data = Request::getInstance();
 
 
         if ($request_data["search-query"] != '') {
             $advanced_search = new SimpleSearch();
-            $sql = $advanced_search->generateSQL($request_data["search-query"], $marketplace_id,   $this->limit);
+            $sql = $advanced_search->generateSQL($request_data["search-query"], $marketplace_id,   $this->limit, $this->order);
             $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
         } else {
-            $this->all_demands = \Marketplace\Demand::findBySQL("marketplace_id = ?", [$marketplace_id]);
+            $attribute_map = [
+                'title' => 'title',
+                'author' => 'auth_user_md5.username',
+                'mkdate' => 'mkdate'
+            ];
+            $order_map = [
+                'asc' => 'ASC',
+                'desc' => 'DESC'
+            ];
+            $order = explode('_', $this->order);
+
+            $this->all_demands = \Marketplace\Demand::findBySQL("LEFT JOIN auth_user_md5 ON author_id = user_id  WHERE marketplace_id = ?  ORDER BY " . $attribute_map[$order[0]] . " " . $order_map[$order[1]] . " LIMIT ?", [$marketplace_id, $this->limit]);
         }
     }
 }

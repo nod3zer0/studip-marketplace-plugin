@@ -339,10 +339,15 @@ class Parser
 
 class SimpleSearch
 {
-
-    public function generateSQL($query, $marketplace_id, $limit)
+    /**
+     * @param $query string search query
+     * @param $marketplace_id string id of marketplace
+     * @param $limit int limit of results
+     * @param $order string order of results (e.g. mkdate_desc)
+     */
+    public function generateSQL(string $query, string $marketplace_id, int $limit, string $order)
     {
-        $output = "LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
+        $output = "LEFT JOIN auth_user_md5 ON author_id = user_id  LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
         $values = [];
         if ($marketplace_id != "") {
             $output .= "mp_marketplace.id = ? AND ";
@@ -359,8 +364,21 @@ class SimpleSearch
             $values[] = $query;
         }
 
+        //sorting
+        //remap attributes to prevent sql injection
+        $attribute_map = [
+            'title' => 'title',
+            'author' => 'auth_user_md5.username',
+            'mkdate' => 'mkdate'
+        ];
+        $order_map = [
+            'asc' => 'ASC',
+            'desc' => 'DESC'
+        ];
+        $order = explode('_', $order); // split into attribute and order
 
-        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id ORDER BY chdate DESC LIMIT ?";
+
+        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id ORDER BY " . $attribute_map[$order[0]] . " " . $order_map[$order[1]] . " LIMIT ?";
         $values[] = intval($limit);
         return [$output, $values];
     }
@@ -387,12 +405,13 @@ class AdvancedSearch
      * @param $categories array of categories
      * @param $marketplace_id string id of marketplace
      * @param $limit int limit of results
+     * @param $order string order of results (e.g. mkdate_desc)
      * @return array [sql, values]
      */
-    public function generateSQL($custom_properties, $tags, $default_properties, $selected_category_path, $categories, $marketplace_id = "", $limit)
+    public function generateSQL($custom_properties, $tags, $default_properties, $selected_category_path, $categories, $marketplace_id = "", $limit, $order)
     {
         $this->categories = $categories;
-        $output = "LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
+        $output = "LEFT JOIN auth_user_md5 ON author_id = user_id LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
 
         if ($marketplace_id != "") {
             $output .= "mp_marketplace.id = ? AND ";
@@ -423,9 +442,20 @@ class AdvancedSearch
             // Remove "AND" from the end of the string
             $output = substr($output, 0, -4);
         }
+        //sorting
+        //remap attributes to prevent sql injection
+        $attribute_map = [
+            'title' => 'title',
+            'author' => 'auth_user_md5.username',
+            'mkdate' => 'mkdate'
+        ];
+        $order_map = [
+            'asc' => 'ASC',
+            'desc' => 'DESC'
+        ];
+        $order = explode('_', $order); // split into attribute and order
 
-
-        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id  ORDER BY chdate DESC LIMIT ?";
+        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id   ORDER BY " . $attribute_map[$order[0]] . " " . $order_map[$order[1]] . " LIMIT ?";
         $this->values[] = intval($limit);
         return [$output, $this->values];
     }
@@ -665,7 +695,17 @@ class SqlGenerator
         "date" => "mkdate",
         "description" => "description",
     ];
-    public function generateSQL($query, $custom_properties, $marketplace_id = "", $categories, $limit)
+
+    /**
+     * @param $query string search query
+     * @param $custom_properties array of custom properties
+     * @param $marketplace_id string id of marketplace
+     * @param $categories array of categories
+     * @param $limit int limit of results
+     * @param $order string order of results (e.g. mkdate_desc)
+     * @return array [sql, values]
+     */
+    public function generateSQL($query, $custom_properties, $marketplace_id = "", $categories, $limit, $order)
     {
 
         $this->categories = $categories;
@@ -680,7 +720,19 @@ class SqlGenerator
 
         $output = $this->generateStart($parser, $marketplace_id);
 
-        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id ORDER BY chdate DESC LIMIT ?";
+        $attribute_map = [
+            'title' => 'title',
+            'author' => 'auth_user_md5.username',
+            'mkdate' => 'mkdate'
+        ];
+        $order_map = [
+            'asc' => 'ASC',
+            'desc' => 'DESC'
+        ];
+        $order = explode('_', $order); // split into attribute and order
+
+
+        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id ORDER BY " . $attribute_map[$order[0]] . " " . $order_map[$order[1]] . " LIMIT ?";
         $this->values[] = intval($limit);
 
         if ($this->numberOfBrackets != 0) {
@@ -692,7 +744,7 @@ class SqlGenerator
 
     public function generateStart($parser, $marketplace_id)
     {
-        $output = "LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
+        $output = "LEFT JOIN auth_user_md5 ON author_id = user_id LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
 
         if ($marketplace_id != "") {
             $output .= "mp_marketplace.id = ? AND ";

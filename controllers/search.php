@@ -28,6 +28,7 @@ class SearchController extends \Marketplace\Controller
         $categories = Category::get_categories($marketplace_id);
         $this->categories = json_encode($categories);
         $this->limit = Request::get('limit') ?: get_config('ENTRIES_PER_PAGE');
+        $order = Request::get('order') ?: 'mkdate_desc';
         if ($query != '') {
 
 
@@ -40,7 +41,7 @@ class SearchController extends \Marketplace\Controller
 
             $generator = new SqlGenerator();
             try {
-                $sql = $generator->generateSQL($query, $custom_properties, $marketplace_id,  $categories, $this->limit);
+                $sql = $generator->generateSQL($query, $custom_properties, $marketplace_id,  $categories, $this->limit, $order);
 
                 $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
             } catch (SearchException $e) {
@@ -50,13 +51,25 @@ class SearchController extends \Marketplace\Controller
             }
         } else {
 
+            $attribute_map = [
+                'title' => 'title',
+                'author' => 'auth_user_md5.username',
+                'mkdate' => 'mkdate'
+            ];
+            $order_map = [
+                'asc' => 'ASC',
+                'desc' => 'DESC'
+            ];
+            $this->order = $order;
+            $order = explode('_', $order); // split into attribute and order
+
             $query = "LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id LEFT JOIN mp_property ON mp_property.demand_id=mp_demand.id LEFT JOIN mp_custom_property ON mp_custom_property.id=mp_property.custom_property_id";
 
             if ($marketplace_id) {
-                $query .= " WHERE mp_marketplace.id = ? Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id ORDER BY chdate DESC LIMIT ?";
+                $query .= " WHERE mp_marketplace.id = ? Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id  ORDER BY " . $attribute_map[$order[0]] . " " . $order_map[$order[1]] . " LIMIT ?";
                 $this->all_demands = \Marketplace\Demand::findBySQL($query, [$marketplace_id, intval($this->limit)]);
             } else {
-                $query .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id ORDER BY chdate DESC LIMIT ?";
+                $query .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id  ORDER BY " . $attribute_map[$order[0]] . " " . $order_map[$order[1]] . " LIMIT ?";
                 $this->all_demands = \Marketplace\Demand::findBySQL($query, [intval($this->limit)]);
             }
 

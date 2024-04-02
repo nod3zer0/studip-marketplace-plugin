@@ -153,6 +153,7 @@ use Studip\Button; ?>
             <option value="1000" <? if ($limit == 1000) : echo "selected";
                                     endif; ?>>1000</option>
         </select>
+        <?= $this->render_partial('partials/order'); ?>
     </fieldset>
 </form>
 

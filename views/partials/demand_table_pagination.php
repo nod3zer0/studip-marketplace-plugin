@@ -4,17 +4,17 @@ use Studip\Button; ?>
 <form action="<?= $controller->link_for('overview/index/') . $marketplace_id . "/?page=" . $page ?>" method="get">
     Sort by:
     <select name="order">
-        <option value="mkdate_asc" <? if ($order == "created_asc") : echo "selected";
+        <option value="mkdate_asc" <? if ($order == "mkdate_asc") : echo "selected";
                                     endif; ?>>Created ascending</option>
-        <option value="mkdate_desc" <? if ($order == "created_desc") : echo "selected";
+        <option value="mkdate_desc" <? if ($order == "mkdate_desc") : echo "selected";
                                     endif; ?>>Created descending</option>
-        <option value="title_asc" <? if ($order == "created_asc") : echo "selected";
+        <option value="title_asc" <? if ($order == "title_asc") : echo "selected";
                                     endif; ?>>Title ascending</option>
-        <option value="title_desc" <? if ($order == "created_asc") : echo "selected";
+        <option value="title_desc" <? if ($order == "title_desc") : echo "selected";
                                     endif; ?>>Title descending</option>
-        <option value="author_asc" <? if ($order == "created_asc") : echo "selected";
+        <option value="author_asc" <? if ($order == "author_asc") : echo "selected";
                                     endif; ?>>Author ascending</option>
-        <option value="author_desc" <? if ($order == "created_asc") : echo "selected";
+        <option value="author_desc" <? if ($order == "author_desc") : echo "selected";
                                     endif; ?>>Author descending</option>
     </select>
     <?= Button::create('Sort') ?>

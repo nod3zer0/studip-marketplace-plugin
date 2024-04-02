@@ -42,8 +42,8 @@ class AdvancedSearchController extends \Marketplace\Controller
         $advanced_search = new AdvancedSearch();
         $this->limit = Request::get('limit') ?: get_config('ENTRIES_PER_PAGE');
 
-
-        $sql = $advanced_search->generateSQL($this->custom_property_data, $this->tag_data, $this->default_property_data, $this->selected_categories,   $categories, $marketplace_id, intval($this->limit));
+        $this->order = Request::get('order') ?: 'mkdate_desc';
+        $sql = $advanced_search->generateSQL($this->custom_property_data, $this->tag_data, $this->default_property_data, $this->selected_categories,   $categories, $marketplace_id, intval($this->limit), $this->order);
         $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
     }
 

@@ -25,7 +25,7 @@ use Studip\Button; ?>
 
             </div>
             <?= Button::create('Search') ?>
-            <select name="limit" style="width: 50px;">
+            <select name="limit" style="width: 60px;">
                 <option value="10" <? if ($limit == 10) : echo "selected";
                                     endif; ?>>10</option>
                 <option value="20" <? if ($limit == 20) : echo "selected";
@@ -37,6 +37,7 @@ use Studip\Button; ?>
                 <option value="1000" <? if ($limit == 1000) : echo "selected";
                                         endif; ?>>1000</option>
             </select>
+            <?= $this->render_partial('partials/order'); ?>
         </div>
     </fieldset>
 
