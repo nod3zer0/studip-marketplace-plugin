@@ -2,6 +2,8 @@
 
 namespace Marketplace;
 
+use function PHPSTORM_META\elementType;
+
 class SearchException extends \Exception
 {
     // Redefine the exception so message isn't optional
@@ -338,7 +340,7 @@ class Parser
 class SimpleSearch
 {
 
-    public function generateSQL($query, $marketplace_id)
+    public function generateSQL($query, $marketplace_id, $limit)
     {
         $output = "LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
         $values = [];
@@ -346,13 +348,20 @@ class SimpleSearch
             $output .= "mp_marketplace.id = ? AND ";
             $values[] = $marketplace_id;
         }
+        if (strlen($query) < 3) {
+            $output .= "mp_demand.title LIKE ? OR mp_demand.description LIKE ? ";
+            $values[] = "%" . $query . "%";
+            $values[] = "%" . $query . "%";
+        } else {
+            $output .= "MATCH(mp_demand.title) AGAINST(? IN BOOLEAN MODE) ";
+            $values[] = $query;
+            $output .= " OR MATCH(mp_demand.description) AGAINST(? IN BOOLEAN MODE) ";
+            $values[] = $query;
+        }
 
-        $output .= "MATCH(mp_demand.title) AGAINST(? IN BOOLEAN MODE) ";
-        $values[] = $query;
-        $output .= " OR MATCH(mp_demand.description) AGAINST(? IN BOOLEAN MODE) ";
-        $values[] = $query;
 
-        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id";
+        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id ORDER BY chdate DESC LIMIT ?";
+        $values[] = intval($limit);
         return [$output, $values];
     }
 }
@@ -645,7 +654,7 @@ class SqlGenerator
         "date" => "mkdate",
         "description" => "description",
     ];
-    public function generateSQL($query, $custom_properties, $marketplace_id = "", $categories)
+    public function generateSQL($query, $custom_properties, $marketplace_id = "", $categories, $limit)
     {
 
         $this->categories = $categories;
@@ -660,8 +669,8 @@ class SqlGenerator
 
         $output = $this->generateStart($parser, $marketplace_id);
 
-        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id";
-
+        $output .= " Group by mp_demand.id, mp_demand.title, mp_demand.mkdate, mp_demand.chdate, mp_demand.author_id, mp_demand.id ORDER BY chdate DESC LIMIT ?";
+        $this->values[] = intval($limit);
 
         if ($this->numberOfBrackets != 0) {
             throw new SearchException("Invalid number of brackets!");

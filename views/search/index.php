@@ -25,6 +25,18 @@ use Studip\Button; ?>
 
             </div>
             <?= Button::create('Search') ?>
+            <select name="limit" style="width: 50px;">
+                <option value="10" <? if ($limit == 10) : echo "selected";
+                                    endif; ?>>10</option>
+                <option value="20" <? if ($limit == 20) : echo "selected";
+                                    endif; ?>>20</option>
+                <option value="50" <? if ($limit == 50) : echo "selected";
+                                    endif; ?>>50</option>
+                <option value="100" <? if ($limit == 100) : echo "selected";
+                                    endif; ?>>100</option>
+                <option value="1000" <? if ($limit == 1000) : echo "selected";
+                                        endif; ?>>1000</option>
+            </select>
         </div>
     </fieldset>
 

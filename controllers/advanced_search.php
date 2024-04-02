@@ -40,16 +40,9 @@ class AdvancedSearchController extends \Marketplace\Controller
         $this->selected_tags = $request_data["selected_tags"];
         $this->selected_categories = $request_data["selected_categories"];
         $advanced_search = new AdvancedSearch();
-        $page = Request::get('page') ?: 1;
         $this->limit = Request::get('limit') ?: get_config('ENTRIES_PER_PAGE');
         $sql = $advanced_search->generateSQL($this->custom_property_data, $this->tag_data, $this->default_property_data, $this->selected_categories,   $categories, $marketplace_id, $this->limit);
         $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
-
-        //pagination
-        $this->pagination_url = 'advanced_search/index/';
-        $this->page = $page;
-        $this->marketplace_id = $marketplace_id;
-        $this->number_of_demands = \Marketplace\Demand::countBymarketplace_id($marketplace_id);
     }
 
     public function get_default_property_data($RequestData)

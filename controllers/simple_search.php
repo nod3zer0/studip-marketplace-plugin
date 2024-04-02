@@ -21,12 +21,13 @@ class SimpleSearchController extends \Marketplace\Controller
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;
 
+        $this->limit = Request::get('limit') ?: get_config('ENTRIES_PER_PAGE');
         $request_data = Request::getInstance();
 
 
         if ($request_data["search-query"] != '') {
             $advanced_search = new SimpleSearch();
-            $sql = $advanced_search->generateSQL($request_data["search-query"], $marketplace_id);
+            $sql = $advanced_search->generateSQL($request_data["search-query"], $marketplace_id,   $this->limit);
             $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
         } else {
             $this->all_demands = \Marketplace\Demand::findBySQL("marketplace_id = ?", [$marketplace_id]);
