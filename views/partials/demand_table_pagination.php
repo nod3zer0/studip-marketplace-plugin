@@ -1,3 +1,25 @@
+<?
+
+use Studip\Button; ?>
+<form action="<?= $controller->link_for('overview/index/') . $marketplace_id . "/?page=" . $page ?>" method="get">
+    Sort by:
+    <select name="order">
+        <option value="mkdate_asc" <? if ($order == "created_asc") : echo "selected";
+                                    endif; ?>>Created ascending</option>
+        <option value="mkdate_desc" <? if ($order == "created_desc") : echo "selected";
+                                    endif; ?>>Created descending</option>
+        <option value="title_asc" <? if ($order == "created_asc") : echo "selected";
+                                    endif; ?>>Title ascending</option>
+        <option value="title_desc" <? if ($order == "created_asc") : echo "selected";
+                                    endif; ?>>Title descending</option>
+        <option value="author_asc" <? if ($order == "created_asc") : echo "selected";
+                                    endif; ?>>Author ascending</option>
+        <option value="author_desc" <? if ($order == "created_asc") : echo "selected";
+                                    endif; ?>>Author descending</option>
+    </select>
+    <?= Button::create('Sort') ?>
+</form>
+
 <table class="default sortable-table">
     <caption>
         <?= $marketplace_comodity_name_plural ?>
@@ -58,7 +80,7 @@
                         'perPage'      => get_config('ENTRIES_PER_PAGE'),
                         'num_postings' => $number_of_demands,
                         'page'         =>  $page,
-                        'pagelink'     =>  $controller->link_for($pagination_url, []) . $marketplace_id . '/?page=%s'
+                        'pagelink'     =>  $controller->link_for($pagination_url, []) . $marketplace_id . '/?page=%s&order=' . $order,
                     ]
                 ) ?>
             </td>

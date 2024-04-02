@@ -40,7 +40,24 @@ class OverviewController extends \Marketplace\Controller
         $this->number_of_demands = \Marketplace\Demand::countBymarketplace_id($marketplace_id);
         $this->pagination_url = 'overview/index/';
 
-        $this->all_demands = \Marketplace\Demand::findBySQL("marketplace_id = ? ORDER BY chdate DESC LIMIT ?,?", [$marketplace_id, ($page - 1) * $entries_per_page, $entries_per_page]);
+        //sorting
+        //remap attributes to prevent sql injection
+        $attribute_map = [
+            'title' => 'title',
+            'author' => 'auth_user_md5.username',
+            'mkdate' => 'mkdate'
+        ];
+        $order_map = [
+            'asc' => 'ASC',
+            'desc' => 'DESC'
+        ];
+        $order = Request::get('order') ?: 'mkdate_desc';
+        $this->order = $order;
+        $order = explode('_', $order); // split into attribute and order
+
+
+
+        $this->all_demands = \Marketplace\Demand::findBySQL("LEFT JOIN auth_user_md5 ON author_id = user_id WHERE marketplace_id = ? ORDER BY " . $attribute_map[$order[0]] . " " . $order_map[$order[1]] . " LIMIT ?,?", [$marketplace_id, ($page - 1) * $entries_per_page, $entries_per_page]);
     }
 
     public function demand_detail_action(string $demand_id = '')
