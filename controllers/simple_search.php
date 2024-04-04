@@ -2,12 +2,12 @@
 
 use Marketplace\SearchException;
 use Marketplace\TagDemand;
-use Marketplace\SimpleSearch;
 use \Marketplace\SearchNotification;
 use \Marketplace\Category;
 use \Marketplace\MarketplaceModel;
 use \Marketplace\CustomProperty;
 use \Marketplace\Tag;
+use \search\SimpleSearch;
 
 class SimpleSearchController extends \Marketplace\Controller
 {
@@ -27,8 +27,8 @@ class SimpleSearchController extends \Marketplace\Controller
 
 
         if ($request_data["search-query"] != '') {
-            $advanced_search = new SimpleSearch();
-            $sql = $advanced_search->generateSQL($request_data["search-query"], $marketplace_id,   $this->limit, $this->order);
+            $simple_search = new SimpleSearch();
+            $sql = $simple_search->generateSQL($request_data["search-query"], $marketplace_id,   $this->limit, $this->order);
             $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
         } else {
             $attribute_map = [

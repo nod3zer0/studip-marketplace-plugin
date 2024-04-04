@@ -16,6 +16,9 @@ require_once __DIR__ . '/models/category_notification.php';
 require_once __DIR__ . '/classes/Controller.php';
 require_once __DIR__ . '/classes/Plugin.php';
 require_once __DIR__ . '/classes/Search.php';
+require_once __DIR__ . '/classes/search/exceptions/SearchException.php';
+require_once __DIR__ . '/classes/search/simpleSearch/SimpleSearch.php';
+require_once __DIR__ . '/classes/search/advancedSearch/AdvancedSearch.php';
 
 
 

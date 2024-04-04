@@ -2,12 +2,12 @@
 
 use Marketplace\SearchException;
 use Marketplace\TagDemand;
-use Marketplace\AdvancedSearch;
 use \Marketplace\SearchNotification;
 use \Marketplace\Category;
 use \Marketplace\MarketplaceModel;
 use \Marketplace\CustomProperty;
 use \Marketplace\Tag;
+use \search\AdvancedSearch;
 
 class AdvancedSearchController extends \Marketplace\Controller
 {
