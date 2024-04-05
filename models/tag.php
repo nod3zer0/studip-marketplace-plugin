@@ -43,6 +43,9 @@ class Tag extends SimpleORMap
         $new_tags_obj = [];
         $i = 0;
         foreach ($new_tags as $tag) {
+            if ($tag["name"] == "" || $tag["name"] == null) {
+                continue;
+            }
             $new_tags_obj[$i] = new \Marketplace\Tag();
             $new_tags_obj[$i]->name = $tag["name"];
             $new_tags_obj[$i]->id = $tag["id"];
