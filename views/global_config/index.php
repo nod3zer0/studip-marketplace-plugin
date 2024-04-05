@@ -4,7 +4,7 @@
     <ul>
         <li v-for="(item, index) in marketplaces" :key="index">
             <input v-model="marketplaces[index].name">
-            <button @click="deleteItem(index)">Delete</button>
+            <button class="button" @click="deleteItem(index)">Delete</button>
             <label for="type">Enabled</label>
             <input type="checkbox" id="enabled" v-model="marketplaces[index].enabled">
             <span v-if="marketplaces[index].hasOwnProperty('id')">
@@ -12,19 +12,19 @@
             </span>
         </li>
     </ul>
-    <button @click="addItem">Add marketplace</button>
+    <button class="button" @click="addItem">Add marketplace</button>
     <h2>Tags</h2>
     <ul>
         <li v-for="(tag, index) in tags" :key="index">
 
             <input v-model="tags[index].name"> Number of references: {{ tags[index].number_of_references }}
-            <button @click="deleteTag(index)">Delete</button>
+            <button class="button" @click="deleteTag(index)">Delete</button>
         </li>
     </ul>
-    <button @click="addTag">Add tag</button>
-    <button @click="deleteUnusedTags">Delete unused tags</button>
+    <button class="button" @click="addTag">Add tag</button>
+    <button class="button" data-confirm @click="deleteUnusedTags">Delete unused tags</button>
     <br>
-    <div> <button @click="submitConfig">Save config</button> </div>
+    <div> <button class="button" @click="submitConfig">Save config</button> </div>
 </div>
 
 <script>

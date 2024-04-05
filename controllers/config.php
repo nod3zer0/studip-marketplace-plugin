@@ -80,6 +80,7 @@ class ConfigController extends \Marketplace\Controller
     public function set_categories_action($marketplace_id)
     {
         Category::set_categories(json_decode(file_get_contents('php://input'), true)["categories"], $marketplace_id);
-        $this->render_nothing();
+        PageLayout::postSuccess('Categories were saved successfully.');
+        $this->render_text('');
     }
 }

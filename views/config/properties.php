@@ -27,7 +27,7 @@
     <ul>
         <li v-for="(item, index) in properties" :key="index" :draggable="true" @dragstart="onDragStart(index)" @dragover.prevent="onDragOver" @drop.prevent="onDrop(index)" @dragenter="onDragEnter(index)" @dragleave="onDragLeave(index)" :class="{ 'draggable': isDragging === index }">
             <input v-model="properties[index].name">
-            <button @click="deleteItem(index)">Delete</button>
+            <button class="button" @click="deleteItem(index)">Delete</button>
             <label for="type">Type:</label>
             <select id="type" v-model="properties[index].type">
                 <option value="1">Short text</option>
@@ -39,8 +39,8 @@
             <input type="checkbox" id="required" v-model="properties[index].required">
         </li>
     </ul>
-    <button @click="addItem">Add property</button>
-    <button @click="submitProperties">Submit</button>
+    <button class="button" @click="addItem">Add property</button>
+    <button class="button" @click="submitProperties">Submit</button>
 </div>
 
 <script>

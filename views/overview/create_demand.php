@@ -127,11 +127,11 @@ use Studip\Button; ?>
                 <ul>
                     <li v-for="(item, index) in tags" :key="index">
                         <input v-model="tags[index]">
-                        <button @click.prevent="deleteItem(index)">Delete</button>
+                        <button class="button" @click.prevent="deleteItem(index)">Delete</button>
                     </li>
                 </ul>
                 <input name="tags" type="hidden" :value="tags.join(',')">
-                <button @click.prevent="addItem">Add tag</button>
+                <button class="button" @click.prevent="addItem">Add tag</button>
             </div>
 
         </div>
@@ -186,8 +186,11 @@ use Studip\Button; ?>
     </fieldset>
 
     <footer data-dialog-button>
+
         <?= Button::create('Submit', 'submit_btn') ?>
-        <?= Button::create('Delete', 'delete_btn') ?>
+        <button class="buton" data-confirm name="delete_btn" type="submit">
+            Delete
+        </button>
 
     </footer>
 </form>

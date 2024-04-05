@@ -13,8 +13,8 @@ $(document).ready(function() {
                 <template v-for="(category, index) in categories">
                     <div>
                         <input type="text" v-model="category.name" @change="checkUniqueName(category,categories)">
-                        <button @click="addSubcategory(category)">Add Subcategory</button>
-                        <button @click="deleteCategory(index)">Delete</button>
+                        <button class="button" @click="addSubcategory(category)">Add Subcategory</button>
+                        <button class="button" @click="deleteCategory(index)">Delete</button>
                         <category v-if="category.subcategories.length > 0" :categories="category.subcategories" v-on:error="onError"></category>
                         <div v-if="category.error" style="color: red;">{{ category.error }}</div>
                     </div>
@@ -55,10 +55,10 @@ $(document).ready(function() {
             <div>
             <div>
             <category v-on:error="onError" :error="errors" :categories="categories"></category>
-            <button @click="addCategory">Add Category</button>
+            <button class="button"  @click="addCategory">Add Category</button>
             </div>
             <div>
-            <button  :disabled="hasErrors" @click="saveCategories">Save</button>
+            <button class="button"  :disabled="hasErrors" @click="saveCategories">Save</button>
             </div>
             </div>`,
             data: () => ({
@@ -108,11 +108,14 @@ $(document).ready(function() {
                         .then(response => {
                             // Handle response
                             console.log('Response:', response.text());
+                            location.reload();
                         })
                         .catch(error => {
                             // Handle error
                             console.error('Error:', error);
                         });
+                    //reload to show saved successully dialog
+
                 },
                 get_categories() {
                     fetch(STUDIP.URLHelper.getURL('plugins.php/marketplace/config/get_categories/').concat(this.marketplace_id))

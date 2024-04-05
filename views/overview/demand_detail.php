@@ -12,7 +12,7 @@ use Studip\Button; ?>
     }) => {
 
         Vue.component('bookmark', {
-            template: `<button @click="setBookmark">{{ bookmarked ? 'Unbookmark' : 'Bookmark' }}</button>`,
+            template: `<button class="button" @click="setBookmark">{{ bookmarked ? 'Unbookmark' : 'Bookmark' }}</button>`,
             props: ['set_bookmark_url', 'get_bookmark_url'],
             data: () => ({
                 bookmarked: false

@@ -11,7 +11,8 @@
     <thead>
         <tr>
             <th data-sort="text">Title</th>
-            <th data-sort="digit">Created on</th>
+            <th data-sort="date">Created on</th>
+            <th data-sort="text">Marketplace</th>
             <th data-sort="text">Edit</th>
         </tr>
     </thead>
@@ -23,6 +24,7 @@
                         <a data-dialog href="<?= $controller->link_for('overview/demand_detail', $demand_obj->id) ?>"><?= htmlReady($demand_obj->title) ?></a>
                     </td>
                     <td> <?= strftime('%x', htmlReady($demand_obj->mkdate)) ?></td>
+                    <td> <a href="<?= $controller->link_for('overview/index/', $demand_obj->mp_marketplace->id) ?>"> <?= htmlReady($demand_obj->mp_marketplace->name) ?> </a></td>
                     <td>
                         <? if ($demand_obj->hasPermission()) : ?>
                             <? $actions = ActionMenu::get(); ?>

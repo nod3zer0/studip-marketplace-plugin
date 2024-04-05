@@ -27,7 +27,6 @@ $(document).ready(function() {
                         </span>
                         </div>
                         </span>
-                        <button @click="set_picked_tags">Save</button>
                         <input type="hidden" name="picked_tags" :value="JSON.stringify({
                             tags: this.picked_tags
                         })">
@@ -145,7 +144,8 @@ $(document).ready(function() {
                         </li>
                     </ul>
                 </div>
-                <input type="button" value="Save" @click="saveNotifications">
+                <button @click="saveNotifications" value="Save" class="button">Save</button>
+
             </div>`,
 
             data: () => ({
