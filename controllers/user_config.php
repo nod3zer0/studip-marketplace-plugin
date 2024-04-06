@@ -12,9 +12,13 @@ use \Marketplace\CategoryNotification;
 class UserConfigController extends \Marketplace\Controller
 {
 
-    public function index_action()
+    public function index_action($markeplace_id = '')
     {
-        Navigation::activateItem('marketplace_root/user_config');
+        if ($markeplace_id) {
+            Navigation::activateItem('marketplace_' . $markeplace_id . '/user_config');
+        } else {
+            Navigation::activateItem('marketplace_root/user_config');
+        }
         PageLayout::setTitle('Configuration');
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/notifications_tags.js');
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/categories_user_config.js');

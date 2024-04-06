@@ -243,7 +243,7 @@ class Parser
     {
 
         $charactersToReplace = ["(", ")", "&", "|", "!", ">=", "<=", ">", "<", "=", ":"];
-        $replaceWith = [" ( ", " ) ", " & ", " | ", " ! ", " GE ", " LE ", " G ", " L ", " E ", " : "];
+        $replaceWith = [" ( ", " ) ", " & ", " | ", " ! ", " ~GE ", " ~LE ", " ~G ", " ~L ", " ~E ", " : "];
         $result = str_replace($charactersToReplace, $replaceWith, $this->query);
         $tokens =  explode(" ", $result);
 
@@ -285,21 +285,21 @@ class Parser
             } else if ($tokens[$i] == ")") //)
             {
                 $this->tokenObjects[] = new CloseToken();
-            } else if ($tokens[$i] == "E") //=
+            } else if ($tokens[$i] == "~E") //=
             {
                 $this->tokenObjects[] = new EqualToken();
             } else if ($tokens[$i] == ":") {
                 $this->tokenObjects[] = new ColonToken();
-            } else if ($tokens[$i] == "G") //>
+            } else if ($tokens[$i] == "~G") //>
             {
                 $this->tokenObjects[] = new GreaterToken();
-            } else if ($tokens[$i] == "L") //<
+            } else if ($tokens[$i] == "~L") //<
             {
                 $this->tokenObjects[] = new LessToken();
-            } else if ($tokens[$i] == "GE") //>=
+            } else if ($tokens[$i] == "~GE") //>=
             {
                 $this->tokenObjects[] = new GreaterEqualToken();
-            } else if ($tokens[$i] == "LE") //<=
+            } else if ($tokens[$i] == "~LE") //<=
             {
                 $this->tokenObjects[] = new LessEqualToken();
             } else if (preg_match('/^[0-9]+$/', $tokens[$i])) //int
@@ -547,12 +547,10 @@ class SqlGenerator
 
     public function generateCustomPropertyString($parser)
     {
-        $output = "EXISTS (
-            SELECT 1
-            FROM mp_property
-            LEFT JOIN mp_custom_property ON mp_property.custom_property_id = mp_custom_property.id
-            WHERE ( mp_custom_property.name LIKE ?  AND MATCH(mp_property.value) AGAINST(? IN BOOLEAN MODE) ) AND mp_demand.id = mp_property.demand_id)";
         $this->values[] = $parser->getNextToken()->getValue();
+        $output = "";
+
+
 
         if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
             throw new SearchException("After property must follow `:` or `=`!");
@@ -560,7 +558,23 @@ class SqlGenerator
         $parser->getNextToken();
 
         if ($parser->peekNextToken() instanceof ValueToken) {
-            $this->values[] =  $parser->getNextToken()->getValue();
+            //fulltext only works on strings with length >= 3, remove * characters for strlen
+            if (strlen(str_replace('*', '', $parser->peekNextToken()->getValue())) <= 3) {
+                $output = "EXISTS (
+                SELECT 1
+                FROM mp_property
+                LEFT JOIN mp_custom_property ON mp_property.custom_property_id = mp_custom_property.id
+                WHERE ( mp_custom_property.name LIKE ?  AND mp_property.value LIKE ? ) AND mp_demand.id = mp_property.demand_id)";
+                //like uses & instead of * for wildcard
+                $this->values[] = str_replace('*', '%', $parser->getNextToken()->getValue());
+            } else {
+                $output = "EXISTS (
+                SELECT 1
+                FROM mp_property
+                LEFT JOIN mp_custom_property ON mp_property.custom_property_id = mp_custom_property.id
+                WHERE ( mp_custom_property.name LIKE ?  AND MATCH(mp_property.value) AGAINST(? IN BOOLEAN MODE) ) AND mp_demand.id = mp_property.demand_id)";
+                $this->values[] = $parser->getNextToken()->getValue();
+            }
         } else {
             throw new SearchException("After `:` must follow searched key word!");
         }
@@ -696,16 +710,24 @@ class SqlGenerator
 
     public function generateDefaultPropertyString($parser)
     {
-        $output = "MATCH(mp_demand." . $this->default_properties_map[$parser->getNextToken()->getValue()] . ") AGAINST(? IN BOOLEAN MODE) ";
-
-
+        $property_name = $this->default_properties_map[$parser->getNextToken()->getValue()];
         if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
             throw new SearchException("After string property must follow `:` or `=` !");
         }
         $parser->getNextToken();
 
+
         if ($parser->peekNextToken() instanceof ValueToken) {
-            $this->values[] =  $parser->getNextToken()->getValue();
+
+            //fulltext only works on strings with length >= 3, remove * characters for strlen
+            if (strlen(str_replace('*', '', $parser->peekNextToken()->getValue())) <= 3) {
+                $output = "mp_demand." . $property_name . " LIKE ? ";
+                //like uses & instead of * for wildcard
+                $this->values[] = str_replace('*', '%', $parser->getNextToken()->getValue());
+            } else {
+                $output = "MATCH(mp_demand." .    $property_name . ") AGAINST(? IN BOOLEAN MODE) ";
+                $this->values[] =  $parser->getNextToken()->getValue();
+            }
         } else {
             throw new SearchException("After string property must follow string!");
         }

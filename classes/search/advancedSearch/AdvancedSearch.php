@@ -168,8 +168,15 @@ class AdvancedSearch
 
     private function generateDefaultPropertyString($default_property)
     {
-        $output = "mp_demand." . $this->default_properties_map[$default_property["name"]] . " LIKE ?";
-        $this->values[] = $default_property["value"];
+        $output = "";
+        if (strlen(str_replace('*', '', $default_property["value"])) <= 3) {
+            $output = "mp_demand." . $this->default_properties_map[$default_property["name"]] . " LIKE ?";
+            $this->values[] = str_replace('*', '%', $default_property["value"]);
+        } else {
+            $output = "MATCH(mp_demand." . $this->default_properties_map[$default_property["name"]] . ") AGAINST (? IN BOOLEAN MODE)";
+            $this->values[] = $default_property["value"];
+        }
+
         return $output;
     }
 
@@ -217,13 +224,26 @@ class AdvancedSearch
 
     private function generateCustomPropertyString($custom_property)
     {
-        $output = "EXISTS (
+        $output = "";
+
+        if (strlen(str_replace('*', '', $custom_property["value"])) <= 3) {
+            $output = "EXISTS (
             SELECT 1
             FROM mp_property
             LEFT JOIN mp_custom_property ON mp_property.custom_property_id = mp_custom_property.id
-            WHERE ( mp_custom_property.name LIKE ?  AND MATCH(mp_property.value) AGAINST(? IN BOOLEAN MODE) ) AND mp_demand.id = mp_property.demand_id)";
-        $this->values[] = $custom_property["name"];
-        $this->values[] = $custom_property["value"];
+            WHERE ( mp_custom_property.name LIKE ?  AND mp_property.value LIKE ? ) AND mp_demand.id = mp_property.demand_id)";
+            $this->values[] = $custom_property["name"];
+            $this->values[] = str_replace('*', '%', $custom_property["value"]);
+        } else {
+            $output = "EXISTS (
+                SELECT 1
+                FROM mp_property
+                LEFT JOIN mp_custom_property ON mp_property.custom_property_id = mp_custom_property.id
+                WHERE ( mp_custom_property.name LIKE ?  AND MATCH(mp_property.value) AGAINST(? IN BOOLEAN MODE) ) AND mp_demand.id = mp_property.demand_id)";
+            $this->values[] = $custom_property["name"];
+            $this->values[] = $custom_property["value"];
+        }
+
         return $output;
     }
 

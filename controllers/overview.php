@@ -25,7 +25,7 @@ class OverviewController extends \Marketplace\Controller
     {
 
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
-        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview');
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview/all');
         PageLayout::setTitle($marketplace_obj->name);
         OverviewController::buildSidebar($marketplace_id, $marketplace_obj->comodity_name_singular);
 

@@ -9,7 +9,7 @@ $(document).ready(function() {
         Vue.component('search_input', {
             template: `
         <span>
-        <input type="text" name="search-query" value="" ref="search_input" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp">
+        <input  autocomplete="one-time-code" type="text" name="search-query" value="" ref="search_input" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp">
         <ul v-show="isOpen" class="autocomplete-results">
             <li :class="{ 'is-active': i === arrowCounter }" @click="setResult(result)" v-for="(result, i) in results_render" :key="i" class="autocomplete-result">
                 {{ result }}
