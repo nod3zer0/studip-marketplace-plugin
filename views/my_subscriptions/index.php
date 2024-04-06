@@ -1,1 +1,1 @@
-<?= $this->render_partial('partials/demand_table_pagination'); ?>
+<?= $this->render_partial('partials/demand_table_pagination_with_marketplaces'); ?>

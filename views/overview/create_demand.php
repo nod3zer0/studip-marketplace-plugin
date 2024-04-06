@@ -3,7 +3,7 @@
 use Studip\Form;
 use Studip\Button; ?>
 
-<script>
+<!-- <script>
     STUDIP.Vue.load().then(({
         Vue,
         createApp,
@@ -31,7 +31,7 @@ use Studip\Button; ?>
             }
         });
     });
-</script>
+</script> -->
 
 <script>
     STUDIP.Vue.load().then(({
@@ -103,6 +103,137 @@ use Studip\Button; ?>
     });
 </script>
 
+
+<script>
+    $(document).ready(function() {
+        STUDIP.Vue.load().then(({
+            Vue,
+            createApp,
+            eventBus,
+            store
+        }) => {
+
+
+
+
+            // tag settings component
+            Vue.component('tags', {
+                template: `<div>
+        <span>
+            <input autocomplete="one-time-code" type="text" name="search-query" @focus="OnChange" value="" ref="search_input" id="search_input" v-model="search" @keydown.esc.prevent="OnEsc" @keydown.enter.prevent="OnEnter" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp">
+            <?= tooltipIcon('You can add new tag by writing its name and pressing enter.') ?>
+            <ul v-show="isOpen" class="mp_autocomplete-results">
+                <li :class="{ 'is-active': i === arrowCounter }" @click="setResult(result)" v-for="(result, i) in results" :key="i" class="mp_autocomplete-result">
+                    {{ result.name }}
+                </li>
+            </ul>
+            <div>
+                <span v-for="tag in picked_tags" :key="tag">
+                    <div class="mp_tag">
+                        {{ tag.name }} <span @click="removeTag(tag)" class="mp_remove-tag">x</span>
+                        </div>
+                        </span>
+                        </div>
+                        </span>
+                        <input type="hidden" name="picked_tags" :value="JSON.stringify({
+                            tags: this.picked_tags
+                        })">
+                        </div>`,
+                props: ['all_tags', 'picked_tags'],
+                data: () => ({
+                    results: [],
+                    picked_tags: [],
+                    tags: [],
+                    isOpen: false,
+                    search: '',
+                    arrowCounter: -1,
+                }),
+                mounted() {
+                    this.get_tags();
+                    this.get_picked_tags();
+                    document.addEventListener('click', this.handleClickOutside);
+                },
+                methods: {
+                    get_tags() {
+                        this.tags = this.all_tags.tags;
+                    },
+                    get_picked_tags() {
+                        this.picked_tags = this.picked_tags.tags;
+                    },
+                    filterResults(event) {
+
+                        this.results = this.tags.filter(tag => tag.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1);
+                        //remove already picked tags
+                        this.results = this.results.filter(tag => !this.picked_tags.find(picked_tag => picked_tag.name === tag.name));
+                    },
+                    OnEnter() {
+                        //add inputed text as tag
+                        //check if keyword is already in pickedtags
+                        if (!this.picked_tags.find(tag => tag.name === this.search)) {
+                            this.picked_tags.push({
+                                name: this.search
+                            });
+                        }
+                        this.isOpen = false;
+                        this.search = '';
+                    },
+                    OnEsc() {
+                        this.isOpen = false;
+                    },
+                    OnTab() {
+                        this.isOpen = false;
+                        if (this.arrowCounter > -1) {
+                            this.picked_tags.push(this.results[this.arrowCounter]);
+                            this.arrowCounter = -1;
+                        }
+                    },
+                    handleClickOutside(event) {
+                        if (!this.$el.contains(event.target)) {
+                            this.arrowCounter = -1;
+                            this.isOpen = false;
+                        }
+                    },
+                    onArrowDown() {
+                        if (this.arrowCounter < this.results.length) {
+                            this.arrowCounter = this.arrowCounter + 1;
+                        }
+                        if (this.arrowCounter >= this.results.length) {
+                            this.arrowCounter = 0;
+                        }
+
+
+                    },
+                    onArrowUp() {
+                        if (this.arrowCounter > 0) {
+                            this.arrowCounter = this.arrowCounter - 1;
+                        }
+                        if (this.arrowCounter < 0) {
+                            this.arrowCounter = this.results.length - 1;
+                        }
+
+                    },
+                    setResult(result) {
+                        this.isOpen = false;
+                        this.arrowCounter = -1;
+                        this.picked_tags.push(result);
+                    },
+                    OnChange(event) {
+                        this.filterResults(event);
+                        this.isOpen = true;
+                    },
+                    removeTag(tag) {
+                        this.picked_tags = this.picked_tags.filter(item => item !== tag);
+                    },
+                },
+            });
+
+            new Vue({
+                el: '#tags',
+            });
+        });
+    });
+</script>
+
 <form enctype="multipart/form-data" class="default collapsable" action="<?= $controller->link_for('overview/store_demand', $marketplace_id, $demand_obj->id) ?>" method="post">
     <?= CSRFProtection::tokenTag() ?>
     <fieldset data-open="bd_basicsettings">
@@ -124,6 +255,10 @@ use Studip\Button; ?>
                 <label>
                     Tags
                 </label>
+                <tags :all_tags="<?= $tags ?>" :picked_tags="<?= $picked_tags ?>"></tags>
+                <!-- <label>
+                    Tags
+                </label>
                 <ul>
                     <li v-for="(item, index) in tags" :key="index">
                         <input v-model="tags[index]">
@@ -131,7 +266,7 @@ use Studip\Button; ?>
                     </li>
                 </ul>
                 <input name="tags" type="hidden" :value="tags.join(',')">
-                <button class="button" @click.prevent="addItem">Add tag</button>
+                <button class="button" @click.prevent="addItem">Add tag</button> -->
             </div>
 
         </div>

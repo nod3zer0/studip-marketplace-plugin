@@ -62,13 +62,13 @@ class TagDemand extends SimpleORMap
         $new_tags_obj = [];
         $i = 0;
         foreach ($tags as $tag) {
-            if ($tag == "" || $tag == null) {
+            if ($tag["name"] == "" || $tag == null) {
                 continue;
             }
-            $tag_obj = \Marketplace\Tag::findByName($tag);
+            $tag_obj = \Marketplace\Tag::findByName($tag["name"]);
             if (!$tag_obj) {
                 $tag_obj = new \Marketplace\Tag();
-                $tag_obj->name = $tag;
+                $tag_obj->name = $tag["name"];
                 $tag_obj->store();
             }
             $new_tags_obj[$i] = new \Marketplace\TagDemand();

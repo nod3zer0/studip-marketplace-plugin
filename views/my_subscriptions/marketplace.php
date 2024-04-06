@@ -1,0 +1,1 @@
+<?= $this->render_partial('partials/demand_table_pagination'); ?>

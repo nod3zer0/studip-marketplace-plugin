@@ -130,6 +130,5 @@ class MySubscriptionsController extends \Marketplace\Controller
             SELECT category_id FROM mp_category_notification WHERE author_id = ?
         )
         )GROUP BY mp_demand.title ORDER BY " . $attribute_map[$order[0]] . " " . $order_map[$order[1]] . " LIMIT ?,?", [$marketplace_id, $GLOBALS['user']->id, $GLOBALS['user']->id, ($page - 1) * $entries_per_page, $entries_per_page]);
-        $this->render_action('index');
     }
 }

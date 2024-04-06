@@ -5,6 +5,7 @@ use \Marketplace\CustomProperty;
 use \Marketplace\Property;
 use \Marketplace\Category;
 use \Marketplace\CategoryDemand;
+use \Marketplace\Tag;
 
 
 class OverviewController extends \Marketplace\Controller
@@ -23,7 +24,7 @@ class OverviewController extends \Marketplace\Controller
 
     public function index_action(string $marketplace_id)
     {
-
+        //Helpbar::get()->addPlainText("test", "test 2", 'icons/16/white/date.png'); https://github.com/nod3zer0/studip-docs-translated/blob/ba50f75faae1052d6c67a438c1c9d468f491944a/quickstart/helpbar.md
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview/all');
         PageLayout::setTitle($marketplace_obj->name);
@@ -80,12 +81,33 @@ class OverviewController extends \Marketplace\Controller
         if (!$this->demand_obj) {
             $this->demand_obj = new \Marketplace\Demand();
         }
-        $this->tags = \Marketplace\TagDemand::findBySQL("demand_id = ?", [$demand_id]);
-        $this->tagsString = "";
-        foreach ($this->tags as $tag) {
-            $this->tagsString .= $tag->mp_tag->name . ",";
-        }
-        $this->tagsString = rtrim($this->tagsString, ",");
+
+
+
+        //load all tags
+        $tags =  Tag::findBySQL("1", []);
+
+        $tags = array_map(function ($tag) {
+            return [
+                'name' => htmlReady($tag->name), // escape html
+            ];
+        }, $tags);
+        $tags =  json_encode(["tags" => $tags]);
+        //replace double quotes with single quotes, so it can be rendered in html
+        $this->tags = str_replace("\"", "'", $tags);
+
+        $picked_tags = \Marketplace\TagDemand::findBySQL("demand_id = ?", [$demand_id]);
+        $picked_tags = array_map(function ($tag) {
+            return [
+                'name' => htmlReady($tag->mp_tag->name),
+                'id' => $tag->mp_tag->id
+            ];
+        }, $picked_tags);
+
+        $picked_tags = json_encode(["tags" => $picked_tags]);
+        $this->picked_tags = str_replace("\"", "'", $picked_tags);
+
+
         $db = DBManager::get();
         $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id WHERE mp_custom_property.marketplace_id = ? ORDER BY mp_custom_property.order_index", [$demand_id, $marketplace_id]);
 
@@ -134,8 +156,8 @@ saving the demand');
         }
         $demand_id = $this->demand_obj->id;
 
-        $tags = explode(",", Request::get('tags'));
-        TagDemand::updateTags($tags, $demand_id);
+        $tags = json_decode(Request::get("picked_tags"), true);
+        TagDemand::updateTags($tags["tags"], $demand_id);
 
         $categories =  json_decode(Request::get('selected_categories'), true);
         CategoryDemand::set_category_demand($categories, $demand_id);
