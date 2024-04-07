@@ -31,7 +31,7 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
     public function __construct()
     {
         parent::__construct();
-
+        //$this->addScript('assets/table_edit.js');
         //$this->addScript('assets/bookmark_component.js');
         $this->addStylesheet('assets/stylesheet.css');
         // PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');

@@ -14,6 +14,7 @@ class SearchController extends \Marketplace\Controller
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/autocomplete.js');
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
 
+
         $this->marketplace_id = $marketplace_id;
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;

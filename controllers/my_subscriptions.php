@@ -45,6 +45,7 @@ class MySubscriptionsController extends \Marketplace\Controller
 
         Navigation::activateItem('marketplace_root/my_subscriptions');
         PageLayout::setTitle("My Subscriptions");
+
         self::buildSidebarIndex();
         $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;
 

@@ -17,6 +17,7 @@ class SimpleSearchController extends \Marketplace\Controller
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search/marketplace_simple_search');
         PageLayout::setTitle(MarketplaceModel::find($marketplace_id)->name);
+
         $this->marketplace_id = $marketplace_id;
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;

@@ -61,6 +61,25 @@ class OverviewController extends \Marketplace\Controller
         $this->all_demands = \Marketplace\Demand::findBySQL("LEFT JOIN auth_user_md5 ON author_id = user_id WHERE marketplace_id = ? ORDER BY " . $attribute_map[$order[0]] . " " . $order_map[$order[1]] . " LIMIT ?,?", [$marketplace_id, ($page - 1) * $entries_per_page, $entries_per_page]);
     }
 
+    public function delete_demands_action()
+    {
+        CSRFProtection::verifyRequest();
+        if ($GLOBALS['user']->perms != 'root') {
+            PageLayout::postError('You do not have permission to delete demands');
+            $this->render_nothing();
+            return;
+        }
+
+
+        $selected_demands = json_decode(file_get_contents('php://input'), true)["demand_ids"];
+        foreach ($selected_demands as $demand_id) {
+            $demand = \Marketplace\Demand::find($demand_id);
+            $demand->delete();
+        }
+        PageLayout::postSuccess('The demands were successfully deleted');
+        $this->render_text('');
+    }
+
     public function demand_detail_action(string $demand_id = '')
     {
         CSRFProtection::verifyRequest();
