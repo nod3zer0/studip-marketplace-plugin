@@ -14,7 +14,8 @@ class AdvancedSearchController extends \Marketplace\Controller
 
     public function index_action($marketplace_id = '')
     {
-
+        Helpbar::get()->addPlainText("Searching", "This search allows you to search for demands based on custom properties, tags, and categories.");
+        Helpbar::get()->addPlainText("Text properties", "Specified query is searched inside property as a whole. Partial words can be searched by adding * (asterisk) in the word (eg. example*, exa*ple, etc...).");
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/search_tag_select.js');
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/search_category_select.js');
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
@@ -78,6 +79,15 @@ class AdvancedSearchController extends \Marketplace\Controller
                 "value_to" => $RequestData["created"]["range_value_to"]
             ];
             $data["created"] = $created;
+        }
+        if ($RequestData["author"]["value"] != "") {
+            $author = [
+                "name" => "author",
+                "type" => 6,
+                "compare_type" => $RequestData["author"]["compare_type"],
+                "value" => $RequestData["author"]["value"]
+            ];
+            $data["author"] = $author;
         }
 
         return $data;

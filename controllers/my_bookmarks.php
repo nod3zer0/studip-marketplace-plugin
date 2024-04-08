@@ -8,6 +8,7 @@ class MyBookmarksController extends \Marketplace\Controller
 {
     public function index_action($marketplace_id = '')
     {
+        Helpbar::get()->addPlainText("My bookmarks", "Here are shown all the demands you have bookmarked.");
         if ($marketplace_id) {
             $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
             $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;

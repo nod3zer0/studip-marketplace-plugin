@@ -234,7 +234,7 @@ use Studip\Button; ?>
     });
 </script>
 
-<form data-secure='true' enctype="multipart/form-data" class="default collapsable" action="<?= $controller->link_for('overview/store_demand', $marketplace_id, $demand_obj->id) ?>" method="post">
+<form data-dialog="reload-on-close" data-secure='true' enctype="multipart/form-data" class="default collapsable" action="<?= $controller->link_for('overview/store_demand', $marketplace_id, $demand_obj->id) ?>" method="post">
     <?= CSRFProtection::tokenTag() ?>
     <fieldset data-open="bd_basicsettings">
         <div>

@@ -21,6 +21,7 @@ class MyDemandsController extends \Marketplace\Controller
 
     public function index_action($marketplace_id = '')
     {
+
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_my_demands');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
@@ -30,6 +31,7 @@ class MyDemandsController extends \Marketplace\Controller
             $this->all_demands = \Marketplace\Demand::findBySQL("author_id = ?", [$GLOBALS['user']->id]);
         }
         $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;
+        Helpbar::get()->addPlainText("My " .  $this->marketplace_comodity_name_plural, "Here are shown all the " . $this->marketplace_comodity_name_plural . " you have created.");
         MyDemandsController::buildSidebar($marketplace_id, $marketplace_obj->comodity_name_singular);
     }
 }

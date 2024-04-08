@@ -14,6 +14,7 @@ class SimpleSearchController extends \Marketplace\Controller
 
     public function index_action($marketplace_id = '')
     {
+        Helpbar::get()->addPlainText("Searching", "Specified search query is searched inside the title and description of the demands.");
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search/marketplace_simple_search');
         PageLayout::setTitle(MarketplaceModel::find($marketplace_id)->name);

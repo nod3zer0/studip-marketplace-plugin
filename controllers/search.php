@@ -11,6 +11,17 @@ class SearchController extends \Marketplace\Controller
 
     public function index_action($marketplace_id = '')
     {
+        Helpbar::get()->addPlainText("Searching", "This search allows you to combine search queries with logic operators (AND, OR, NOT).
+       ");
+        Helpbar::get()->addPlainText("Properties", "You can search in properties by writing its name with '.' (dot) as a prefix followed by operator and searched string (eg. .description = example query), autocomplete will suggest viable options for properties and operators.");
+        Helpbar::get()->addPlainText("Tags", "  Tags can be searched by specifying their names with # (hashtag) as a prefix, autocomplete will suggest available tags.");
+        Helpbar::get()->addPlainText("Categories", "Categories can be searched by property .category followed by = (equal sign) and category path (eg. .category = category1/subcategory1), autocomplete does not support categories at the moment.");
+        Helpbar::get()->addPlainText("Search operators", "You can use AND, OR, NOT operators to combine queries (eg. query1 AND query2). Text properties support = (equal sign). Search searches for exact words, partial words can be searched by adding * (asterisk) in the word (eg. example*, exa*ple, etc...). Number and date properties support =, >, <, >=, <= operators (eg. .price > 100, .date >= 2021-01-01).");
+
+
+
+
+        // https://github.com/nod3zer0/studip-docs-translated/blob/ba50f75faae1052d6c67a438c1c9d468f491944a/quickstart/helpbar.md
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/autocomplete.js');
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
 

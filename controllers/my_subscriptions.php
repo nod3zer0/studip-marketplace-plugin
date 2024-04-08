@@ -42,7 +42,7 @@ class MySubscriptionsController extends \Marketplace\Controller
 
     public function index_action()
     {
-
+        Helpbar::get()->addPlainText("Subscriptions", "Here are shown all the demands from your subscribed tags and categories. These can be managed in user settings.");
         Navigation::activateItem('marketplace_root/my_subscriptions');
         PageLayout::setTitle("My Subscriptions");
 

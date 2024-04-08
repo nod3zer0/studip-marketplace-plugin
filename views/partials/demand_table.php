@@ -1,3 +1,48 @@
+<script>
+    function deleteDemands() {
+        var selectedDemands = document.querySelectorAll('input[name="selected_demands[]"]:checked');
+        var demandIds = [];
+        selectedDemands.forEach(function(demand) {
+            demandIds.push(demand.value);
+        });
+
+        if (demandIds.length === 0) {
+            alert("Please select at least one demand to delete.");
+            return;
+        }
+
+        // Assuming your endpoint for deleting demands is '/delete_demands'
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '<?= $controller->link_for('overview/delete_demands/') ?>', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                console.log(xhr.responseText);
+                // Handle success response here
+                // For example, reload the page
+                location.reload();
+            } else {
+                console.error(xhr.statusText);
+                // Handle error response here
+                // For example, show an error message
+                alert("Failed to delete demands. Please try again later.");
+            }
+        };
+        xhr.onerror = function() {
+            console.error(xhr.statusText);
+            // Handle error response here
+            // For example, show an error message
+            alert("Failed to delete demands. Please try again later.");
+        };
+        xhr.send(JSON.stringify({
+            demand_ids: demandIds
+        }));
+    }
+</script>
+
+<? if ($GLOBALS['user']->perms == 'root') : ?>
+    <button class="button" style="float: right;" onclick="deleteDemands()">Delete</button>
+<? endif; ?>
 <table class="default sortable-table">
     <caption>
         <?= $marketplace_comodity_name_plural ?>
@@ -14,6 +59,9 @@
             <th data-sort="text">Author</th>
             <th data-sort="digit">Created on</th>
             <th data-sort="text">Edit</th>
+            <? if ($GLOBALS['user']->perms == 'root') : ?>
+                <th data-sort="text"></th>
+            <? endif; ?>
         </tr>
     </thead>
     <tbody>
@@ -37,6 +85,11 @@
                             <?= $actions ?>
                         <? endif; ?>
                     </td>
+                    <? if ($GLOBALS['user']->perms == 'root') : ?>
+                        <td>
+                            <input type="checkbox" name="selected_demands[]" value="<?= $demand_obj->id ?>">
+                        </td>
+                    <? endif; ?>
                 </tr>
             <? endforeach; ?>
         <? else : ?>

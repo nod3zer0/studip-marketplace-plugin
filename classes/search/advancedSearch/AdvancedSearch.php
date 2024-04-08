@@ -23,6 +23,7 @@ class AdvancedSearch
         "created" => "mkdate",
         "date" => "mkdate",
         "description" => "description",
+        "author" => "username"
     ];
 
     /***
@@ -161,7 +162,21 @@ class AdvancedSearch
             case 5:
                 $output = $this->generateDefaultPropertyString($default_property);
                 break;
+            case 6:
+                $output = $this->generateDefaultPropertyUserName($default_property);
+                break;
         }
+
+        return $output;
+    }
+
+    private function generateDefaultPropertyUserName($default_property)
+    {
+        $output = "";
+
+        $output =  "CONCAT(auth_user_md5.Vorname, ' ', auth_user_md5.Nachname) LIKE ?";
+        $query = '%' . str_replace('*', '%', $default_property["value"]) . '%';
+        $this->values[] = $query;
 
         return $output;
     }

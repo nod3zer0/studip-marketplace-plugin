@@ -25,6 +25,7 @@ class OverviewController extends \Marketplace\Controller
     public function index_action(string $marketplace_id)
     {
         //Helpbar::get()->addPlainText("test", "test 2", 'icons/16/white/date.png'); https://github.com/nod3zer0/studip-docs-translated/blob/ba50f75faae1052d6c67a438c1c9d468f491944a/quickstart/helpbar.md
+        Helpbar::get()->addPlainText("Overview", "Here are shown all the demands from the marketplace.");
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview/all');
         PageLayout::setTitle($marketplace_obj->name);
@@ -183,6 +184,8 @@ saving the demand');
 
         $request = Request::getInstance();
         Property::update_custom_properties($request['custom_properties'], $demand_id);
-        $this->redirect('overview/index/' . $marketplace_id);
+        $this->response->add_header('X-Dialog-Close', '1');
+        $this->render_nothing();
+        //  $this->redirect('overview/index/' . $marketplace_id);
     }
 }

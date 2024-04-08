@@ -56,6 +56,10 @@ use Studip\Button; ?>
                     <td> <input type="text" name="description[value]" value="<?= htmlReady($default_property_data["description"]["value"]) ?>"> </td>
                 </tr>
                 <tr>
+                    <td> Author</td>
+                    <td> <input type="text" name="author[value]" value="<?= htmlReady($default_property_data["author"]["value"]) ?>"> </td>
+                </tr>
+                <tr>
                     <td>created</td>
                     <td>
                         <select class="date_select" name="created[compare_type]" ; ?>">
