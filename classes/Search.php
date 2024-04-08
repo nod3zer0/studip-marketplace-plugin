@@ -214,6 +214,7 @@ class Parser
         "date" => 3,
         "description" => 5,
         "category" => 6,
+        "author" => 7,
     ];
 
     private $custom_properties = [];
@@ -321,6 +322,8 @@ class Parser
                     $this->tokenObjects[] = new DefaultPropertyToken($tokens[$i], $this->default_properties[$tokens[$i]]);
                 } else if (isset($custom_properties_dict[$tokens[$i]])) {
                     $this->tokenObjects[] = new CustomPropertyToken($tokens[$i], $custom_properties_dict[$tokens[$i]]);
+                } else {
+                    throw new SearchException("Invalid property: " . $tokens[$i]);
                 }
             } else if (preg_match('/^[a-zA-Z0-9_*+\/]+$/', $tokens[$i])) {
                 if (
@@ -348,6 +351,7 @@ class SqlGenerator
         "created" => "mkdate",
         "date" => "mkdate",
         "description" => "description",
+        "author" => "username",
     ];
 
     /**
@@ -708,6 +712,37 @@ class SqlGenerator
         return $output;
     }
 
+    private function generateDefaultPropertyUserName($parser)
+    {
+        $output = "";
+        $parser->getNextToken()->getValue(); //skip property name
+        if (!($parser->peekNextToken() instanceof ColonToken) && !($parser->peekNextToken() instanceof EqualToken)) {
+            throw new SearchException("After string property must follow `:` or `=` !");
+        }
+        $parser->getNextToken();
+
+        //here is no fulltext index, so we can't use MATCH AGAINST
+        if ($parser->peekNextToken() instanceof ValueToken) {
+
+            $output =  "( CONCAT(auth_user_md5.Vorname, ' ', auth_user_md5.Nachname) LIKE ? ) ";
+            //like uses & instead of * for wildcard
+            $query = '%' . str_replace('*', '%',  $parser->getNextToken()->getValue()) . '%';
+            $this->values[] = $query;
+        } else {
+            throw new SearchException("After string property must follow string!");
+        }
+
+        if ($parser->peekNextToken() instanceof LogicToken) {
+            $output .= $this->generateLogic($parser);
+        } else if (!$parser->peekNextToken()) { // check NULL
+            return $output;
+        } else {
+            $output .= " AND " . $this->generateExpression($parser);
+        }
+
+        return $output;
+    }
+
     public function generateDefaultPropertyString($parser)
     {
         $property_name = $this->default_properties_map[$parser->getNextToken()->getValue()];
@@ -805,6 +840,9 @@ class SqlGenerator
                 break;
             case 6:
                 $output = $this->generateDefaultPropertyCategory($parser);
+                break;
+            case 7:
+                $output = $this->generateDefaultPropertyUserName($parser);
                 break;
         }
 

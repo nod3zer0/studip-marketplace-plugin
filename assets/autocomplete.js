@@ -126,7 +126,7 @@ $(document).ready(function() {
                             } else {
                                 console.error('Invalid properties data received:', data);
                             }
-                            this.attributes.push(...[{ name: 'title', type: 1 }, { name: 'description', type: 5 }, { name: 'created', type: 3 }]);
+                            this.attributes.push(...[{ name: 'title', type: 1 }, { name: 'description', type: 5 }, { name: 'created', type: 3 }, { name: 'author', type: 1 }]);
                             //replace spaces with _ in attribute names
                             this.attributes = this.attributes.map(attribute => {
                                 attribute.name = attribute.name.replace(/ /g, '_');
