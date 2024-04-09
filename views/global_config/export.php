@@ -16,5 +16,5 @@ use Studip\Button;
 
         Restore user generated data (local data will be lost).
     </label>
-    <?= Button::create('Upload', 'submit_btn') ?>
+    <button class="button" name="submit_btn" data-confirm @click="deleteUnusedTags">Upload</button>
 </form>

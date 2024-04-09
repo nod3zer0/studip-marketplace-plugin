@@ -36,5 +36,5 @@
             </tr>
         </tbody>
     </table>
-    <input type="submit" value="Save">
+    <input class="button" type="submit" value="Save">
 </form>

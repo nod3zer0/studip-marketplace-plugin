@@ -26,7 +26,8 @@
 <div id="properties_settings">
     <ul>
         <li v-for="(item, index) in properties" :key="index" :draggable="true" @dragstart="onDragStart(index)" @dragover.prevent="onDragOver" @drop.prevent="onDrop(index)" @dragenter="onDragEnter(index)" @dragleave="onDragLeave(index)" :class="{ 'draggable': isDragging === index }">
-            <input v-model="properties[index].name">
+            <input v-if="properties[index].type != 11" v-model="properties[index].name">
+            <textarea v-if="properties[index].type == 11" v-model="properties[index].name"></textarea>
             <button class="button" @click="deleteItem(index)">Delete</button>
             <label for="type">Type:</label>
             <select id="type" v-model="properties[index].type">
@@ -34,9 +35,11 @@
                 <option value="5">Text area</option>
                 <option value="2">Number</option>
                 <option value="3">Date</option>
+                <option value="10">Heading</option>
+                <option value="11">Description</option>
             </select>
-            <label for="required">Required:</label>
-            <input type="checkbox" id="required" v-model="properties[index].required">
+            <label v-if="properties[index].type != 11 && properties[index].type != 10" for="required">Required:</label>
+            <input v-if="properties[index].type != 11 && properties[index].type != 10" type="checkbox" id="required" v-model="properties[index].required">
         </li>
     </ul>
     <button class="button" @click="addItem">Add property</button>

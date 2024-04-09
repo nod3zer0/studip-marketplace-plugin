@@ -89,12 +89,20 @@ use Studip\Button; ?>
             <? endforeach; ?>
 
             <? foreach ($properties as $property) : ?>
-                <dt>
-                    <?= htmlReady($property['name']) ?>
-                </dt>
-                <? if ($property['type'] == 5) : ?>
+
+                <? if ($property['type'] == 10) : ?>
+                    <h2><?= htmlReady($property['name']) ?></h2>
+                <? elseif ($property['type'] == 11) : ?>
+                    <p><?= htmlReady($property['name']) ?></p>
+                <? elseif ($property['type'] == 5) : ?>
+                    <dt>
+                        <?= htmlReady($property['name']) ?>
+                    </dt>
                     <dd><?= \Studip\Markup::markupToHtml($property['value']) ?></dd>
                 <? else : ?>
+                    <dt>
+                        <?= htmlReady($property['name']) ?>
+                    </dt>
                     <dd><?= htmlReady($property['value']) ?></dd>
                 <? endif; ?>
             <? endforeach; ?>

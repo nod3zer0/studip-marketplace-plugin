@@ -282,7 +282,16 @@ use Studip\Button; ?>
         <? foreach ($properties as $property) : ?>
             <div>
                 <label>
-                    <?= $property['name'] ?>
+                    <?
+                    if ($property['type'] == 10) {
+                        echo "<h2>" . $property['name'] . "</h2>";
+                    } else if ($property['type'] == 11) {
+                        echo "<p>" . $property['name'] . "</p>";
+                    } else {
+                        echo $property['name'];
+                    }
+
+                    ?>
                 </label>
                 <?
                 $property_html = "";
