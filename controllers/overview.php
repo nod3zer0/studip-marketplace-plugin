@@ -30,7 +30,7 @@ class OverviewController extends \Marketplace\Controller
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview/all');
         PageLayout::setTitle($marketplace_obj->name);
         OverviewController::buildSidebar($marketplace_id, $marketplace_obj->comodity_name_singular);
-        PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
+        //  PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
 
 
         $this->marketplace_id = $marketplace_id;

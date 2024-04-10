@@ -86,7 +86,7 @@ use Studip\Button; ?>
                     <th data-sort="text">Author</th>
                     <th data-sort="digit">Created on</th>
                     <th data-sort="text">Edit</th>
-                    <th data-sort="text">>Bookmark</th>
+                    <th data-sort="text">Bookmark</th>
                     <? if ($GLOBALS['user']->perms == 'root') : ?>
                         <th data-sort="text"></th>
                     <? endif; ?>
