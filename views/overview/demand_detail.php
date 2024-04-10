@@ -80,6 +80,18 @@ use Studip\Button; ?>
                 Description
             </dt>
             <dd><?= $demand_obj->description ?></dd>
+            <dt>
+                Contact name
+            </dt>
+            <dd>
+                <?= htmlReady($demand_obj->contact_name) ?>
+            </dd>
+            <dt>
+                Contact email
+            </dt>
+            <dd>
+                <?= htmlReady($demand_obj->contact_mail) ?>
+            </dd>
 
 
             <dt>
@@ -122,4 +134,11 @@ use Studip\Button; ?>
         </div>
 
     </section>
+
+    <footer data-dialog-button>
+
+        <a class="button" href="<?= $controller->url_for('overview/response', $demand_obj->id) ?>" data-dialog="reload-on-close"> Respond
+        </a>
+
+    </footer>
 </fieldset>

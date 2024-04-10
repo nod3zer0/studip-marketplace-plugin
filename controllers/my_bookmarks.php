@@ -19,6 +19,7 @@ class MyBookmarksController extends \Marketplace\Controller
             Navigation::activateItem('/marketplace_root/marketplace_my_bookmarks');
             $this->all_demands = \Marketplace\Bookmark::getAllBookmarks($GLOBALS['user']->id);
         }
+        PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
     }
 
 

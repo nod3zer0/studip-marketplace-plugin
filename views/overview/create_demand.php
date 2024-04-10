@@ -251,6 +251,26 @@ use Studip\Button; ?>
             <textarea class="add_toolbar wysiwyg" name="description"><?= wysiwygReady($demand_obj->description) ?></textarea>
         </div>
         <div>
+            <label>
+                Contact name
+            </label>
+            <? if ($demand_obj->contact_name) : ?>
+                <input required name="contact_name" value="<?= htmlReady($demand_obj->contact_name) ?>">
+            <? else : ?>
+                <input required name="contact_name" value="<?= htmlReady($GLOBALS['user']->Vorname . ' ' . $GLOBALS['user']->Nachname) ?>">
+            <? endif; ?>
+        </div>
+        <div>
+            <label>
+                Contact email
+            </label>
+            <? if ($demand_obj->contact_mail) : ?>
+                <input required name="contact_mail" value="<?= htmlReady($demand_obj->contact_mail) ?>">
+            <? else : ?>
+                <input required name="contact_mail" value="<?= htmlReady($GLOBALS['user']->email) ?>">
+            <? endif; ?>
+        </div>
+        <div>
             <div id="tags">
                 <label>
                     Tags

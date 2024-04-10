@@ -21,7 +21,7 @@ class MyDemandsController extends \Marketplace\Controller
 
     public function index_action($marketplace_id = '')
     {
-
+        PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_my_demands');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);

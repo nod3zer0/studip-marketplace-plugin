@@ -18,6 +18,7 @@ class AdvancedSearchController extends \Marketplace\Controller
         Helpbar::get()->addPlainText("Text properties", "Specified query is searched inside property as a whole. Partial words can be searched by adding * (asterisk) in the word (eg. example*, exa*ple, etc...).");
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/search_tag_select.js');
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/search_category_select.js');
+        PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
 
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search/marketplace_advanced_search');

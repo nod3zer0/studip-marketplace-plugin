@@ -45,6 +45,7 @@ class MySubscriptionsController extends \Marketplace\Controller
         Helpbar::get()->addPlainText("Subscriptions", "Here are shown all the demands from your subscribed tags and categories. These can be managed in user settings.");
         Navigation::activateItem('marketplace_root/my_subscriptions');
         PageLayout::setTitle("My Subscriptions");
+        PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
 
         self::buildSidebarIndex();
         $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;

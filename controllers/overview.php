@@ -30,7 +30,7 @@ class OverviewController extends \Marketplace\Controller
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview/all');
         PageLayout::setTitle($marketplace_obj->name);
         OverviewController::buildSidebar($marketplace_id, $marketplace_obj->comodity_name_singular);
-        //  PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
+        PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
 
 
         $this->marketplace_id = $marketplace_id;
@@ -137,6 +137,28 @@ class OverviewController extends \Marketplace\Controller
         $this->categories = json_encode(Category::get_categories($marketplace_id));
     }
 
+    public function response_action($demand_id)
+    {
+        $this->demand_id = $demand_id;
+    }
+
+    public function send_response_action($demand_id)
+    {
+        $demand  = \Marketplace\Demand::find($demand_id);
+
+        $mail = new StudipMail();
+        $mail->addRecipient($demand->contact_mail)
+            ->setReplyToEmail($GLOBALS['user']->email)
+            ->setSubject('New response to your offer: ' . $demand->title)
+            ->setBodyText("User " . $GLOBALS['user']->username . " has responded to your offer " . $this->url_for('overview/demand_detail/' . $demand_id, []) . ". Reply address is set to the sender. Response is below. \n\n" . Request::get('message'))
+            ->send();
+
+
+        PageLayout::postSuccess('The message was successfully sent.');
+        $this->response->add_header('X-Dialog-Close', '1');
+        $this->render_nothing();
+    }
+
 
     public function store_demand_action(string $marketplace_id, string $demand_id = '')
     {
@@ -165,7 +187,9 @@ class OverviewController extends \Marketplace\Controller
 
         $this->demand_obj->setData([
             'title' => Request::get('title'),
-            'description' => Studip\Markup::purifyHtml(Request::get('description'))
+            'description' => Studip\Markup::purifyHtml(Request::get('description')),
+            'contact_mail' => Studip\Markup::purifyHtml(Request::get('contact_mail')),
+            'contact_name' => Studip\Markup::purifyHtml(Request::get('contact_name'))
         ]);
 
 

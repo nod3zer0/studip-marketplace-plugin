@@ -24,7 +24,7 @@ class SearchController extends \Marketplace\Controller
         // https://github.com/nod3zer0/studip-docs-translated/blob/ba50f75faae1052d6c67a438c1c9d468f491944a/quickstart/helpbar.md
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/autocomplete.js');
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
-
+        PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
 
         $this->marketplace_id = $marketplace_id;
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
