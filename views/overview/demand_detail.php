@@ -12,8 +12,10 @@ use Studip\Button; ?>
     }) => {
 
         Vue.component('bookmark', {
-            template: `<button class="button" @click="setBookmark">{{ bookmarked ? 'Unbookmark' : 'Bookmark' }}</button>`,
-            props: ['set_bookmark_url', 'get_bookmark_url'],
+            template: `<span><button class="button" v-if="icon == 'false'" @click="setBookmark">{{ bookmarked ? 'Unbookmark' : 'Bookmark' }}</button>
+                    <img width="16" height="16" src="/public/assets/images/icons/black/add-circle.svg" v-if="icon == 'true' && bookmarked" @click="setBookmark"/>
+                    <img width="16" height="16" src="/public/assets/images/icons/black/remove-circle.svg" v-if="icon == 'true' && !bookmarked" @click="setBookmark"/>`,
+            props: ['set_bookmark_url', 'get_bookmark_url', 'icon'],
             data: () => ({
                 bookmarked: false
             }),
@@ -116,7 +118,7 @@ use Studip\Button; ?>
         </dl>
 
         <div id="bookmark">
-            <bookmark :set_bookmark_url="'<?= $controller->link_for('my_bookmarks/set_bookmark', $demand_obj->id) ?>'" :get_bookmark_url="'<?= $controller->link_for('my_bookmarks/get_bookmark', $demand_obj->id) ?>'" />
+            <bookmark icon="false" :set_bookmark_url="'<?= $controller->link_for('my_bookmarks/set_bookmark', $demand_obj->id) ?>'" :get_bookmark_url="'<?= $controller->link_for('my_bookmarks/get_bookmark', $demand_obj->id) ?>'" />
         </div>
 
     </section>

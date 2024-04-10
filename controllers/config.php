@@ -66,6 +66,13 @@ class ConfigController extends \Marketplace\Controller
 
     public function properties_action($marketplace_id = '')
     {
+        Helpbar::get()->addPlainText("Properties", "Here you can setup properties for each comodity. Properties are rendered in comodity detail and creation in same order as they are here. You can change order of properties by drag and drop. If you delete property, all data that users filled in that property will be lost.");
+        Helpbar::get()->addPlainText("Short text", "Short text is small text input field, that users can fill in.");
+        Helpbar::get()->addPlainText("Text area", "Text area is large text input field with wysiwyg editor, that users can fill in.");
+        Helpbar::get()->addPlainText("Number", "Number is input field that accepts only numbers.");
+        Helpbar::get()->addPlainText("Date", "Date is input field that accepts only date. It is rendered as date picker.");
+        Helpbar::get()->addPlainText("Heading", "Heading is text that is rendered as heading. Users can't fill in this field.");
+        Helpbar::get()->addPlainText("Description", "Description is text that is rendered as plain text. Users can't fill in this field.");
         $this->marketplace_id = $marketplace_id;
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_config/properties');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);

@@ -6,8 +6,11 @@ STUDIP.Vue.load().then(({
 }) => {
 
     Vue.component('bookmark_public', {
-        template: `<button @click="setBookmark">{{ bookmarked ? 'Unbookmark' : 'Bookmark' }}</button>`,
-        props: ['set_bookmark_url', 'get_bookmark_url'],
+        template: `<span><button v-if="!icon" @click="setBookmark">{{ bookmarked ? 'Unbookmark' : 'Bookmark' }}</button>
+                    <img width="16" height="16" src="/public/assets/images/icons/black/add-circle.svg" v-if="icon && bookmarked" @click="setBookmark"/>
+                    <img width="16" height="16" src="/public/assets/images/icons/black/remove-circle.svg" v-if="icon && !bookmarked" @click="setBookmark"/>
+        </span>`,
+        props: ['set_bookmark_url', 'get_bookmark_url', 'icon'],
         data: () => ({
             bookmarked: false
         }),

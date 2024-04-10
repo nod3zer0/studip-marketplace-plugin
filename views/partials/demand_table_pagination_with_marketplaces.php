@@ -83,6 +83,7 @@ use Studip\Button; ?>
             <th data-sort="digit">Created on</th>
             <th data-sort="text">Marketplace</th>
             <th data-sort="text">Edit</th>
+
             <? if ($GLOBALS['user']->perms == 'root') : ?>
                 <th data-sort="text"></th>
             <? endif; ?>
@@ -110,6 +111,7 @@ use Studip\Button; ?>
                             <?= $actions ?>
                         <? endif; ?>
                     </td>
+
                     <? if ($GLOBALS['user']->perms == 'root') : ?>
                         <td>
                             <input type="checkbox" name="selected_demands[]" value="<?= $demand_obj->id ?>">
