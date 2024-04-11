@@ -213,9 +213,12 @@ class GlobalConfigController extends \Marketplace\Controller
         foreach ($search_demands as $search_demand) {
             $db->execute("INSERT INTO mp_search_demand (id, demand_id, search_notification_id) VALUES (?, ?, ?)", [$search_demand["id"], $search_demand["author_id"], $search_demand["demand_id"]]);
         }
+        //ignore temporary foreign key checks
+        $db->execute("SET FOREIGN_KEY_CHECKS=0");
         foreach ($categories as $category) {
-            $db->execute("INSERT INTO mp_category (id, name, parent_category_id, marketplace_id) VALUES (?, ?, ?, ?)", [$category["id"], $category["name"], $category["parent_id"], $category["marketplace_id"]]);
+            $db->execute("INSERT INTO mp_category (id, name, parent_category_id, marketplace_id) VALUES (?, ?, ?, ?)", [$category["id"], $category["name"], $category["parent_category_id"], $category["marketplace_id"]]);
         }
+        $db->execute("SET FOREIGN_KEY_CHECKS=1");
         foreach ($category_demands as $category_demand) {
             $db->execute("INSERT INTO mp_category_demand (id, category_id, demand_id) VALUES (?, ?, ?)", [$category_demand["id"], $category_demand["category_id"], $category_demand["demand_id"]]);
         }
