@@ -31,7 +31,7 @@
                             <? if ($demand_obj->hasPermission()) : ?>
                                 <? $actions = ActionMenu::get(); ?>
                                 <? $actions->addLink(
-                                    $controller->url_for('overview/create_demand/') . $marketplace_id . "/" . $demand_obj->id,
+                                    $controller->url_for('overview/create_demand/') . $demand_obj->mp_marketplace->id . "/" . $demand_obj->id,
                                     'Edit',
                                     Icon::create('edit'),
                                     ['data-dialog' => true]

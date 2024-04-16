@@ -251,7 +251,7 @@ use Studip\Button; ?>
             <textarea class="add_toolbar wysiwyg" name="description"><?= wysiwygReady($demand_obj->description) ?></textarea>
         </div>
         <div>
-            <label>
+            <label class="required">
                 Contact name
             </label>
             <? if ($demand_obj->contact_name) : ?>
@@ -261,7 +261,7 @@ use Studip\Button; ?>
             <? endif; ?>
         </div>
         <div>
-            <label>
+            <label class="required">
                 Contact email
             </label>
             <? if ($demand_obj->contact_mail) : ?>
@@ -301,13 +301,14 @@ use Studip\Button; ?>
 
         <? foreach ($properties as $property) : ?>
             <div>
-                <label>
+                <label <?= $property["required"] ? "class=\"required\"" : ""; ?>>
                     <?
                     if ($property['type'] == 10) {
                         echo "<h2>" . $property['name'] . "</h2>";
                     } else if ($property['type'] == 11) {
                         echo "<p>" . $property['name'] . "</p>";
                     } else {
+
                         echo $property['name'];
                     }
 

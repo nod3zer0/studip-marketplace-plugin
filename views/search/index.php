@@ -10,7 +10,7 @@ use Studip\Button; ?>
     <fieldset data-open="bd_basicsettings">
         <div>
             <label class="required">
-                search
+                Search advanced query
             </label>
             <div id="search_input">
                 <search_input :categories="<?= str_replace("\"", "'", $categories) ?>" :value="'<?= $query ?>'" :marketplace_id="'<?= $marketplace_id ?>'" :attributes_url="'<?= $controller->link_for('search/get_attributes', $marketplace_id) ?>'" />

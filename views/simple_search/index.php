@@ -10,7 +10,7 @@ use Studip\Button; ?>
     <fieldset data-open="bd_basicsettings">
         <div>
             <label class="required">
-                search
+                Search for words
             </label>
             <div id="search_input">
                 <input type="text" name="search-query" value="">

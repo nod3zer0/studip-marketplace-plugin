@@ -97,7 +97,7 @@ class OverviewController extends \Marketplace\Controller
 
     public function create_demand_action(string $marketplace_id, string $demand_id = '')
     {
-        PageLayout::setTitle('Edit demand');
+        PageLayout::setTitle('Edit ' . \Marketplace\MarketplaceModel::find($marketplace_id)->comodity_name_singular);
         $this->marketplace_id = $marketplace_id;
         $this->demand_obj = \Marketplace\Demand::find($demand_id);
         if (!$this->demand_obj) {
@@ -164,6 +164,7 @@ class OverviewController extends \Marketplace\Controller
     {
         CSRFProtection::verifyRequest();
         $this->demand_obj = \Marketplace\Demand::find($demand_id);
+        $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         if (!$this->demand_obj) {
             $this->demand_obj = new \Marketplace\Demand();
             $this->demand_obj->author_id = $GLOBALS['user']->id;
@@ -177,9 +178,9 @@ class OverviewController extends \Marketplace\Controller
 
         if (Request::submitted('delete_btn')) {
             if ($this->demand_obj->delete()) {
-                PageLayout::postSuccess('The demand was successfully deleted');
+                PageLayout::postSuccess('The ' . $marketplace_obj->comodity_name_singular . ' was successfully deleted');
             } else {
-                PageLayout::postError('An error occurred while deleting the demand');
+                PageLayout::postError('An error occurred while deleting the ' . $marketplace_obj->comodity_name_singular);
             }
             $this->redirect('overview/index/' . $marketplace_id);
             return;
@@ -194,11 +195,11 @@ class OverviewController extends \Marketplace\Controller
 
 
         if ($this->demand_obj->store() !== false) {
-            PageLayout::postSuccess('The demand was
+            PageLayout::postSuccess('The ' . $marketplace_obj->comodity_name_singular . '  was
 successfully saved');
         } else {
             PageLayout::postError('An error occurred while
-saving the demand');
+saving the .' . $marketplace_obj->comodity_name_singular);
         }
         $demand_id = $this->demand_obj->id;
 

@@ -8,8 +8,8 @@ $(document).ready(function() {
 
         Vue.component('bookmark_public', {
             template: `<span><button v-if="!icon" @click="setBookmark">{{ bookmarked ? 'Unbookmark' : 'Bookmark' }}</button>
-                    <img width="16" height="16" src="/assets/images/icons/black/add-circle.svg" v-if="icon && bookmarked" @click="setBookmark"/>
-                    <img width="16" height="16" src="/assets/images/icons/black/remove-circle.svg" v-if="icon && !bookmarked" @click="setBookmark"/>
+                    <img width="16" height="16" src="/assets/images/icons/black/add-circle.svg" v-if="icon && !bookmarked" @click="setBookmark"/>
+                    <img width="16" height="16" src="/assets/images/icons/black/remove-circle.svg" v-if="icon && bookmarked" @click="setBookmark"/>
         </span>`,
             props: ['set_bookmark_url', 'get_bookmark_url', 'icon'],
             data: () => ({
