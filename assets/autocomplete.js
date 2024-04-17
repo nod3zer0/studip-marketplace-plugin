@@ -18,7 +18,7 @@ $(document).ready(function() {
         <!--  <input type="button" value="Notify on new demands" @click="SetNotification()"> -->
         </span>
         `,
-            props: ['attributes_url', 'marketplace_id', 'value', 'categories'],
+            props: ['attributes_url', 'marketplace_id', 'value', 'categories', 'attributes', 'tags'],
             data: () => ({
                 attributes: [{
                     name: 'test1',
@@ -86,9 +86,24 @@ $(document).ready(function() {
                 mode: 'attribute'
             }),
             async created() {
-                this.loadTags();
-                await this.loadAttributes();
-                this.loadAttributes();
+
+
+                // remap tags so they have type attribute
+                this.tags = this.tags.map(tag => ({
+                    name: tag.name,
+                    type: 'tag'
+                }));
+
+                //convert type string to int
+                this.attributes = this.attributes.map(attribute => {
+                    return {
+                        name: attribute.name,
+                        type: parseInt(attribute.type)
+                    };
+                });
+                // remove headings 10 and descriptions 11
+                this.attributes = this.attributes.filter(attribute => attribute.type != 10 && attribute.type != 11);
+                this.attributes.push(...[{ name: 'title', type: 1 }, { name: 'description', type: 5 }, { name: 'created', type: 3 }, { name: 'author', type: 1 }, { name: 'category', type: 'category' }]);
 
                 // fore each category create string path to it and add it to list
                 this.category_paths = this.getCategoryPaths(this.categories);
@@ -113,51 +128,6 @@ $(document).ready(function() {
                         }
                     });
                     return paths;
-                },
-                loadTags() {
-                    fetch(STUDIP.URLHelper.getURL('plugins.php/marketplace/search/get_tags'))
-                        .then(response => response.json())
-                        .then(data => {
-                            // Check if data is an array
-                            if (Array.isArray(data)) {
-                                // Update properties with data from the response
-                                this.tags = data.map(tag => ({
-                                    name: tag.name,
-                                    type: 'tag'
-                                }));
-                            } else {
-                                console.error('Invalid properties data received:', data);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error fetching properties:', error);
-                        });
-                },
-                async loadAttributes() {
-                    fetch(document.getElementById('attributes_url').value)
-                        .then(response => response.json())
-                        .then(data => {
-                            // Check if data is an array
-                            if (Array.isArray(data)) {
-                                // Update properties with data from the response
-                                this.attributes = data.map(attribute => ({
-                                    name: attribute.name,
-                                    type: parseInt(attribute.type)
-                                }));
-                            } else {
-                                console.error('Invalid properties data received:', data);
-                            }
-                            this.attributes.push(...[{ name: 'title', type: 1 }, { name: 'description', type: 5 }, { name: 'created', type: 3 }, { name: 'author', type: 1 }, { name: 'category', type: 'category' }]);
-                            //replace spaces with _ in attribute names
-                            this.attributes = this.attributes.map(attribute => {
-                                attribute.name = attribute.name.replace(/ /g, '_');
-                                return attribute;
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error fetching properties:', error);
-                        });
-
                 },
                 async SetNotification() {
                     fetch(STUDIP.URLHelper.getURL('plugins.php/marketplace/search/save_search'), {
@@ -317,7 +287,7 @@ $(document).ready(function() {
 
                     } else if (this.mode == 'operator') {
 
-                        if (selected.type = "category_operator") {
+                        if (selected.type == "category_operator") {
                             this.search = this.InsertAtIndex(this.search, ' '.concat(selected.name, ' /'), search_input.selectionStart);
                             this.isOpen = true; //open for path selection
                             this.SetCursorPos(search_input.selectionStart + selected.name.length + 3);

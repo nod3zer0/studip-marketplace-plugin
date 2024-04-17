@@ -36,6 +36,15 @@ class SearchController extends \Marketplace\Controller
         $query = Request::get('search-query');
         $this->query = $query;
 
+        $custom_properties = $db->fetchAll("SELECT name, type FROM mp_custom_property WHERE marketplace_id = ?", [$marketplace_id]);
+        $this->custom_properties = json_encode($custom_properties);
+
+        $tags = $db->fetchAll("SELECT name FROM mp_tag", []);
+        $this->tags = json_encode($tags);
+
+
+
+
         $categories = Category::get_categories($marketplace_id);
         $this->categories = json_encode($categories);
         $this->limit = Request::get('limit') ?: get_config('ENTRIES_PER_PAGE');
