@@ -18,7 +18,7 @@ $(document).ready(function() {
         <!--  <input type="button" value="Notify on new demands" @click="SetNotification()"> -->
         </span>
         `,
-            props: ['attributes_url', 'marketplace_id', 'value'],
+            props: ['attributes_url', 'marketplace_id', 'value', 'categories'],
             data: () => ({
                 attributes: [{
                     name: 'test1',
@@ -72,6 +72,11 @@ $(document).ready(function() {
                     name: '=',
                     type: 'string_operator'
                 }],
+                category_operators: [{
+                    name: '=',
+                    type: 'category_operator'
+                }],
+                category_paths: [],
                 results: [],
                 results_render: [],
                 isOpen: false,
@@ -84,6 +89,11 @@ $(document).ready(function() {
                 this.loadTags();
                 await this.loadAttributes();
                 this.loadAttributes();
+
+                // fore each category create string path to it and add it to list
+                this.category_paths = this.getCategoryPaths(this.categories);
+
+
             },
             mounted() {
                 document.addEventListener('click', this.handleClickOutside);
@@ -93,6 +103,17 @@ $(document).ready(function() {
                 document.removeEventListener('click', this.handleClickOutside);
             },
             methods: {
+                getCategoryPaths(categories, parentPath = '') {
+                    let paths = [];
+                    categories.forEach(category => {
+                        const fullPath = parentPath + '/' + category.name.trim();
+                        paths.push(fullPath);
+                        if (category.subcategories.length > 0) {
+                            paths = paths.concat(this.getCategoryPaths(category.subcategories, fullPath));
+                        }
+                    });
+                    return paths;
+                },
                 loadTags() {
                     fetch(STUDIP.URLHelper.getURL('plugins.php/marketplace/search/get_tags'))
                         .then(response => response.json())
@@ -126,7 +147,7 @@ $(document).ready(function() {
                             } else {
                                 console.error('Invalid properties data received:', data);
                             }
-                            this.attributes.push(...[{ name: 'title', type: 1 }, { name: 'description', type: 5 }, { name: 'created', type: 3 }, { name: 'author', type: 1 }]);
+                            this.attributes.push(...[{ name: 'title', type: 1 }, { name: 'description', type: 5 }, { name: 'created', type: 3 }, { name: 'author', type: 1 }, { name: 'category', type: 'category' }]);
                             //replace spaces with _ in attribute names
                             this.attributes = this.attributes.map(attribute => {
                                 attribute.name = attribute.name.replace(/ /g, '_');
@@ -203,6 +224,19 @@ $(document).ready(function() {
                             return item;
                         }
                     }));
+                    //sort categories by lenght of name shortes first
+                    this.results.push(...this.category_paths.filter(item => {
+                        //cut item
+                        cuted_item = item.slice(0, last_key.length);
+                        if (cuted_item.toLowerCase() == last_key.toLowerCase()) {
+                            return item;
+                        }
+                    }).sort((a, b) => a.length - b.length).map(item => ({
+                        name: item,
+                        type: 'category_path'
+                    })));
+
+
                     if (this.results.length > 0) {
                         this.results_render = this.results.map(item => item.name);
                         this.isOpen = true;
@@ -233,6 +267,7 @@ $(document).ready(function() {
                             case 2: //number
                             case 3: //date
                             case 5: //text area
+                            case 'category':
                                 this.search = this.InsertAtIndex(this.search, '.'.concat(selected.name).slice(last_key.length).concat(' '), search_input.selectionStart);
                                 this.isOpen = false;
                                 this.SetCursorPos(search_input.selectionStart + '#'.concat(selected.name).slice(last_key.length).length + 1);
@@ -242,6 +277,10 @@ $(document).ready(function() {
                                 this.isOpen = false;
                                 this.SetCursorPos(search_input.selectionStart + '#'.concat(selected.name).slice(last_key.length).length + 1);
                                 break;
+                            case 'category_path':
+                                this.search = this.InsertAtIndex(this.search, selected.name.slice(last_key.length).concat(' '), search_input.selectionStart);
+                                this.isOpen = false;
+                                this.SetCursorPos(search_input.selectionStart + selected.name.slice(last_key.length).length + 1);
                         }
 
                         switch (selected.type) {
@@ -264,13 +303,40 @@ $(document).ready(function() {
                                 this.mode = 'operator';
                                 this.isOpen = true;
                                 break;
+                            case 'category':
+                                this.results = this.category_operators;
+                                this.results_render = this.category_operators.map(item => item.name);
+                                this.mode = 'operator';
+                                this.isOpen = true;
+                                break;
+                            default:
+                                this.mode = 'attribute';
+                                this.isOpen = false;
+                                break;
                         }
 
                     } else if (this.mode == 'operator') {
-                        this.search = this.InsertAtIndex(this.search, ' '.concat(selected.name, ' '), search_input.selectionStart);
+
+                        if (selected.type = "category_operator") {
+                            this.search = this.InsertAtIndex(this.search, ' '.concat(selected.name, ' /'), search_input.selectionStart);
+                            this.isOpen = true; //open for path selection
+                            this.SetCursorPos(search_input.selectionStart + selected.name.length + 3);
+
+                            // fill results with all category paths
+                            this.results = this.category_paths.sort((a, b) => a.length - b.length).map(item => ({
+                                name: item,
+                                type: 'category_path'
+                            }));
+                            this.results_render = this.category_paths.sort((a, b) => a.length - b.length);
+                        } else {
+                            this.search = this.InsertAtIndex(this.search, ' '.concat(selected.name, ' '), search_input.selectionStart);
+                            this.isOpen = false; //close end of autocompletion
+                            this.SetCursorPos(search_input.selectionStart + selected.name.length + 2);
+                        }
                         this.mode = 'attribute';
-                        this.isOpen = false;
-                        this.SetCursorPos(search_input.selectionStart + selected.name.length + 2);
+
+
+
                     }
                 },
                 OnTab() {

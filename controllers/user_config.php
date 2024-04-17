@@ -14,6 +14,7 @@ class UserConfigController extends \Marketplace\Controller
 
     public function index_action($markeplace_id = '')
     {
+        Helpbar::get()->addPlainText("Notification settings", "Here you can manage your notification settings. The selected tags and categories will be used to notify you about new demands. Also your subscription page will contain only the demands that match your selected tags and categories.");
         if ($markeplace_id) {
             Navigation::activateItem('marketplace_' . $markeplace_id . '/user_config');
         } else {
