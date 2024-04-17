@@ -15,7 +15,7 @@ class SearchController extends \Marketplace\Controller
        ");
         Helpbar::get()->addPlainText("Properties", "You can search in properties by writing its name with '.' (dot) as a prefix followed by operator and searched string (eg. .description = example query), autocomplete will suggest viable options for properties and operators.");
         Helpbar::get()->addPlainText("Tags", "  Tags can be searched by specifying their names with # (hashtag) as a prefix, autocomplete will suggest available tags.");
-        Helpbar::get()->addPlainText("Categories", "Categories can be searched by property .category followed by = (equal sign) and category path (eg. .category = category1/subcategory1), autocomplete does not support categories at the moment.");
+        Helpbar::get()->addPlainText("Categories", "Categories can be searched by property .category followed by = (equal sign) and category path (eg. .category = category1/subcategory1).");
         Helpbar::get()->addPlainText("Search operators", "You can use AND, OR, NOT operators to combine queries (eg. query1 AND query2). Text properties support = (equal sign). Search searches for exact words, partial words can be searched by adding * (asterisk) in the word (eg. example*, exa*ple, etc...). Number and date properties support =, >, <, >=, <= operators (eg. .price > 100, .date >= 2021-01-01).");
 
 

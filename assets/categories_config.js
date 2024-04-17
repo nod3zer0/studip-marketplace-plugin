@@ -37,6 +37,12 @@ $(document).ready(function() {
                     if (!isUnique) {
                         Vue.set(category, 'error', 'Name must be unique within the category');
                         this.$emit('error', 1);
+                    } else if (category.name === '') {
+                        Vue.set(category, 'error', 'Name must not be empty');
+                        this.$emit('error', 1);
+                    } else if (category.name.includes('/')) {
+                        Vue.set(category, 'error', 'Name must not contain /');
+                        this.$emit('error', 1);
                     } else {
                         Vue.set(category, 'error', null);
                         this.$emit('error', -1);
