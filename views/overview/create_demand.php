@@ -292,8 +292,11 @@ use Studip\Button; ?>
         </div>
         <input type="hidden" name="tags_previous" value="<?= $tagsString ?>">
         <div>
+            <label>
+                Manage images
+            </label>
             <label class="file-upload">
-                <input multiple accept=".png" name="images[]" type="file" multiple>
+                <input multiple accept="image/*" name="images[]" type="file" multiple>
 
                 Upload Images
             </label>

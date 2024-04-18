@@ -184,6 +184,7 @@ class OverviewController extends \Marketplace\Controller
                 PageLayout::postSuccess('The ' . $marketplace_obj->comodity_name_singular . ' was successfully deleted');
             } else {
                 PageLayout::postError('An error occurred while deleting the ' . $marketplace_obj->comodity_name_singular);
+                return;
             }
             $this->redirect('overview/index/' . $marketplace_id);
             return;
@@ -197,19 +198,20 @@ class OverviewController extends \Marketplace\Controller
         ]);
 
 
+
+
         if ($this->demand_obj->store() !== false) {
             PageLayout::postSuccess('The ' . $marketplace_obj->comodity_name_singular . '  was
 successfully saved');
         } else {
             PageLayout::postError('An error occurred while
 saving the .' . $marketplace_obj->comodity_name_singular);
+            return;
         }
         $demand_id = $this->demand_obj->id;
 
-        //TODO check image quality
         if (image::storeImages($_FILES["images"], $demand_id) === false) {
             PageLayout::postError('An error occurred while saving the image');
-            $this->render_nothing();
             return;
         }
         $images_to_remove = Request::getArray('remove_images');

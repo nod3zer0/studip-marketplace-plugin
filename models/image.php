@@ -34,7 +34,12 @@ class Image extends SimpleORMap
             $image->filename =   $newname;
             $image->store();
             $target =  'marketplace/user_data/images/' . $newname;
-            if (!move_uploaded_file($files['tmp_name'][$i], $target)) {
+
+            $allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF);
+            $detectedType = exif_imagetype($files['tmp_name']);
+            $correctType = in_array($detectedType, $allowedTypes);
+
+            if (!$correctType || !move_uploaded_file($files['tmp_name'][$i], $target)) {
                 $image->delete();
 
                 return false;
