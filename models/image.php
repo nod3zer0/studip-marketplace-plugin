@@ -17,4 +17,41 @@ class Image extends SimpleORMap
         ];
         parent::configure($config);
     }
+
+    /**
+     * Stores the image in the database and the file system
+     * @return true if the image was stored successfully, false otherwise
+     */
+    public static function storeImages($files, $demand_id): bool
+    {
+        for ($i = 0; $i < count($files['name']); $i++) {
+            $image = new Image();
+            $image->demand_id = $demand_id;
+            $image->store();
+            $info = pathinfo($files['name'][$i]);
+            $ext = $info['extension']; // get the extension of the file
+            $newname =  $image->id . "." . $ext;
+            $image->filename =   $newname;
+            $image->store();
+            $target =  'marketplace/user_data/images/' . $newname;
+            if (!move_uploaded_file($files['tmp_name'][$i], $target)) {
+                $image->delete();
+
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static function deleteImages($image_ids)
+    {
+        foreach ($image_ids as $image_id) {
+            $image = Image::find($image_id);
+            $target = 'marketplace/user_data/images/' . $image->filename;
+            if (file_exists($target)) {
+                unlink($target);
+            }
+            $image->delete();
+        }
+    }
 }

@@ -291,13 +291,38 @@ use Studip\Button; ?>
 
         </div>
         <input type="hidden" name="tags_previous" value="<?= $tagsString ?>">
-        <!-- <div>
+        <div>
             <label class="file-upload">
-                <input name="images" type="file" multiple>
+                <input multiple accept=".png" name="images[]" type="file" multiple>
 
                 Upload Images
             </label>
-        </div> -->
+        </div>
+
+        <table>
+            <tr>
+                <th>Image</th>
+                <th>Remove</th>
+            </tr>
+            <? foreach ($images as $image) : ?>
+                <tr>
+                    <td>
+                        <div class="gallery">
+                            <a target="_blank" href="<?= "/marketplace/user_data/images/" . $image->filename ?>">
+                                <img src="<?= "/marketplace/user_data/images/" . $image->filename ?>" style="width: 100px; height: 100px;">
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="remove_images[]" value="<?= $image->id ?>">
+                    </td>
+                </tr>
+            <? endforeach; ?>
+        </table>
+
+        <!--
+        data-max-size=""
+                       data-message-too-large="" -->
 
         <? foreach ($properties as $property) : ?>
             <div>

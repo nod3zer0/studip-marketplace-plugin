@@ -127,6 +127,21 @@ use Studip\Button; ?>
             <dd>
                 <?= htmlReady($selected_path) ?>
             </dd>
+            <dt>
+                Images
+            </dt>
+
+            <dd>
+                <? foreach ($images as $image) : ?>
+            <dd>
+                <div class="gallery">
+                    <a target="_blank" href="<?= "/marketplace/user_data/images/" . $image->filename ?>">
+                        <img src="<?= "/marketplace/user_data/images/" . $image->filename ?>" style="width: 300; height: 400px;">
+                    </a>
+                </div>
+            </dd>
+        <? endforeach; ?>
+        </dd>
         </dl>
 
         <div id="bookmark">

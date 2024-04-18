@@ -6,6 +6,7 @@ use \Marketplace\Property;
 use \Marketplace\Category;
 use \Marketplace\CategoryDemand;
 use \Marketplace\Tag;
+use \Marketplace\Image;
 
 
 class OverviewController extends \Marketplace\Controller
@@ -43,6 +44,7 @@ class OverviewController extends \Marketplace\Controller
         $this->marketplace_id = $marketplace_id;
         $this->number_of_demands = \Marketplace\Demand::countBymarketplace_id($marketplace_id);
         $this->pagination_url = 'overview/index/';
+
 
         //sorting
         //remap attributes to prevent sql injection
@@ -91,6 +93,7 @@ class OverviewController extends \Marketplace\Controller
         PageLayout::setTitle($this->demand_obj->title);
         $this->tags = \Marketplace\TagDemand::findBySQL("demand_id = ?", [$demand_id]);
         $db = DBManager::get();
+        $this->images = Image::findBySQL("demand_id = ?", [$demand_id]);
         $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id WHERE mp_custom_property.marketplace_id = ? ORDER BY mp_custom_property.order_index", [$demand_id, $this->demand_obj->marketplace_id]);
         $this->selected_path = CategoryDemand::get_saved_path($demand_id);
     }
@@ -104,7 +107,7 @@ class OverviewController extends \Marketplace\Controller
             $this->demand_obj = new \Marketplace\Demand();
         }
 
-
+        $this->images = Image::findBySQL("demand_id = ?", [$demand_id]);
 
         //load all tags
         $tags =  Tag::findBySQL("1", []);
@@ -202,6 +205,18 @@ successfully saved');
 saving the .' . $marketplace_obj->comodity_name_singular);
         }
         $demand_id = $this->demand_obj->id;
+
+        //TODO check image quality
+        if (image::storeImages($_FILES["images"], $demand_id) === false) {
+            PageLayout::postError('An error occurred while saving the image');
+            $this->render_nothing();
+            return;
+        }
+        $images_to_remove = Request::getArray('remove_images');
+        if ($images_to_remove) {
+            image::deleteImages($images_to_remove);
+        }
+
 
         $tags = json_decode(Request::get("picked_tags"), true);
         TagDemand::updateTags($tags["tags"], $demand_id);

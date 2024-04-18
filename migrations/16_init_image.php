@@ -9,6 +9,7 @@ class InitImage extends Migration
             latin1_bin NOT NULL,
             demand_id CHAR(32) CHARACTER SET latin1 COLLATE
             latin1_bin NOT NULL,
+            filename VARCHAR(255) NOT NULL,
             PRIMARY KEY (id),
             FOREIGN KEY (demand_id) REFERENCES mp_demand(id) ON DELETE CASCADE
             )";

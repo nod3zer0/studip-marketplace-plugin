@@ -26,6 +26,25 @@
     color: white;
 }
 
+
+/*https://www.w3schools.com/css/css_image_gallery.asp */
+
+div.mp_gallery {
+    margin: 5px;
+    border: 1px solid #ccc;
+    float: left;
+    width: 180px;
+}
+
+div.mp_gallery:hover {
+    border: 1px solid #777;
+}
+
+div.mp_gallery img {
+    width: 100%;
+    height: auto;
+}
+
 .mp_autocomplete {
     position: relative;
 }
