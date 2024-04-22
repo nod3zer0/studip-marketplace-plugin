@@ -20,6 +20,7 @@ require_once __DIR__ . '/classes/Search.php';
 require_once __DIR__ . '/classes/search/exceptions/SearchException.php';
 require_once __DIR__ . '/classes/search/simpleSearch/SimpleSearch.php';
 require_once __DIR__ . '/classes/search/advancedSearch/AdvancedSearch.php';
+require_once __DIR__ . '/classes/StudIPSqlSearches/SimpleSearchStudIp.php';
 
 
 

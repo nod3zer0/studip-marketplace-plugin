@@ -1,8 +1,10 @@
 <?
 
-use Studip\Button; ?>
-
-
+use Studip\Button;
+use \Marketplace\SimpleTypeSearch?>
+<?
+$search = new SimpleTypeSearch($marketplace_id);
+?>
 <input type="hidden" id="attributes_url" value="<?= $controller->link_for('search/get_attributes', $marketplace_id) ?>">
 
 <form class="default collapsable" action="<?= $controller->link_for('simple_search/index', $marketplace_id) ?>" method="get">
@@ -13,7 +15,11 @@ use Studip\Button; ?>
                 Search for words
             </label>
             <div id="search_input">
-                <input type="text" name="search-query" value="">
+                <!-- <input type="text" name="search-query" value=""> -->
+                <?
+                print QuickSearch::get("search-query", $search)
+                    ->render();
+                ?>
             </div>
             <?= Button::create('Search') ?>
 
