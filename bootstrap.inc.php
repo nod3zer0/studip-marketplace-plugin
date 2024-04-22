@@ -1,3 +1,3 @@
 <?php
-StudipAutoloader::addAutoloadPath(__DIR__ . '/classes', 'TestPlugin');
-StudipAutoloader::addAutoloadPath(__DIR__ . '/models', 'TestPlugin');
+StudipAutoloader::addAutoloadPath(__DIR__ . '/models', 'Marketplace');
+//StudipAutoloader::addAutoloadPath(__DIR__ . '/classes', 'TestPlugin');

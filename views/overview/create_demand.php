@@ -297,6 +297,7 @@ use Studip\Button; ?>
             </label>
             <label class="file-upload">
                 <input multiple accept="image/*" name="images[]" type="file" multiple>
+                <?= tooltipIcon('You can select multiple images by holding ctrl or shift while selecting. Supported formats are PNG, JPG/JPEG and GIF.') ?>
 
                 Upload Images
             </label>
@@ -311,8 +312,8 @@ use Studip\Button; ?>
                 <tr>
                     <td>
                         <div class="gallery">
-                            <a target="_blank" href="<?= "/marketplace/user_data/images/" . $image->filename ?>">
-                                <img src="<?= "/marketplace/user_data/images/" . $image->filename ?>" style="width: 100px; height: 100px;">
+                            <a target="_blank" href="<?= "/plugins_packages/marketplace_data/user_data/images/" . $image->filename ?>">
+                                <img src="<?= "/plugins_packages/marketplace_data/user_data/images/" . $image->filename ?>" style="width: 100px; height: 100px;">
                             </a>
                         </div>
                     </td>

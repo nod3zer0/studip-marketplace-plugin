@@ -33,13 +33,14 @@ class Image extends SimpleORMap
             $newname =  $image->id . "." . $ext;
             $image->filename =   $newname;
             $image->store();
-            $target =  'marketplace/user_data/images/' . $newname;
+            $target =  'plugins_packages/marketplace_data/user_data/images/' . $newname;
 
-            $allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF);
-            $detectedType = exif_imagetype($files['tmp_name']);
-            $correctType = in_array($detectedType, $allowedTypes);
+            // exif_imagetype is not allowed by default. Client side should be enough.
+            // $allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF);
+            // $detectedType = \exif_imagetype($files['tmp_name']);
+            // $correctType = in_array($detectedType, $allowedTypes);
 
-            if (!$correctType || !move_uploaded_file($files['tmp_name'][$i], $target)) {
+            if (!move_uploaded_file($files['tmp_name'][$i], $target)) {
                 $image->delete();
 
                 return false;
@@ -52,7 +53,7 @@ class Image extends SimpleORMap
     {
         foreach ($image_ids as $image_id) {
             $image = Image::find($image_id);
-            $target = 'marketplace/user_data/images/' . $image->filename;
+            $target = 'plugins_packages/marketplace_data/user_data/images/' . $image->filename;
             if (file_exists($target)) {
                 unlink($target);
             }

@@ -1,19 +1,19 @@
 <?php
-
-require_once __DIR__ . '/models/demand.php';
-require_once __DIR__ . '/models/property.php';
-require_once __DIR__ . '/models/tag.php';
-require_once __DIR__ . '/models/tag_demand.php';
-require_once __DIR__ . '/models/custom_property.php';
-require_once __DIR__ . '/models/marketplace.php';
-require_once __DIR__ . '/models/tag_notification.php';
-require_once __DIR__ . '/models/bookmark.php';
-require_once __DIR__ . '/models/search_notification.php';
-require_once __DIR__ . '/models/search_demand.php';
-require_once __DIR__ . '/models/category.php';
-require_once __DIR__ . '/models/category_demand.php';
-require_once __DIR__ . '/models/category_notification.php';
-require_once __DIR__ . '/models/image.php';
+require_once __DIR__ . '/bootstrap.inc.php';
+// require_once __DIR__ . '/models/demand.php';
+// require_once __DIR__ . '/models/property.php';
+// require_once __DIR__ . '/models/tag.php';
+// require_once __DIR__ . '/models/tag_demand.php';
+// require_once __DIR__ . '/models/custom_property.php';
+// require_once __DIR__ . '/models/marketplace.php';
+// require_once __DIR__ . '/models/tag_notification.php';
+// require_once __DIR__ . '/models/bookmark.php';
+// require_once __DIR__ . '/models/search_notification.php';
+// require_once __DIR__ . '/models/search_demand.php';
+// require_once __DIR__ . '/models/category.php';
+// require_once __DIR__ . '/models/category_demand.php';
+// require_once __DIR__ . '/models/category_notification.php';
+// require_once __DIR__ . '/models/image.php';
 require_once __DIR__ . '/classes/Controller.php';
 require_once __DIR__ . '/classes/Plugin.php';
 require_once __DIR__ . '/classes/Search.php';

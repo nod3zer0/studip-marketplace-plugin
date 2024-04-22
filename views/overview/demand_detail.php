@@ -135,8 +135,8 @@ use Studip\Button; ?>
                 <? foreach ($images as $image) : ?>
             <dd>
                 <div class="gallery">
-                    <a target="_blank" href="<?= "/marketplace/user_data/images/" . $image->filename ?>">
-                        <img src="<?= "/marketplace/user_data/images/" . $image->filename ?>" style="width: 300; height: 400px;">
+                    <a target="_blank" href="<?= "/plugins_packages/marketplace_data/user_data/images/" . $image->filename ?>">
+                        <img src="<?= "/plugins_packages/marketplace_data/user_data/images/" . $image->filename ?>" style="width: 300; height: 400px;">
                     </a>
                 </div>
             </dd>

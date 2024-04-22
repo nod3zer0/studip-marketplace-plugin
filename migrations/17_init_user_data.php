@@ -4,13 +4,18 @@ class InitUserData extends Migration
 {
     public function up()
     {
-        mkdir("marketplace/user_data/images/", 0777, true);
-        mkdir("marketplace/user_data/files/", 0777, true);
+        if (!mkdir("plugins_packages/marketplace_data/user_data/images/", 0777, true)) {
+            PageLayout::postError("Could not create directory" . getcwd());
+        }
+
+        if (!mkdir("plugins_packages/marketplace_data/marketplace/user_data/files/", 0777, true)) {
+            PageLayout::postError("Could not create directory" . getcwd());
+        }
     }
 
     public function down()
     {
-        self::removeDirectory("marketplace");
+        self::removeDirectory("plugins_packages/marketplace_data");
     }
 
     public function removeDirectory($path)
