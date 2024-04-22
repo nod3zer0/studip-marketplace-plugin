@@ -370,12 +370,13 @@ use Studip\Button; ?>
                 <!-- <? if ($property["required"])  echo "required"; ?> name="custom_properties[<?= $property['id'] ?>]" value="<?= htmlReady($property['value']) ?>"> -->
             </div>
         <? endforeach; ?>
-
-        <div> Category </div>
-        <div id="categories">
-            <category_picker :categories="<?= str_replace("\"", "'", $categories) ?>" :selected_path="'<?= $selected_path ?>'"></category_picker>
-        </div>
-        </div>
+        <? if ($categories != "") : ?>
+            <div> Category </div>
+            <div id="categories">
+                <category_picker :categories="<?= str_replace("\"", "'", $categories) ?>" :selected_path="'<?= $selected_path ?>'"></category_picker>
+            </div>
+            </div>
+        <? endif; ?>
 
     </fieldset>
 

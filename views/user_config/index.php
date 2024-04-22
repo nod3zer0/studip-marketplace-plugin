@@ -12,6 +12,7 @@ use Studip\Button; ?>
     <div id="categories_user_config">
         <h1> Subscribe to categories </h1>
         <? foreach ($marketplaces as $marketplace) : ?>
+            <? if (count($marketplace["categories"]) == 0) continue; ?>
             <h2><?= htmlReady($marketplace["marketplace_name"]) ?></h2>
             <category_picker :categories="<?= str_replace("\"", "'", json_encode($marketplace["categories"])) ?>" :selected_categories="<?= $selected_categories ?>" :php_export_variable="'selected_categories[]'"> </category_picker>
         <? endforeach; ?>

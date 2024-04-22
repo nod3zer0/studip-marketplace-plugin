@@ -137,7 +137,12 @@ class OverviewController extends \Marketplace\Controller
         $this->properties = $db->fetchAll("SELECT * FROM mp_custom_property LEFT JOIN (SELECT value, demand_id, custom_property_id FROM mp_property WHERE mp_property.demand_id = ? ) t2 ON mp_custom_property.id = t2.custom_property_id WHERE mp_custom_property.marketplace_id = ? ORDER BY mp_custom_property.order_index", [$demand_id, $marketplace_id]);
 
         $this->selected_path = CategoryDemand::get_saved_path($demand_id);
-        $this->categories = json_encode(Category::get_categories($marketplace_id));
+        $categories = Category::get_categories($marketplace_id);
+        if (count($categories) == 0) {
+            $this->categories = "";
+        } else {
+            $this->categories = json_encode(Category::get_categories($marketplace_id));
+        }
     }
 
     public function response_action($demand_id)
