@@ -52,12 +52,12 @@ class AdvancedSearchController extends \Marketplace\Controller
     public function get_default_property_data($RequestData)
     {
         $data = [];
-        if ($RequestData["title"]["value"] != "") {
+        if ($RequestData["title_parameter"]["value"] != "") {
             $title = [
                 "name" => "title",
                 "type" => 1,
-                "compare_type" => $RequestData["title"]["compare_type"],
-                "value" => $RequestData["title"]["value"]
+                "compare_type" => $RequestData["title_parameter"]["compare_type"],
+                "value" => $RequestData["title_parameter"]["value"]
             ];
             $data["title"] = $title;
         }
@@ -81,12 +81,12 @@ class AdvancedSearchController extends \Marketplace\Controller
             ];
             $data["created"] = $created;
         }
-        if ($RequestData["author"]["value"] != "") {
+        if ($RequestData["author_parameter"]["value"] != "") {
             $author = [
                 "name" => "author",
                 "type" => 6,
-                "compare_type" => $RequestData["author"]["compare_type"],
-                "value" => $RequestData["author"]["value"]
+                "compare_type" => $RequestData["author_parameter"]["compare_type"],
+                "value" => $RequestData["author_parameter"]["value"]
             ];
             $data["author"] = $author;
         }
@@ -99,7 +99,12 @@ class AdvancedSearchController extends \Marketplace\Controller
 
         $custom_property_data = [];
         foreach ($properties as $property) {
-            $filledProperty = $RequestData[str_replace(" ", "_", $property->name)];
+            if ($property->type == 5 || $property->type == 1) { //properties with autocomplete end with _parameter (because of use of inbuilt autocomplete component from Stud.IP)
+                $filledProperty = $RequestData[str_replace(" ", "_", $property->name . "_parameter")];
+            } else {
+                $filledProperty = $RequestData[str_replace(" ", "_", $property->name)];
+            }
+
             if ($filledProperty["value"] == "") {
                 continue;
             }

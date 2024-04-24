@@ -18,6 +18,7 @@ $search = new SimpleTypeSearch($marketplace_id);
                 <!-- <input type="text" name="search-query" value=""> -->
                 <?
                 print QuickSearch::get("search-query", $search)
+                     ->defaultValue($query, $query)
                     ->render();
                 ?>
             </div>

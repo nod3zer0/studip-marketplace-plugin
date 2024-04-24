@@ -29,10 +29,13 @@ class SimpleTypeSearch extends \SearchType
         //$results = $db->fetchAll("", );
 
         // $stm = $db->prepare("SELECT title, description FROM mp_demand WHERE marketplace_id LIKE :marketplace_id AND (title LIKE :query OR description LIKE :query)");
-        $stm = $db->prepare("SELECT title, title FROM mp_demand WHERE marketplace_id LIKE :marketplace_id AND (title LIKE :query OR description LIKE :query)");
+        $stm = $db->prepare("SELECT title, title FROM mp_demand WHERE marketplace_id LIKE :marketplace_id AND (title LIKE :query OR description LIKE :query) LIMIT 5");
         $stm->execute(["marketplace_id" => $this->marketplace_id, "query" => "%" . $input . "%"]);
 
         $results =  $stm->fetchAll();
+
+
+
 
         return   $results;
         //  return [1 => ["test", "testing"], 2 => ["test", "testing",], 3 => ["test", "testing"]];

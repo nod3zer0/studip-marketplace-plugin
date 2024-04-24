@@ -27,11 +27,11 @@ class SimpleSearchController extends \Marketplace\Controller
         $this->limit = intval(Request::get('limit') ?: get_config('ENTRIES_PER_PAGE'));
         $this->order = Request::get('order') ?: 'mkdate_desc';
         $request_data = Request::getInstance();
+        $this->query = $request_data["search-query_parameter"];
 
-
-        if ($request_data["search-query"] != '') {
+        if ($this->query != '') {
             $simple_search = new SimpleSearch();
-            $sql = $simple_search->generateSQL($request_data["search-query"], $marketplace_id,   $this->limit, $this->order);
+            $sql = $simple_search->generateSQL($this->query, $marketplace_id,   $this->limit, $this->order);
             $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
         } else {
             $attribute_map = [

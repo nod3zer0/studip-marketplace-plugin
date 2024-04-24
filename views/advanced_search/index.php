@@ -1,6 +1,10 @@
 <?
 
-use Studip\Button; ?>
+use Studip\Button;
+use \Marketplace\CustomPropertySearchStudIp;
+use \Marketplace\DefaultPropertySearchStudIp;
+?>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -49,15 +53,37 @@ use Studip\Button; ?>
             <tbody>
                 <tr>
                     <td> Title</td>
-                    <td> <input type="text" name="title[value]" value="<?= htmlReady($default_property_data["title"]["value"]) ?>"> </td>
+                    <!-- <td> <input type="text" name="title[value]" value="<?= htmlReady($default_property_data["title"]["value"]) ?>"> </td> -->
+                    <td>
+                        <?
+                        print QuickSearch::get('title[value]', new DefaultPropertySearchStudIp($marketplace_id, 'title'))
+                            ->defaultValue(htmlReady($default_property_data["title"]["value"]), htmlReady($default_property_data["title"]["value"]))
+                            ->render();
+                        ?>
+                    </td>
                 </tr>
                 <tr>
                     <td> Description</td>
                     <td> <input type="text" name="description[value]" value="<?= htmlReady($default_property_data["description"]["value"]) ?>"> </td>
+
+                    <!-- <td> -->
+                    <?
+                    // print QuickSearch::get('description[value]', new DefaultPropertySearchStudIp($marketplace_id, 'description'))
+                    //     ->defaultValue(htmlReady($default_property_data["description"]["value"]), htmlReady($default_property_data["description"]["value"]))
+                    //     ->render();
+                    ?>
+                    <!-- </td> -->
                 </tr>
                 <tr>
                     <td> Author</td>
-                    <td> <input type="text" name="author[value]" value="<?= htmlReady($default_property_data["author"]["value"]) ?>"> </td>
+                    <!-- <td> <input type="text" name="author[value]" value="<?= htmlReady($default_property_data["author"]["value"]) ?>"> </td> -->
+                    <td>
+                        <?
+                        print QuickSearch::get('author[value]', new DefaultPropertySearchStudIp($marketplace_id, 'author'))
+                            ->defaultValue(htmlReady($default_property_data["author"]["value"]), htmlReady($default_property_data["author"]["value"]))
+                            ->render();
+                        ?>
+                    </td>
                 </tr>
                 <tr>
                     <td>created</td>
@@ -86,7 +112,9 @@ use Studip\Button; ?>
                     <?php foreach ($properties as $property) : ?>
 
                 <tr>
-                    <td><?php echo $property['name']; ?></td>
+                    <? if ($property['type'] == 1 || $property['type'] == 2 || $property['type'] == 3 || $property['type'] == 5) : ?>
+                        <td><?php echo $property['name']; ?></td>
+                    <? endif; ?>
                     <td>
                         <?php if ($property['type'] === '2') : //number
                         ?>
@@ -127,8 +155,13 @@ use Studip\Button; ?>
                                 to:
                                 <input type="date" id="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "_rangeValue"; ?>" name="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "[range_value_to]"; ?>" min="0" max="100" value="<?= $custom_property_data[$property['name']]["value_to"] ?>">
                             </span>
-                        <?php else : ?>
-                            <input type="text" name="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "[value]"; ?>" value="<?= $custom_property_data[$property['name']]["value"] ?>">
+                        <?php elseif ($property['type'] === '1' || $property['type'] === '5') : ?>
+                            <!-- <input type="text" name="<?php echo htmlReady(str_replace(" ", "_", $property['name'])) . "[value]"; ?>" value="<?= $custom_property_data[$property['name']]["value"] ?>"> -->
+                            <?
+                            print QuickSearch::get(htmlReady(str_replace(" ", "_", $property['name'])) . "[value]", new CustomPropertySearchStudIp($marketplace_id, $property['name']))
+                                ->defaultValue($custom_property_data[$property['name']]["value"], $custom_property_data[$property['name']]["value"])
+                                ->render();
+                            ?>
                         <?php endif; ?>
                     </td>
                 </tr>
