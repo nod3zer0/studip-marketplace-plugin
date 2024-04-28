@@ -20,7 +20,7 @@
             </tr>
             <tr>
                 <td>
-                    Name of marketplace
+                    Name of catalog
                 </td>
                 <td>
                     <input type="text" name="marketplace_name" value="<?= htmlReady($marketplace_name) ?>">

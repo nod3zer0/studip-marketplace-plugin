@@ -100,7 +100,8 @@
                 <? endforeach; ?>
             <? else : ?>
                 <tr>
-                    <td colspan="4">
+                    <td colspan="6">
+                        No commodities found
                     </td>
                 </tr>
 

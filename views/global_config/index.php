@@ -1,6 +1,6 @@
 <div id="global_config">
-    <h1>Marketplace Configuration</h1>
-    <h2>Marketplaces</h2>
+    <h1>Catalog Configuration</h1>
+    <h2>Catalogs</h2>
     <ul>
         <li v-for="(item, index) in marketplaces" :key="index">
             <input v-model="marketplaces[index].name">
@@ -12,7 +12,7 @@
             </span>
         </li>
     </ul>
-    <button class="button" @click="addItem">Add marketplace</button>
+    <button class="button" @click="addItem">Add catalog</button>
     <h2>Tags</h2>
     <ul>
         <li v-for="(tag, index) in tags" :key="index">

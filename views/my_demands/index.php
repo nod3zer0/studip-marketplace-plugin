@@ -39,7 +39,8 @@
             <? endforeach; ?>
         <? else : ?>
             <tr>
-                <td colspan="4">
+                <td colspan="3">
+                    You did not create any demands yet
                 </td>
             </tr>
 

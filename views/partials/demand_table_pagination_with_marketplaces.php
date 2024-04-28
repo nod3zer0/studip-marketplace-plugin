@@ -127,7 +127,8 @@ use Studip\Button; ?>
                 <? endforeach; ?>
             <? else : ?>
                 <tr>
-                    <td colspan="4">
+                    <td colspan="6">
+                        This catalog has no commodities yet.
                     </td>
                 </tr>
 

@@ -1,6 +1,6 @@
 <table class="default sortable-table">
     <caption>
-        Marketplaces
+        Catalogs
     </caption>
     <colgroup>
         <col>

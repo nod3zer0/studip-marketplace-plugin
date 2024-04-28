@@ -40,7 +40,7 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         $this->addStylesheet('assets/stylesheet.css');
         // PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
         $root_nav = new Navigation(
-            'Marketplace',
+            'Catalog',
             PluginEngine::getURL($this, [], 'marketplaces')
         );
         $root_nav->setImage(Icon::create(
@@ -50,7 +50,7 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         Navigation::addItem('/marketplace_root', $root_nav);
 
         $marketplaces = new Navigation(
-            'Marketplaces',
+            'Catalogs',
             PluginEngine::getURL($this, [], 'marketplaces')
         );
         $root_nav->addSubNavigation('marketplaces', $marketplaces);
@@ -70,32 +70,32 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         $root_nav->addSubNavigation('my_subscriptions', $subscriptions);
 
         $user_config = new Navigation(
-            'User config',
+            'Subscription settings',
             PluginEngine::getURL($this, [], 'user_config')
         );
         $root_nav->addSubNavigation('user_config', $user_config);
 
-        $default_marketplace = new Navigation(
-            'Default marketplace',
-            PluginEngine::getURL($this, [], 'overview')
-        );
-        Navigation::addItem('/default_marketplace', $default_marketplace);
-        //$root_nav->addSubNavigation('default_marketplace', $default_marketplace);
-        $overview = new Navigation(
-            'Overview',
-            PluginEngine::getURL($this, [], 'overview')
-        );
-        $default_marketplace->addSubNavigation('marketplace_overview', $overview);
-        $search_nav = new Navigation(
-            'Search',
-            PluginEngine::getURL($this, [], 'search')
-        );
-        $default_marketplace->addSubNavigation('marketplace_search', $search_nav);
-        $my_demands = new Navigation(
-            'My demands',
-            PluginEngine::getURL($this, [], 'my_demands')
-        );
-        $default_marketplace->addSubNavigation('marketplace_my_demands', $my_demands);
+        // $default_marketplace = new Navigation(
+        //     'Default marketplace',
+        //     PluginEngine::getURL($this, [], 'overview')
+        // );
+        // Navigation::addItem('/default_marketplace', $default_marketplace);
+        // //$root_nav->addSubNavigation('default_marketplace', $default_marketplace);
+        // $overview = new Navigation(
+        //     'Overview',
+        //     PluginEngine::getURL($this, [], 'overview')
+        // );
+        // $default_marketplace->addSubNavigation('marketplace_overview', $overview);
+        // $search_nav = new Navigation(
+        //     'Search',
+        //     PluginEngine::getURL($this, [], 'search')
+        // );
+        // $default_marketplace->addSubNavigation('marketplace_search', $search_nav);
+        // $my_demands = new Navigation(
+        //     'My demands',
+        //     PluginEngine::getURL($this, [], 'my_demands')
+        // );
+        // $default_marketplace->addSubNavigation('marketplace_my_demands', $my_demands);
 
 
         // $global_search = new Navigation(
@@ -107,11 +107,11 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
 
 
         if ($GLOBALS['user']->perms === 'root') {
-            $config_nav = new Navigation(
-                'Config',
-                PluginEngine::getURL($this, [], 'config')
-            );
-            $default_marketplace->addSubNavigation('marketplace_config', $config_nav);
+            // $config_nav = new Navigation(
+            //     'Config',
+            //     PluginEngine::getURL($this, [], 'config')
+            // );
+            // $default_marketplace->addSubNavigation('marketplace_config', $config_nav);
             $global_config = new Navigation(
                 'Config',
                 PluginEngine::getURL($this, [], 'global_config')
@@ -139,7 +139,7 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
             Navigation::addItem('/marketplace_' . $marketplace->id, $marketplace_nav);
 
             $marketplaces = new Navigation(
-                'Marketplaces',
+                'Catalogs',
                 PluginEngine::getURL($this, [], 'marketplaces')
             );
             $marketplace_nav->addSubNavigation('marketplaces', $marketplaces);
@@ -159,6 +159,18 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
                 PluginEngine::getURL($this, [], 'my_subscriptions/marketplace/', []) . $marketplace->id
             );
             $overview->addSubNavigation('my_subscriptions', $subscriptions);
+            $my_demands = new Navigation(
+                'My ' . $marketplace->comodity_name_plural,
+                PluginEngine::getURL($this, [], 'my_demands/index/', []) . $marketplace->id
+            );
+            //$marketplace_nav->addSubNavigation('marketplace_my_demands', $my_demands);
+            $overview->addSubNavigation('my_demands', $my_demands);
+            $my_bookmarks = new Navigation(
+                'My bookmarks',
+                PluginEngine::getURL($this, [], 'my_bookmarks/index/', []) . $marketplace->id
+            );
+            $overview->addSubNavigation('my_bookmarks', $my_bookmarks);
+            // $marketplace_nav->addSubNavigation('marketplace_my_bookmarks', $my_demands);
 
 
 
@@ -182,16 +194,7 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
                 PluginEngine::getURL($this, [], 'search/index/', []) . $marketplace->id
             );
             $search_nav->addSubNavigation('marketplace_advanced_search_plus', $advanced_search_plus_nav);
-            $my_demands = new Navigation(
-                'My ' . $marketplace->comodity_name_plural,
-                PluginEngine::getURL($this, [], 'my_demands/index/', []) . $marketplace->id
-            );
-            $marketplace_nav->addSubNavigation('marketplace_my_demands', $my_demands);
-            $my_demands = new Navigation(
-                'My bookmarks',
-                PluginEngine::getURL($this, [], 'my_bookmarks/index/', []) . $marketplace->id
-            );
-            $marketplace_nav->addSubNavigation('marketplace_my_bookmarks', $my_demands);
+
 
             $user_config = new Navigation(
                 'Subscription settings',

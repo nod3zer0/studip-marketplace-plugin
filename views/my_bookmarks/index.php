@@ -8,6 +8,7 @@
             <col style="width: 80px">
             <col style="width: 20%">
             <col style="width: 80px">
+            <col style="width: 80px">
         </colgroup>
         <thead>
             <tr>
@@ -46,7 +47,8 @@
                 <? endforeach; ?>
             <? else : ?>
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
+                        No bookmarks found
                     </td>
                 </tr>
 
