@@ -1,5 +1,10 @@
 <?php
 
+/**
+ *  Controller for My Commodities list
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 use Marketplace\SearchException;
 use Marketplace\TagDemand;
 use Marketplace\SqlGenerator;

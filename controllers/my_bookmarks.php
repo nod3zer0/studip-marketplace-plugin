@@ -1,5 +1,10 @@
 <?php
 
+/**
+ *  Controller for bookmarks list
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 use Marketplace\SearchException;
 use Marketplace\TagDemand;
 use Marketplace\SqlGenerator;

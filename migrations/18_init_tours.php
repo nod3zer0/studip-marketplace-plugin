@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * Migration for importing premade tours into database
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
 class InitTours extends Migration
 {
     public function up()

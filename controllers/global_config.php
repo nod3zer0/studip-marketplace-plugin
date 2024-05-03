@@ -1,5 +1,11 @@
 <?php
 
+/**
+ *  Controller for global configuration of catalog
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
+
 use Marketplace\TagDemand;
 use Marketplace\SqlGenerator;
 use \Marketplace\CustomProperty;

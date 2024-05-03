@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
 class InitDemand extends Migration
 {
     public function up()
@@ -15,8 +19,8 @@ class InitDemand extends Migration
             latin1_bin NOT NULL,
             marketplace_id CHAR(32) CHARACTER SET latin1 COLLATE
             latin1_bin NOT NULL,
-            contact_mail VARCHAR(255) NULL DEFAULT NULL,
-            contact_name VARCHAR(255) NULL DEFAULT NULL,
+            contact_mail NVARCHAR(255) NULL DEFAULT NULL,
+            contact_name NVARCHAR(255) NULL DEFAULT NULL,
             PRIMARY KEY (id),
             FULLTEXT (title),
             FULLTEXT (description),

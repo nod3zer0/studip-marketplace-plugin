@@ -1,5 +1,10 @@
 <?php
 
+/**
+ *  Controler for overview of all commodities in the catalog
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 use Marketplace\TagDemand;
 use \Marketplace\CustomProperty;
 use \Marketplace\Property;
@@ -25,7 +30,6 @@ class OverviewController extends \Marketplace\Controller
 
     public function index_action(string $marketplace_id)
     {
-        //Helpbar::get()->addPlainText("test", "test 2", 'icons/16/white/date.png'); https://github.com/nod3zer0/studip-docs-translated/blob/ba50f75faae1052d6c67a438c1c9d468f491944a/quickstart/helpbar.md
         Helpbar::get()->addPlainText("Overview", "Here are shown all the commodities from the catalog.");
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview/all');

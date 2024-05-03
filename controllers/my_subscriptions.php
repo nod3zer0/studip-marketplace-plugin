@@ -1,5 +1,11 @@
 <?php
 
+/**
+ *  Controller for My Subscriptions list
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
+
 use Marketplace\TagDemand;
 use \Marketplace\CustomProperty;
 use \Marketplace\Property;

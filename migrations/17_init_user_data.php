@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Migration for creating and removing directories for user data
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 class InitUserData extends Migration
 {
     public function up()

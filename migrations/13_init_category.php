@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
 class InitCategory extends Migration
 {
     public function up()

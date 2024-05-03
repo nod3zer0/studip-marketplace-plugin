@@ -251,7 +251,7 @@ class Parser
         $custom_properties_dict = [];
         //convert custom properties to dict name -> type
         foreach ($this->custom_properties as $property) {
-            $custom_properties_dict[$property["name"]] = $property["type"];
+            $custom_properties_dict[strtolower($property["name"])] = $property["type"];
         }
 
         //trim and remove empty tokens
@@ -318,10 +318,10 @@ class Parser
             } else if ($tokens[$i][0] == '.'  && count($tokens) > ($i)) //string
             {
                 $tokens[$i] = substr($tokens[$i], 1); //remove starting dot
-                if (isset($this->default_properties[$tokens[$i]])) {
-                    $this->tokenObjects[] = new DefaultPropertyToken($tokens[$i], $this->default_properties[$tokens[$i]]);
-                } else if (isset($custom_properties_dict[$tokens[$i]])) {
-                    $this->tokenObjects[] = new CustomPropertyToken($tokens[$i], $custom_properties_dict[$tokens[$i]]);
+                if (isset($this->default_properties[strtolower($tokens[$i])])) {
+                    $this->tokenObjects[] = new DefaultPropertyToken(strtolower($tokens[$i]), $this->default_properties[strtolower($tokens[$i])]);
+                } else if (isset($custom_properties_dict[strtolower($tokens[$i])])) {
+                    $this->tokenObjects[] = new CustomPropertyToken(strtolower($tokens[$i]), $custom_properties_dict[strtolower($tokens[$i])]);
                 } else {
                     throw new SearchException("Invalid property: " . $tokens[$i]);
                 }

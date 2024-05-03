@@ -1,4 +1,7 @@
 <?php
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
 class InitSearchNotification extends Migration
 {
     public function up()

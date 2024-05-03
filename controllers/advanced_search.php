@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Controller for advanced search
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
+
+
+
+
 use Marketplace\SearchException;
 use Marketplace\TagDemand;
 use \Marketplace\SearchNotification;
@@ -31,11 +40,8 @@ class AdvancedSearchController extends \Marketplace\Controller
         $this->categories = json_encode($categories);
         $this->properties = CustomProperty::findBySQL("marketplace_id = ?", [$marketplace_id]);
         $this->tags = Tag::get_all_tags_csv();
-        //$query = Request::get('search-query');
+
         $request_data = Request::getInstance();
-        // foreach ($this->properties as $property) {
-        //     $properties[] =  Request::get(str_replace(" ", "_", $property->name));
-        // }
         $this->custom_property_data = $this->get_custom_property_data($request_data, $this->properties);
         $this->tag_data = $this->get_tag_data($request_data, Tag::get_all_tags());
         $this->default_property_data = $this->get_default_property_data($request_data);
@@ -49,6 +55,10 @@ class AdvancedSearchController extends \Marketplace\Controller
         $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
     }
 
+    /**
+     * Converts data from request to format used by advanced search
+     * @param $RequestData data from request
+     */
     public function get_default_property_data($RequestData)
     {
         $data = [];
@@ -94,6 +104,10 @@ class AdvancedSearchController extends \Marketplace\Controller
         return $data;
     }
 
+    /**
+     * Converts data from request to format used by advanced search
+     * @param $RequestData data from request
+     */
     public function get_custom_property_data($RequestData, $properties)
     {
 
@@ -132,6 +146,11 @@ class AdvancedSearchController extends \Marketplace\Controller
         return $custom_property_data;
     }
 
+    /**
+     * Converts data from request to format used by advanced search
+     * @param $RequestData data from request
+     * @param $tags all tags
+     */
     public function get_tag_data($RequestData, $tags)
     {
 

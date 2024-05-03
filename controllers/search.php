@@ -1,5 +1,11 @@
 <?php
 
+/**
+ *  Controller for Advanced Search +
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
+
 use Marketplace\SearchException;
 use Marketplace\TagDemand;
 use Marketplace\SqlGenerator;

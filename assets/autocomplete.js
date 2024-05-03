@@ -9,8 +9,8 @@ $(document).ready(function() {
         Vue.component('search_input', {
             template: `
         <span>
-        <input  autocomplete="one-time-code" type="text" name="search-query" value="" ref="search_input" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent="onArrowDown" @keydown.up.prevent="onArrowUp">
-        <ul v-show="isOpen" class="autocomplete-results">
+        <input  autocomplete="one-time-code" type="text" name="search-query" value="" ref="search_input" id="search_input" v-model="search" @input="OnChange" @keydown.tab.prevent="OnTab" @keydown.down.prevent= "onArrowDown" @keydown.up.prevent ="onArrowUp">
+        <ul autofocus v-show="isOpen" class="autocomplete-results">
             <li :class="{ 'is-active': i === arrowCounter }" @click="setResult(result)" v-for="(result, i) in results_render" :key="i" class="autocomplete-result">
                 {{ result }}
             </li>
@@ -182,7 +182,7 @@ $(document).ready(function() {
                     this.results = this.attributes.filter(item => {
                         //cut item
                         cuted_item = item.name.slice(0, last_key.length - 1);
-                        if ('.'.concat(cuted_item) == last_key.toLowerCase()) {
+                        if ('.'.concat(cuted_item).toLowerCase() == last_key.toLowerCase()) {
                             return item;
                         }
                     });
@@ -190,7 +190,7 @@ $(document).ready(function() {
                     this.results.push(...this.tags.filter(item => {
                         //cut item
                         cuted_item = item.name.slice(0, last_key.length - 1);
-                        if ('#'.concat(cuted_item) == last_key.toLowerCase()) {
+                        if ('#'.concat(cuted_item).toLowerCase() == last_key.toLowerCase()) {
                             return item;
                         }
                     }));
@@ -198,7 +198,7 @@ $(document).ready(function() {
                     this.results.push(...this.category_paths.filter(item => {
                         //cut item
                         cuted_item = item.slice(0, last_key.length);
-                        if (cuted_item.toLowerCase() == last_key.toLowerCase()) {
+                        if (cuted_item.toLowerCase().toLowerCase() == last_key.toLowerCase()) {
                             return item;
                         }
                     }).sort((a, b) => a.length - b.length).map(item => ({
@@ -208,6 +208,7 @@ $(document).ready(function() {
 
 
                     if (this.results.length > 0) {
+                        this.results = this.results.slice(0, 5);
                         this.results_render = this.results.map(item => item.name);
                         this.isOpen = true;
                     }
@@ -297,7 +298,7 @@ $(document).ready(function() {
                                 name: item,
                                 type: 'category_path'
                             }));
-                            this.results_render = this.category_paths.sort((a, b) => a.length - b.length);
+                            this.results_render = this.category_paths.sort((a, b) => a.length - b.length).slice(0, 5);
                         } else {
                             this.search = this.InsertAtIndex(this.search, ' '.concat(selected.name, ' '), search_input.selectionStart);
                             this.isOpen = false; //close end of autocompletion
@@ -338,9 +339,9 @@ $(document).ready(function() {
                         this.arrowCounter = 0;
                     }
 
-                    this.$nextTick(() => {
-                        document.getElementsByClassName('autocomplete-result is-active')[0].scrollIntoView();
-                    });
+                    // this.$nextTick(() => {
+                    //     document.getElementsByClassName('autocomplete-result is-active')[0].scrollIntoView();
+                    // });
                 },
                 onArrowUp() {
                     if (this.arrowCounter <= 0) {
@@ -349,9 +350,9 @@ $(document).ready(function() {
                     if (this.arrowCounter > 0) {
                         this.arrowCounter = this.arrowCounter - 1;
                     }
-                    this.$nextTick(() => {
-                        document.getElementsByClassName('autocomplete-result is-active')[0].scrollIntoView();
-                    });
+                    // this.$nextTick(() => {
+                    //     document.getElementsByClassName('autocomplete-result is-active')[0].scrollIntoView();
+                    // });
                 },
                 OnChange(event) {
                     this.filterResults(event);

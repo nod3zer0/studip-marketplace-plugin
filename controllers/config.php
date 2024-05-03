@@ -1,5 +1,10 @@
 <?php
 
+/**
+ *  Controller for configuration of individual catalogs
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 use Marketplace\TagDemand;
 use Marketplace\SqlGenerator;
 use \Marketplace\CustomProperty;
@@ -23,8 +28,6 @@ class ConfigController extends \Marketplace\Controller
     public function save_general_config_action($marketplace_id)
     {
         $marketplace = \Marketplace\MarketplaceModel::find($marketplace_id);
-
-
         $marketplace->enabled = Request::submitted('enabled');
         $marketplace->comodity_name_singular = Request::get('comodity_name');
         $marketplace->comodity_name_plural = Request::get('comodity_name_plural');
