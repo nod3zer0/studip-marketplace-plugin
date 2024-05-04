@@ -33,6 +33,6 @@ class Demand extends SimpleORMap
 
     public function hasPermission(): bool
     {
-        return $GLOBALS['user']->id === $this->author_id || $GLOBALS['user']->perms === 'root';
+        return $GLOBALS['user']->id === $this->author_id || $GLOBALS['user']->perms === 'root' || $GLOBALS['user']->perms === 'admin';
     }
 }

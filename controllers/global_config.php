@@ -17,7 +17,7 @@ class GlobalConfigController extends \Marketplace\Controller
 
     public function index_action()
     {
-        if ($GLOBALS['user']->perms != 'root') {
+        if ($GLOBALS['user']->perms != 'root' && $GLOBALS['user']->perms != 'admin') {
             PageLayout::postError('You do not have permission to access this page!');
         }
         Navigation::activateItem('marketplace_root/global_config/general');
@@ -26,7 +26,7 @@ class GlobalConfigController extends \Marketplace\Controller
 
     public function save_config_action()
     {
-        if ($GLOBALS['user']->perms != 'root') {
+        if ($GLOBALS['user']->perms != 'root' && $GLOBALS['user']->perms != 'admin') {
             PageLayout::postError('You do not have permission to access this page!');
         }
         $config = json_decode(file_get_contents('php://input'), true);
@@ -46,7 +46,7 @@ class GlobalConfigController extends \Marketplace\Controller
 
     public function get_tags_action()
     {
-        if ($GLOBALS['user']->perms != 'root') {
+        if ($GLOBALS['user']->perms != 'root' && $GLOBALS['user']->perms != 'admin') {
             PageLayout::postError('You do not have permission to access this page!');
         }
         $db = DBManager::get();
@@ -57,7 +57,7 @@ class GlobalConfigController extends \Marketplace\Controller
 
     public function get_config_action()
     {
-        if ($GLOBALS['user']->perms != 'root') {
+        if ($GLOBALS['user']->perms != 'root' && $GLOBALS['user']->perms != 'admin') {
             PageLayout::postError('You do not have permission to access this page!');
         }
         $db = DBManager::get();
@@ -67,7 +67,7 @@ class GlobalConfigController extends \Marketplace\Controller
 
     public function delete_unused_tags_action()
     {
-        if ($GLOBALS['user']->perms != 'root') {
+        if ($GLOBALS['user']->perms != 'root' && $GLOBALS['user']->perms != 'admin') {
             PageLayout::postError('You do not have permission to access this page!');
         }
         $db = DBManager::get();
@@ -77,7 +77,7 @@ class GlobalConfigController extends \Marketplace\Controller
 
     public function export_action()
     {
-        if ($GLOBALS['user']->perms != 'root') {
+        if ($GLOBALS['user']->perms != 'root' && $GLOBALS['user']->perms != 'admin') {
             PageLayout::postError('You do not have permission to access this page!');
         }
         Navigation::activateItem('marketplace_root/global_config/export');
@@ -86,7 +86,7 @@ class GlobalConfigController extends \Marketplace\Controller
 
     public function export_users_action()
     {
-        if ($GLOBALS['user']->perms != 'root') {
+        if ($GLOBALS['user']->perms != 'root' && $GLOBALS['user']->perms != 'admin') {
             PageLayout::postError('You do not have permission to export data!');
         }
         $db = DBManager::get();
@@ -99,7 +99,7 @@ class GlobalConfigController extends \Marketplace\Controller
 
     public function export_data_action()
     {
-        if ($GLOBALS['user']->perms != 'root') {
+        if ($GLOBALS['user']->perms != 'root' && $GLOBALS['user']->perms != 'admin') {
             PageLayout::postError('You do not have permission to export data');
         }
         //load all data from database
@@ -143,7 +143,7 @@ class GlobalConfigController extends \Marketplace\Controller
 
     public function import_data_action()
     {
-        if ($GLOBALS['user']->perms != 'root') {
+        if ($GLOBALS['user']->perms != 'root' && $GLOBALS['user']->perms != 'admin') {
             PageLayout::postError('You do not have permission to access this page!');
         }
         self::import_data(json_decode(file_get_contents($_FILES["backup"]["tmp_name"]), true));

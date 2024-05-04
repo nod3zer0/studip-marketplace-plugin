@@ -73,7 +73,7 @@ class OverviewController extends \Marketplace\Controller
     public function delete_demands_action()
     {
         CSRFProtection::verifyRequest();
-        if ($GLOBALS['user']->perms != 'root') {
+        if ($GLOBALS['user']->perms != 'root' && $GLOBALS['user']->perms != 'admin') {
             PageLayout::postError('You do not have permission to delete demands');
             $this->render_nothing();
             return;

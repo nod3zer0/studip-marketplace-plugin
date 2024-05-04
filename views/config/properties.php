@@ -9,7 +9,7 @@
         padding: 5px;
         background-color: #f0f0f0;
         border: 1px solid #ddd;
-        cursor: move;
+        cursor: grab;
         /* Change cursor to indicate draggable */
         transition: background-color 0.3s ease;
         /* Add transition effect */
