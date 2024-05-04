@@ -6,11 +6,13 @@
  */
 
 
-use Marketplace\SearchException;
+
 use Marketplace\TagDemand;
 use Marketplace\SqlGenerator;
 use \Marketplace\SearchNotification;
 use \Marketplace\Category;
+use \search\AdvancedSearchPlus;
+use \search\SearchException;
 
 class SearchController extends \Marketplace\Controller
 {
@@ -65,9 +67,9 @@ class SearchController extends \Marketplace\Controller
             // }, $custom_properties);
 
 
-            $generator = new SqlGenerator();
+            $advanced_search_plus = new AdvancedSearchPlus();
             try {
-                $sql = $generator->generateSQL($query, $custom_properties, $marketplace_id,  $categories, $this->limit, $order);
+                $sql = $advanced_search_plus->generateSQL($query, $custom_properties, $marketplace_id,  $categories, $this->limit, $order);
 
                 $this->all_demands = \Marketplace\Demand::findBySQL($sql[0], $sql[1]);
             } catch (SearchException $e) {
