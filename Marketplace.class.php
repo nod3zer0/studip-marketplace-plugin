@@ -16,10 +16,14 @@ require_once __DIR__ . '/models/category_notification.php';
 require_once __DIR__ . '/models/image.php';
 require_once __DIR__ . '/classes/Controller.php';
 require_once __DIR__ . '/classes/Plugin.php';
-require_once __DIR__ . '/classes/Search.php';
+//require_once __DIR__ . '/classes/Search.php';
 require_once __DIR__ . '/classes/search/exceptions/SearchException.php';
 require_once __DIR__ . '/classes/search/simpleSearch/SimpleSearch.php';
 require_once __DIR__ . '/classes/search/advancedSearch/AdvancedSearch.php';
+require_once __DIR__ . '/classes/search/advancedSearchPlus/AdvancedSearchPlus.php';
+require_once __DIR__ . '/classes/search/advancedSearchPlus/Parser.php';
+require_once __DIR__ . '/classes/search/advancedSearchPlus/Tokens.php';
+require_once __DIR__ . '/classes/search/advancedSearchPlus/Generator.php';
 require_once __DIR__ . '/classes/StudIPSqlSearches/SimpleSearchStudIp.php';
 require_once __DIR__ . '/classes/StudIPSqlSearches/CustomPropertySearchStudIp.php';
 require_once __DIR__ . '/classes/StudIPSqlSearches/DefaultPropertySearchStudIp.php';
@@ -106,7 +110,7 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         // $root_nav->addSubNavigation('global_search', $global_search);
 
 
-        if ($GLOBALS['user']->perms === 'root') {
+        if ($GLOBALS['user']->perms === 'root' || $GLOBALS['user']->perms === 'admin') {
             // $config_nav = new Navigation(
             //     'Config',
             //     PluginEngine::getURL($this, [], 'config')
@@ -203,7 +207,7 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
             $marketplace_nav->addSubNavigation('user_config', $user_config);
 
 
-            if ($GLOBALS['user']->perms === 'root') {
+            if ($GLOBALS['user']->perms === 'root' || $GLOBALS['user']->perms === 'admin') {
                 $config_nav = new Navigation(
                     'Config',
                     PluginEngine::getURL($this, [], 'config/index/', []) . $marketplace->id
