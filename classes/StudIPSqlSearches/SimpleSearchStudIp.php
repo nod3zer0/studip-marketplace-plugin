@@ -2,6 +2,12 @@
 
 namespace Marketplace;
 
+/**
+ * SimpleTypeSearch
+ * custom search type for searching in titles and descriptions in marketplace plugin
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 class SimpleTypeSearch extends \SearchType
 {
 

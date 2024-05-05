@@ -1,12 +1,18 @@
 <?
 
+/**
+ * Advanced search plus - parser
+ * converts user query to tokens which can be used in SQL generator
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 namespace search;
 
 class Parser
 {
     private $tokenObjects = array();
     private $query;
-
+    // default property types
     private $default_properties = [
         "title" => 1,
         "created" => 3,
@@ -18,18 +24,28 @@ class Parser
 
     private $custom_properties = [];
 
+    /**
+     * @param $query string search query
+     * @param $custom_properties array of custom properties
+     */
     public function __construct($query, $custom_properties)
     {
         $this->query = $query;
         $this->custom_properties = $custom_properties;
         $this->tokenize();
     }
-
+    /**
+     * Get next token from token list (removes it from list)
+     * @return Token
+     */
     public function getNextToken()
     {
         return array_shift($this->tokenObjects);
     }
-
+    /**
+     * Get next token from token list (does not remove it from list)
+     * @return Token
+     */
     public function peekNextToken()
     {
         if ($this->tokenObjects) {
@@ -38,13 +54,16 @@ class Parser
             return null;
         }
     }
-
+    /**
+     * Tokenize query
+     */
     public function tokenize()
     {
-
+        //remap characters so they do not colide with other user input
         $charactersToReplace = ["(", ")", "&", "|", "!", ">=", "<=", ">", "<", "=", ":"];
         $replaceWith = [" ( ", " ) ", " & ", " | ", " ! ", " ~GE ", " ~LE ", " ~G ", " ~L ", " ~E ", " : "];
         $result = str_replace($charactersToReplace, $replaceWith, $this->query);
+        //split by space
         $tokens =  explode(" ", $result);
 
         $custom_properties_dict = [];
@@ -127,9 +146,9 @@ class Parser
             } else if (preg_match('/^[a-zA-Z0-9_*+\/]+$/', $tokens[$i])) {
                 if (
                     $this->tokenObjects[array_key_last($this->tokenObjects)] instanceof StringToken
-                ) {
+                ) { //append to last string token
                     $this->tokenObjects[array_key_last($this->tokenObjects)]->value .= " " . $tokens[$i];
-                } else {
+                } else { //create new string token
                     $this->tokenObjects[] = new StringToken($tokens[$i]);
                 }
             } else {

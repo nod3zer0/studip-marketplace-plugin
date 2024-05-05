@@ -1,5 +1,11 @@
 <?
 
+/**
+ * CustomPropertySearchStudIp
+ * custom search type for searching in custom properties in marketplace plugin
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 namespace Marketplace;
 
 class DefaultPropertySearchStudIp extends \SearchType

@@ -1,5 +1,9 @@
 <?
 
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 use Studip\Button; ?>
 <form action="<?= $controller->link_for('user_config/save_user_config') ?>" method="post">
 

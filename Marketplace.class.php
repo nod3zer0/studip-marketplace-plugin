@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * Marketplace class
+ * initializes plugin and its navigation
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
 // require_once __DIR__ . '/bootstrap.inc.php';
 require_once __DIR__ . '/models/demand.php';
 require_once __DIR__ . '/models/property.php';
@@ -79,43 +85,7 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
         );
         $root_nav->addSubNavigation('user_config', $user_config);
 
-        // $default_marketplace = new Navigation(
-        //     'Default marketplace',
-        //     PluginEngine::getURL($this, [], 'overview')
-        // );
-        // Navigation::addItem('/default_marketplace', $default_marketplace);
-        // //$root_nav->addSubNavigation('default_marketplace', $default_marketplace);
-        // $overview = new Navigation(
-        //     'Overview',
-        //     PluginEngine::getURL($this, [], 'overview')
-        // );
-        // $default_marketplace->addSubNavigation('marketplace_overview', $overview);
-        // $search_nav = new Navigation(
-        //     'Search',
-        //     PluginEngine::getURL($this, [], 'search')
-        // );
-        // $default_marketplace->addSubNavigation('marketplace_search', $search_nav);
-        // $my_demands = new Navigation(
-        //     'My demands',
-        //     PluginEngine::getURL($this, [], 'my_demands')
-        // );
-        // $default_marketplace->addSubNavigation('marketplace_my_demands', $my_demands);
-
-
-        // $global_search = new Navigation(
-        //     'Search',
-        //     PluginEngine::getURL($this, [], 'search')
-        // );
-
-        // $root_nav->addSubNavigation('global_search', $global_search);
-
-
         if ($GLOBALS['user']->perms === 'root' || $GLOBALS['user']->perms === 'admin') {
-            // $config_nav = new Navigation(
-            //     'Config',
-            //     PluginEngine::getURL($this, [], 'config')
-            // );
-            // $default_marketplace->addSubNavigation('marketplace_config', $config_nav);
             $global_config = new Navigation(
                 'Config',
                 PluginEngine::getURL($this, [], 'global_config')
@@ -167,16 +137,13 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
                 'My ' . $marketplace->comodity_name_plural,
                 PluginEngine::getURL($this, [], 'my_demands/index/', []) . $marketplace->id
             );
-            //$marketplace_nav->addSubNavigation('marketplace_my_demands', $my_demands);
+
             $overview->addSubNavigation('my_demands', $my_demands);
             $my_bookmarks = new Navigation(
                 'My bookmarks',
                 PluginEngine::getURL($this, [], 'my_bookmarks/index/', []) . $marketplace->id
             );
             $overview->addSubNavigation('my_bookmarks', $my_bookmarks);
-            // $marketplace_nav->addSubNavigation('marketplace_my_bookmarks', $my_demands);
-
-
 
             $search_nav = new Navigation(
                 'Search',

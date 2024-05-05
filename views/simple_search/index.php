@@ -1,5 +1,7 @@
 <?
-
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
 use Studip\Button;
 use \Marketplace\SimpleTypeSearch?>
 <?

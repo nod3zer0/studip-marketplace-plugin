@@ -4,8 +4,8 @@ namespace search;
 
 /**
  * Class SearchException
- * author: Rene Ceska <xceska06@stud.fit.vutbr.cz>
  * This class is special exception for search classes
+ * @author  Rene Ceska <xceska06@stud.fit.vutbr.cz>
  */
 class SearchException extends \Exception
 {

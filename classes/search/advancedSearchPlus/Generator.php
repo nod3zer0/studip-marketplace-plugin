@@ -1,5 +1,11 @@
 <?
 
+/**
+ * Advanced search plus - generator
+ * generates SQL query from user query
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 namespace search;
 
 class SqlGenerator
@@ -8,6 +14,7 @@ class SqlGenerator
     private $numberOfBrackets = 0;
     private $categories = [];
 
+    // map of default properties to database columns
     private $default_properties_map = [
         "title" => "title",
         "created" => "mkdate",
@@ -40,11 +47,13 @@ class SqlGenerator
 
         $output = $this->generateStart($parser, $marketplace_id);
 
+        // maps proerties to database columns for sorting (to prevent SQL injection)
         $attribute_map = [
             'title' => 'title',
             'author' => 'auth_user_md5.username',
             'mkdate' => 'mkdate'
         ];
+        // map to prevent SQL injection
         $order_map = [
             'asc' => 'ASC',
             'desc' => 'DESC'
@@ -61,7 +70,12 @@ class SqlGenerator
 
         return [$output, $this->values];
     }
-
+    /**
+     * Generates start of SQL query
+     * @param $parser Parser
+     * @param $marketplace_id string id of marketplace
+     * @return string
+     */
     public function generateStart($parser, $marketplace_id)
     {
         $output = "LEFT JOIN auth_user_md5 ON author_id = user_id LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
@@ -75,7 +89,12 @@ class SqlGenerator
         return $output;
     }
 
-
+    /**
+     * Generates expression of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     public function generateExpression($parser)
     {
         $output = "";
@@ -102,7 +121,11 @@ class SqlGenerator
         return $output;
     }
 
-    // return "mp_tag.name LIKE ?";
+    /**
+     * Generates tag part of SQL query
+     * @param $parser Parser
+     * @return string
+     */
     public function generateTag($parser)
     {
 
@@ -126,7 +149,12 @@ class SqlGenerator
 
         return $output;
     }
-
+    /**
+     * Generates logic part of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     public function generateLogic($parser)
     {
 
@@ -150,7 +178,11 @@ class SqlGenerator
     }
 
 
-
+    /**
+     * Generates AND part of SQL query
+     * @param $parser Parser
+     * @return string
+     */
     public function generateAnd($parser)
     {
         $output = "";
@@ -159,7 +191,11 @@ class SqlGenerator
         $output .= $this->generateExpression($parser);
         return $output;
     }
-
+    /**
+     * Generates OR part of SQL query
+     * @param $parser Parser
+     * @return string
+     */
     public function generateOr($parser)
     {
         $output = "";
@@ -168,7 +204,11 @@ class SqlGenerator
         $output .= $this->generateExpression($parser);
         return $output;
     }
-
+    /**
+     * Generates NOT part of SQL query
+     * @param $parser Parser
+     * @return string
+     */
     public function generateNot($parser)
     {
         $output = "";
@@ -177,7 +217,11 @@ class SqlGenerator
         $output .= $this->generateExpression($parser);
         return $output;
     }
-
+    /**
+     * Generates open bracket part of SQL query
+     * @param $parser Parser
+     * @return string
+     */
     public function generateOpen($parser)
     {
         $this->numberOfBrackets++;
@@ -187,7 +231,12 @@ class SqlGenerator
         $output .= $this->generateExpression($parser);
         return $output;
     }
-
+    /**
+     * Generates close bracket part of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     public function generateClose($parser)
     {
         if ($this->numberOfBrackets <= 0) {
@@ -210,7 +259,12 @@ class SqlGenerator
 
 
 
-
+    /**
+     * Generates custom property part of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     public function generateCustomPropertyString($parser)
     {
         $this->values[] = $parser->getNextToken()->getValue();
@@ -255,7 +309,12 @@ class SqlGenerator
 
         return $output;
     }
-
+    /**
+     * Generates custom property part of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     public function generateCustomPropertyInt($parser)
     {
         $output = "EXISTS (
@@ -302,7 +361,12 @@ class SqlGenerator
 
         return $output;
     }
-
+    /**
+     * Generates custom property part of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     public function generateCustomPropertyDate($parser)
     {
 
@@ -339,7 +403,6 @@ class SqlGenerator
         } else {
             throw new SearchException("After date property must follow date!");
         }
-        //SELECT * FROM mp_demand LEFT JOIN mp_tag_demand ON mp_demand.id=mp_tag_demand.demand_id LEFT JOIN mp_tag ON mp_tag_demand.tag_id=mp_tag.id LEFT JOIN mp_property ON mp_property.demand_id=mp_demand.id LEFT JOIN mp_custom_property ON mp_custom_property.id=mp_property.custom_property_id WHERE (mp_custom_property.name LIKE "prop4" AND STR_TO_DATE(mp_property.value, "%Y-%m-%d") = DATE("2024-02-20"))
         if ($parser->peekNextToken() instanceof LogicToken) {
             $output .= $this->generateLogic($parser);
         } else if (!$parser->peekNextToken()) { // check NULL
@@ -349,7 +412,12 @@ class SqlGenerator
         }
         return $output;
     }
-
+    /**
+     * Generates custom property part of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     public function generateCustomProperty($parser)
     {
         $output = "";
@@ -373,7 +441,12 @@ class SqlGenerator
 
         return $output;
     }
-
+    /**
+     * Generates default property part of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     private function generateDefaultPropertyUserName($parser)
     {
         $output = "";
@@ -404,7 +477,12 @@ class SqlGenerator
 
         return $output;
     }
-
+    /**
+     * Generates default property part of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     public function generateDefaultPropertyString($parser)
     {
         $property_name = $this->default_properties_map[$parser->getNextToken()->getValue()];
@@ -439,7 +517,12 @@ class SqlGenerator
 
         return $output;
     }
-
+    /**
+     * Generates default property part of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     public function generateDefaultPropertyDate($parser)
     {
         $output = "(DATE(FROM_UNIXTIME(mp_demand." . $this->default_properties_map[$parser->getNextToken()->getValue()] . "))";
@@ -479,7 +562,12 @@ class SqlGenerator
         return $output;
     }
 
-
+    /**
+     * Generates default property part of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     public function generateDefaultProperty($parser)
     {
         $output = "";
@@ -510,7 +598,12 @@ class SqlGenerator
 
         return $output;
     }
-
+    /**
+     * Parses category id from path
+     * @param $path string path to category
+     * @return string
+     * @throws SearchException
+     */
     public function parseCategoryId($path)
     {
         $path_array = explode("/", trim($path, '/'));
@@ -540,7 +633,12 @@ class SqlGenerator
 
         return $id;
     }
-
+    /**
+     * Generates default property part of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     public function generateDefaultPropertyCategory($parser)
     {
         $output = "EXISTS (
@@ -573,7 +671,12 @@ class SqlGenerator
         return $output;
     }
 
-
+    /**
+     * Generates default property part of SQL query
+     * @param $parser Parser
+     * @return string
+     * @throws SearchException
+     */
     public function generateString($parser)
     {
         //TODO rewrite to fulltext search

@@ -4,7 +4,7 @@ namespace search;
 
 /**
  * Class AdvancedSearch
- * author: Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ * @author  Rene Ceska <xceska06@stud.fit.vutbr.cz>
  * This class is used to generate a SQL query for an advanced search
  * The query can search for custom properties, tags, default properties and categories
  * The query can be limited to a specific marketplace
@@ -27,6 +27,7 @@ class AdvancedSearch
     ];
 
     /***
+     * Generates a SQL query for an advanced search
      * @param $custom_properties array of custom properties
      * @param $tags array of tags
      * @param $default_properties array of default properties

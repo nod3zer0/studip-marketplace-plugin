@@ -1,3 +1,5 @@
+///@author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+///@brief Vue component for bookmarking commodities
 $(document).ready(function() {
     STUDIP.Vue.load().then(({
         Vue,

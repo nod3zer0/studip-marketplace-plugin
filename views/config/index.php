@@ -1,3 +1,9 @@
+<?
+
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+?>
 <form method="post" action="<?= $controller->link_for('config/save_general_config', $marketplace_id) ?>">
     <table>
         <tbody>

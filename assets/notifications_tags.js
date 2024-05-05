@@ -1,3 +1,6 @@
+///@author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+///@brief Vue component for managing tag notifications
+
 $(document).ready(function() {
     STUDIP.Vue.load().then(({
         Vue,
@@ -131,7 +134,7 @@ $(document).ready(function() {
         });
 
         //search notification settings component
-
+        //unused
         Vue.component('search_notification_settings', {
             template: `
             <div>

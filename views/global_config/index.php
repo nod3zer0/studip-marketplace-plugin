@@ -1,3 +1,10 @@
+<?
+
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+?>
+
 <div id="global_config">
     <h1>Catalog Configuration</h1>
     <h2>Catalogs</h2>

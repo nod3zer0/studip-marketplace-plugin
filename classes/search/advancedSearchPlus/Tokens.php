@@ -1,5 +1,11 @@
 <?
 
+/**
+ * Advanced search plus - tokens
+ * token objects that are used in parser
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 namespace search;
 
 abstract class Token

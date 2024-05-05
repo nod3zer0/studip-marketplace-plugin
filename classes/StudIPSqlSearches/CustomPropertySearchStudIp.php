@@ -1,5 +1,12 @@
 <?
 
+/**
+ * CustomPropertySearchStudIp
+ * custom search type for searching in custom properties in marketplace plugin
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
+
 namespace Marketplace;
 
 class CustomPropertySearchStudIp extends \SearchType
@@ -28,26 +35,17 @@ class CustomPropertySearchStudIp extends \SearchType
     public function getResults($input, $contextual_data = array(), $limit = PHP_INT_MAX, $offset = 0)
     {
         $db = \DBManager::get();
-        //$results = $db->fetchAll("", );
-        //
-        //
-        // $stm = $db->prepare("SELECT title, description FROM mp_demand WHERE marketplace_id LIKE :marketplace_id AND (title LIKE :query OR description LIKE :query)");
         $stm = $db->prepare("SELECT mp_property.value, mp_property.value FROM mp_property
                              LEFT JOIN mp_custom_property ON mp_custom_property.id = mp_property.custom_property_id
                              WHERE mp_custom_property.marketplace_id LIKE :marketplace_id
                              AND mp_property.value LIKE :query
                              AND  mp_custom_property.name LIKE :property_name
                                LIMIT 5");
-        //$stm = $db->prepare("SELECT title, title FROM mp_demand WHERE marketplace_id LIKE :marketplace_id AND (title LIKE :query OR description LIKE :query)");
-        //$stm->execute(["marketplace_id" => $this->marketplace_id, "property_name" => $this->property_name, "query" => "%" . $input . "%"]);
-        //$stm->execute(["marketplace_id" => $this->marketplace_id]);
+
         $stm->execute(["marketplace_id" => $this->marketplace_id,  "query" => "%" . $input . "%", "property_name" => $this->property_name]);
         $results =  $stm->fetchAll();
-
         array_push($results, [$input, $input]);
-
         return   $results;
-        //  return [1 => ["test", "testing"], 2 => ["test", "testing",], 3 => ["test", "testing"]];
     }
 
     public function includePath()

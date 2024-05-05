@@ -1,3 +1,9 @@
+<?
+
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+?>
 Order by:
 <select name="order" style="width: 200px;">
     <option value="mkdate_asc" <? if ($order == "mkdate_asc") : echo "selected";

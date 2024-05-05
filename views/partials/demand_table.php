@@ -1,3 +1,10 @@
+<?
+
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+?>
+
 <script>
     function deleteDemands() {
         var selectedDemands = document.querySelectorAll('input[name="selected_demands[]"]:checked');

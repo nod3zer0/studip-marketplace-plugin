@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * This cron job notifies all users when a new search result is available. (unused)
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 namespace Marketplace;
 
 class SearchNotificationCron extends \CronJob

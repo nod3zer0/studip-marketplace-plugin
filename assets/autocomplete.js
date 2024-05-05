@@ -1,3 +1,5 @@
+/// @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+/// @brief  autocomplete for search input in marketplace
 $(document).ready(function() {
     STUDIP.Vue.load().then(({
         Vue,

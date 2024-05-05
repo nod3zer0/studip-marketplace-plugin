@@ -1,3 +1,5 @@
+///@author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+///@brief Vue component categories for user configuration
 $(document).ready(function() {
     STUDIP.Vue.load().then(({
         Vue,

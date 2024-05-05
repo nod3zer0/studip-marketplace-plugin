@@ -1,5 +1,9 @@
 <?
 
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 use Studip\LinkButton;
 use Studip\Button;
 ?>

@@ -4,7 +4,7 @@ namespace search;
 
 /**
  * Class SimpleSearch
- * author: Rene Ceska <xceksa06@stud.fit.vutbr.cz>
+ * @author  Rene Ceska <xceska06@stud.fit.vutbr.cz>
  * This class is used to generate a SQL query for a simple search
  * The query searches for a given query in the title and description of a demand
  * The query can be limited to a specific marketplace

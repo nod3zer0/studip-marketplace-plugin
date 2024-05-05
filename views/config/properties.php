@@ -1,3 +1,10 @@
+<?
+
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+?>
+
 <style>
     #properties_settings ul {
         list-style-type: none;

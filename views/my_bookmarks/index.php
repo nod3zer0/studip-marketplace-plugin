@@ -1,3 +1,10 @@
+<?
+
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+?>
+
 <div id="bookmark_public">
     <table class="default sortable-table">
         <caption>

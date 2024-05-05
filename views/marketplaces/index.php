@@ -1,3 +1,10 @@
+<?
+
+/**
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+?>
+
 <table class="default sortable-table">
     <caption>
         Catalogs

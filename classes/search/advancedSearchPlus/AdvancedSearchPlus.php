@@ -1,5 +1,11 @@
 <?
 
+/**
+ * Advanced search plus
+ * transpiles user query to SQL query
+ * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ */
+
 namespace search;
 
 class AdvancedSearchPlus
