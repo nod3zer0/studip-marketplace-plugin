@@ -228,6 +228,9 @@ class GlobalConfigController extends \Marketplace\Controller
         foreach ($category_demands as $category_demand) {
             $db->execute("INSERT INTO mp_category_demand (id, category_id, demand_id) VALUES (?, ?, ?)", [$category_demand["id"], $category_demand["category_id"], $category_demand["demand_id"]]);
         }
+        //delete demands from users that no longer exist
+        $db->execute("DELETE FROM mp_demand WHERE author_id NOT IN (SELECT user_id FROM auth_user_md5)");
+
         PageLayout::postSuccess('Data imported successfully');
         $this->redirect('global_config/export/');
     }
