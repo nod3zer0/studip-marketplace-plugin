@@ -577,13 +577,13 @@ class SqlGenerator
                 $output = $this->generateDefaultPropertyString($parser);
                 break;
             case 2:
-                // $output = $this->generateDefaultPropertyInt($parser); TODO
+                // $output = $this->generateDefaultPropertyInt($parser); NOTE there is no int default property
                 break;
             case 3:
                 $output = $this->generateDefaultPropertyDate($parser);
                 break;
             case 4:
-                //$this->generateDefaultPropertyBool($parser); TODO
+                //$this->generateDefaultPropertyBool($parser); NOTE there is no int default property
                 break;
             case 5:
                 $output = $this->generateDefaultPropertyString($parser);
@@ -601,7 +601,7 @@ class SqlGenerator
     /**
      * Parses category id from path
      * @param $path string path to category
-     * @return string
+     * @return string id of last category
      * @throws SearchException
      */
     public function parseCategoryId($path)
@@ -679,11 +679,19 @@ class SqlGenerator
      */
     public function generateString($parser)
     {
-        //TODO rewrite to fulltext search
-        $output = "(INSTR(mp_demand.title, ? ) > 0 OR INSTR(mp_demand.description , ? ) > 0 )";
-        $value = $parser->getNextToken()->getValue();
-        $this->values[] = $value;
-        $this->values[] = $value;
+
+        if (strlen(str_replace('*', '', $parser->peekNextToken()->getValue())) <= 3) {
+            $output = "mp_demand.title LIKE ? OR mp_demand.description LIKE ?";
+            //like uses & instead of * for wildcard
+            $value =  str_replace('*', '%', $parser->getNextToken()->getValue());
+            $this->values[] =  $value;
+            $this->values[] =  $value;
+        } else {
+            $output = "MATCH(mp_demand.title) AGAINST(? IN BOOLEAN MODE) OR MATCH(mp_demand.description) AGAINST(? IN BOOLEAN MODE) ";
+            $value =    $parser->getNextToken()->getValue();
+            $this->values[] =  $value;
+            $this->values[] =  $value;
+        }
 
         if ($parser->peekNextToken() instanceof LogicToken) {
             $output .= $this->generateLogic($parser);

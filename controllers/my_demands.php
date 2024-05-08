@@ -28,7 +28,7 @@ class MyDemandsController extends \Marketplace\Controller
     {
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
-        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview/my_demands');
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/overview/my_demands');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
         if ($marketplace_id) {
             $this->all_demands = \Marketplace\Demand::findBySQL("marketplace_id = ? AND author_id = ?", [$marketplace_id, $GLOBALS['user']->id]);

@@ -24,31 +24,49 @@ $(document).ready(function() {
                 </template>
             </div>
         `,
+            data: () => ({
+                error: 0
+            }),
             methods: {
                 addSubcategory(category) {
-                    category.subcategories.push({
+
+                    new_category = {
                         name: 'New Subcategory',
                         subcategories: []
-                    });
+                    };
+                    category.subcategories.push(new_category);
+                    this.checkUniqueName(new_category, category.subcategories);
                 },
                 deleteCategory(index) {
+                    deleted_category = this.categories[index];
+                    this.checkUniqueName(deleted_category, this.categories, true);
                     this.categories.splice(index, 1);
+
                 },
-                checkUniqueName(category, categories) {
+                checkUniqueName(category, categories, isDelete = false) {
                     const countOccurrences = categories.filter(cat => cat.name === category.name).length;
                     const isUnique = countOccurrences <= 1;
-                    if (!isUnique) {
+
+                    if (isDelete && !isUnique) {
+                        Vue.set(category, 'error', null);
+                        this.$emit('error', -1);
+                        this.error = 0;
+                    } else if (!isUnique) {
                         Vue.set(category, 'error', 'Name must be unique within the category');
                         this.$emit('error', 1);
+                        this.error = 1;
                     } else if (category.name === '') {
                         Vue.set(category, 'error', 'Name must not be empty');
                         this.$emit('error', 1);
+                        this.error = 1;
                     } else if (category.name.includes('/')) {
                         Vue.set(category, 'error', 'Name must not contain /');
                         this.$emit('error', 1);
-                    } else {
+                        this.error = 1;
+                    } else if (this.error == 1) {
                         Vue.set(category, 'error', null);
                         this.$emit('error', -1);
+                        this.error = 0;
 
                     }
                 },
@@ -67,7 +85,7 @@ $(document).ready(function() {
             <button class="button"  @click="addCategory">Add Category</button>
             </div>
             <div>
-            <button class="button"  :disabled="hasErrors" @click="saveCategories">Save</button>
+            <button  class="button"  :disabled="hasErrors" @click="saveCategories">Save</button>
             </div>
             </div>`,
             data: () => ({

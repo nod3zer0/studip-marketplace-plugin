@@ -32,7 +32,7 @@ class OverviewController extends \Marketplace\Controller
     {
         Helpbar::get()->addPlainText("Overview", "Here are shown all the commodities from the catalog.");
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
-        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview/all');
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/overview/all');
         PageLayout::setTitle($marketplace_obj->name);
         OverviewController::buildSidebar($marketplace_id, $marketplace_obj->comodity_name_singular);
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
@@ -197,7 +197,8 @@ class OverviewController extends \Marketplace\Controller
                 $this->render_nothing();
                 return;
             }
-            $this->redirect('overview/index/' . $marketplace_id);
+            $this->response->add_header('X-Dialog-Close', '1');
+            $this->render_nothing();
             return;
         }
 

@@ -30,7 +30,7 @@ class AdvancedSearchController extends \Marketplace\Controller
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
 
-        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search/marketplace_advanced_search');
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search/advanced_search');
         PageLayout::setTitle(MarketplaceModel::find($marketplace_id)->name);
 
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);

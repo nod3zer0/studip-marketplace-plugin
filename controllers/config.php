@@ -16,7 +16,7 @@ class ConfigController extends \Marketplace\Controller
     public function index_action($marketplace_id = '')
     {
         $this->marketplace_id = $marketplace_id;
-        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_config/general');
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/config/general');
         $markeplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         $this->marketplace_name = $markeplace_obj->name;
         PageLayout::setTitle($this->marketplace_name);
@@ -31,7 +31,7 @@ class ConfigController extends \Marketplace\Controller
         $marketplace->enabled = Request::submitted('enabled');
         $marketplace->comodity_name_singular = Request::get('comodity_name');
         $marketplace->comodity_name_plural = Request::get('comodity_name_plural');
-        $marketplace_id->name = Request::get('marketplace_name');
+        $marketplace->name = Request::get('marketplace_name');
         $marketplace->store();
         PageLayout::postSuccess('Configuration save successfully.');
         $this->redirect('config/index/' . $marketplace_id);
@@ -61,7 +61,7 @@ class ConfigController extends \Marketplace\Controller
 
     public function categories_action($marketplace_id = '')
     {
-        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_config/categories');
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/config/categories');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/categories_config.js');
         $this->marketplace_id = $marketplace_id;
@@ -77,7 +77,7 @@ class ConfigController extends \Marketplace\Controller
         Helpbar::get()->addPlainText("Heading", "Heading is text that is rendered as heading. Users can't fill in this field.");
         Helpbar::get()->addPlainText("Description", "Description is text that is rendered as plain text. Users can't fill in this field.");
         $this->marketplace_id = $marketplace_id;
-        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_config/properties');
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/config/properties');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
     }
 

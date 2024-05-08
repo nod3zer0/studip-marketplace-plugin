@@ -26,4 +26,3 @@ class AdvancedSearchPlus
         return $generator->generateSQL($query, $custom_properties, $marketplace_id,  $categories, $limit, $order);
     }
 }
-//TODO

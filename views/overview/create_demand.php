@@ -1,4 +1,5 @@
 <?
+
 /**
  * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
  */
@@ -363,7 +364,7 @@ use Studip\Button; ?>
                         $property_html = ('<input type="date" '  . $required .  ' name="custom_properties[' . $property['id'] . ']" value="' . htmlReady($property['value']) . '">');
                         break;
                     case 4:
-                        //TODO boolean
+                        //NOTE boolean was not implemented in Catalog plugin
                     case 5:
                         $property_html = ('<textarea class="add_toolbar wysiwyg"'  . $required .  ' name="custom_properties[' . $property['id'] . ']">' . wysiwygReady($property['value']) . '</textarea>');
                         break;

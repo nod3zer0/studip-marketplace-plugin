@@ -38,7 +38,7 @@ class SearchController extends \Marketplace\Controller
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;
 
-        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search/marketplace_advanced_search_plus');
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search/advanced_search_plus');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
         $db = DBManager::get();
         $query = Request::get('search-query');

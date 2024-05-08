@@ -89,7 +89,7 @@ class Parser
             } else if (substr($tokens[$i][0], 0, 1) == "#") //tags
             {
                 $this->tokenObjects[] = new TagToken(substr($tokens[$i], 1));
-            } else if (strtolower($tokens[$i]) == "and" || $tokens[$i] == "&") //ADN
+            } else if (strtolower($tokens[$i]) == "and" || $tokens[$i] == "&") //AND
             {
                 $this->tokenObjects[] = new AndToken();
             } else if (strtolower($tokens[$i]) == "or" || $tokens[$i] == "|") //OR
@@ -124,7 +124,7 @@ class Parser
             } else if (preg_match('/^[0-9]+$/', $tokens[$i])) //int
             {
                 $this->tokenObjects[] = new IntToken((int)$tokens[$i]);
-            } else if (preg_match('/^[0-9]+\.[0-9]+$/', $tokens[$i])) //float
+            } else if (preg_match('/^[0-9]+\.[0-9]+$/', $tokens[$i])) //float NOTE: there is no float property in Catalog plugin
             {
                 $this->tokenObjects[] = new FloatToken((float)$tokens[$i]);
             } else if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $tokens[$i])) //date

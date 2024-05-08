@@ -43,6 +43,7 @@ class AdvancedSearch
         $this->categories = $categories;
         $output = "LEFT JOIN auth_user_md5 ON author_id = user_id LEFT JOIN mp_marketplace ON mp_demand.marketplace_id = mp_marketplace.id WHERE ";
 
+        //check if search is global or local to marketplace
         if ($marketplace_id != "") {
             $output .= "mp_marketplace.id = ? AND ";
             $this->values[] = $marketplace_id;
@@ -90,6 +91,11 @@ class AdvancedSearch
         return [$output, $this->values];
     }
 
+    /***
+     * Parses the category path and returns the category id
+     * @param $path string path to category
+     * @return string category id
+     */
     public function parseCategoryId($path)
     {
         $path_array = explode("/", trim($path, '/'));
@@ -119,7 +125,11 @@ class AdvancedSearch
 
         return $id;
     }
-
+    /***
+     * Generates a SQL query for a custom property
+     * @param $custom_property array of custom properties
+     * @return string SQL query
+     */
     private function getCustomPropertySQL($custom_property)
     {
         $output = "";
@@ -134,7 +144,7 @@ class AdvancedSearch
                 $output = $this->generateCustomPropertyDate($custom_property);
                 break;
             case 4:
-                //$this->generateCustomPropertyBool($parser); TODOs
+                //$this->generateCustomPropertyBool($parser); NOTE: NOT IMPLEMENTED)
                 break;
             case 5:
                 $output = $this->generateCustomPropertyString($custom_property);
@@ -143,7 +153,11 @@ class AdvancedSearch
 
         return $output;
     }
-
+    /***
+     * Generates a SQL query for a default property
+     * @param $default_property array of default properties
+     * @return string SQL query
+     */
     private function getDefaultPropertySQL($default_property)
     {
         $output = "";
@@ -158,7 +172,7 @@ class AdvancedSearch
                 $output = $this->generateDefaultPropertyDate($default_property);
                 break;
             case 4:
-                //$this->generateCustomPropertyBool($parser); TODOs
+                //$this->generateCustomPropertyBool($parser); (NOTE: NOT IMPLEMENTED)
                 break;
             case 5:
                 $output = $this->generateDefaultPropertyString($default_property);
@@ -170,7 +184,11 @@ class AdvancedSearch
 
         return $output;
     }
-
+    /***
+     * Generates a SQL query for a default property of type username
+     * @param $default_property array of default properties
+     * @return string SQL query
+     */
     private function generateDefaultPropertyUserName($default_property)
     {
         $output = "";
@@ -181,7 +199,11 @@ class AdvancedSearch
 
         return $output;
     }
-
+    /***
+     * Generates a SQL query for a default property of type string
+     * @param $default_property array of default properties
+     * @return string SQL query
+     */
     private function generateDefaultPropertyString($default_property)
     {
         $output = "";
@@ -195,7 +217,11 @@ class AdvancedSearch
 
         return $output;
     }
-
+    /***
+     * Generates a SQL query for a default property of type int
+     * @param $default_property array of default properties
+     * @return string SQL query
+     */
     private function generateDefaultPropertyInt($default_property)
     {
         $output = "mp_demand." . $this->default_properties_map[$default_property["name"]];
@@ -213,7 +239,11 @@ class AdvancedSearch
         $this->values[] = $default_property["value"];
         return $output;
     }
-
+    /***
+     * Generates a SQL query for a default property of type date
+     * @param $default_property array of default properties
+     * @return string SQL query
+     */
     private function generateDefaultPropertyDate($default_property)
     {
         $output = "(DATE(FROM_UNIXTIME(mp_demand." . $this->default_properties_map[$default_property["name"]] .  "))";
@@ -237,7 +267,11 @@ class AdvancedSearch
 
         return $output;
     }
-
+    /***
+     * Generates a SQL query for a custom property of type string
+     * @param $custom_property array of custom properties
+     * @return string SQL query
+     */
     private function generateCustomPropertyString($custom_property)
     {
         $output = "";
@@ -262,7 +296,11 @@ class AdvancedSearch
 
         return $output;
     }
-
+    /***
+     * Generates a SQL query for a custom property of type int
+     * @param $custom_property array of custom properties
+     * @return string SQL query
+     */
     private function generateCustomPropertyInt($custom_property)
     {
         $output = "EXISTS (
@@ -289,7 +327,11 @@ class AdvancedSearch
         return $output;
     }
 
-
+    /***
+     * Generates a SQL query for a custom property of type date
+     * @param $custom_property array of custom properties
+     * @return string SQL query
+     */
     private function generateCustomPropertyDate($custom_property)
     {
         $output = "EXISTS (
@@ -333,9 +375,13 @@ class AdvancedSearch
         return $output;
     }
 
+    /***
+     * Generates a SQL query for a category
+     * @param $category_id string id of last category in path
+     * @return string SQL query
+     */
     private function generateCategory($category_id)
     {
-
         $output = "EXISTS (
             SELECT 1
             FROM mp_category_demand

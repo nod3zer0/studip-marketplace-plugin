@@ -96,7 +96,7 @@ class MySubscriptionsController extends \Marketplace\Controller
     {
 
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
-        Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview/my_subscriptions');
+        Navigation::activateItem('marketplace_' . $marketplace_id . '/overview/my_subscriptions');
         PageLayout::setTitle($marketplace_obj->name);
         self::buildSidebarMarketplace($marketplace_id, $marketplace_obj->comodity_name_singular);
 

@@ -17,11 +17,11 @@ class MyBookmarksController extends \Marketplace\Controller
         if ($marketplace_id) {
             $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
             $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;
-            Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_overview/my_bookmarks');
+            Navigation::activateItem('marketplace_' . $marketplace_id . '/overview/my_bookmarks');
             $this->all_demands = \Marketplace\Bookmark::getByMarketplace($marketplace_id, $GLOBALS['user']->id);
         } else {
             $this->marketplace_comodity_name_plural = 'Commodities';
-            Navigation::activateItem('/marketplace_root/marketplace_my_bookmarks');
+            Navigation::activateItem('/marketplace_root/my_bookmarks');
             $this->all_demands = \Marketplace\Bookmark::getAllBookmarks($GLOBALS['user']->id);
         }
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');

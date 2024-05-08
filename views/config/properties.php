@@ -102,7 +102,6 @@
                     this.properties.splice(index, 1);
                 },
                 submitProperties: function() {
-                    // TODO: make url dynamic
                     fetch('<?= $controller->link_for('config/save_config', $marketplace_id) ?>', {
                             method: 'POST',
                             headers: {

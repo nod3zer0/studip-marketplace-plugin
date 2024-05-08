@@ -2,6 +2,8 @@
 
 /**
  * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
+ * model for notifying users about new offers in saved search queries
+ * not implemented as deemed unnecessary after consultation with supervisor
  */
 
 namespace Marketplace;
@@ -79,7 +81,9 @@ class SearchNotification extends SimpleORMap
             $search_notification->delete();
         }
     }
-
+    /**
+     * Notify users about new offers
+     */
     public static function notifyUsers()
     {
         //TODO:
