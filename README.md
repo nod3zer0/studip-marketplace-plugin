@@ -2,7 +2,6 @@ author: René Češka <xceska06@stud.fit.vutbr.cz>
 
 # Catalog plugin
 
-
 This folder contains Catalog plugin, originally known as Marketplace plugin.
 The purpose of this plugin is to allow users to create demands or offers for a wide range of commodities. For example, the catalog can be utilized to find team members for projects, instructors for courses, collaborators for research endeavors and more. Search engines are central to this plugin, as they offer varying levels of complexity, making it easy for users to search for anything they specify.
 
@@ -36,23 +35,23 @@ Directory structure is same as is recommended in Stud.IP plugin tutorials. Here 
         - CustomPropertySearchStudIp.php
         - DefaultPropertySearchStudIp.php
 - Makefile - creates zip file
-- migrations/
+- migrations/ - sets up database and other migrations
     - ...
 - README.md
 - views/
     - ...
-- assets/
+- assets/ - vue.js scripts and css
     - ...
 - controllers/
     - ...
-- Marketplace.class.php
+- Marketplace.class.php - initializes plugin and sets up navigation
 - models/
     - ...
-- bootstrap.inc.php
 - LICENSE.txt
 - marketplace.zip: compressed plugin prepared for uploading to Stud.IP
 - plugin.manifest
 - demo_data.json: demo data that can be uploaded into plugin
+
 
 ## Administrator configuration
 
