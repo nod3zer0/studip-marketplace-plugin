@@ -214,8 +214,6 @@ $(document).ready(function() {
                         this.results_render = this.results.map(item => item.name);
                         this.isOpen = true;
                     }
-
-                    //this.results.push(this.tags.filter(item => '#'.concat(item).toLowerCase().indexOf(last_key[0].toLowerCase()) > -1));
                 },
                 InsertAtIndex(str, substring, index) {
                     return str.slice(0, index) + substring + str.slice(index);

@@ -5,7 +5,6 @@
  * initializes plugin and its navigation
  * @author Rene Ceska <xceska06@stud.fit.vutbr.cz>
  */
-// require_once __DIR__ . '/bootstrap.inc.php';
 require_once __DIR__ . '/models/demand.php';
 require_once __DIR__ . '/models/property.php';
 require_once __DIR__ . '/models/tag.php';
@@ -45,10 +44,7 @@ class Marketplace extends StudIPPlugin implements SystemPlugin
     public function __construct()
     {
         parent::__construct();
-        //$this->addScript('assets/table_edit.js');
-        //$this->addScript('assets/bookmark_component.js'); //does not work sometimes
         $this->addStylesheet('assets/stylesheet.css');
-        // PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
         $root_nav = new Navigation(
             'Catalog',
             PluginEngine::getURL($this, [], 'marketplaces')

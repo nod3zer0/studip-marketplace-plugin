@@ -124,6 +124,8 @@ class OverviewController extends \Marketplace\Controller
         $tags =  json_encode(["tags" => $tags]);
         //replace double quotes with single quotes, so it can be rendered in html
         $this->tags = str_replace("\"", "'", $tags);
+        print_r($tags);
+        print_r($this->tags);
 
         $picked_tags = \Marketplace\TagDemand::findBySQL("demand_id = ?", [$demand_id]);
         $picked_tags = array_map(function ($tag) {

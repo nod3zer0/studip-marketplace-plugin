@@ -25,7 +25,12 @@ class Bookmark extends SimpleORMap
         ];
         parent::configure($config);
     }
-
+    /**
+     * Set bookmark for demand
+     * @param $demand_id
+     * @param $author_id
+     * @param $bookmark_status
+     */
     public function setBookmark($demand_id, $author_id, $bookmark_status)
     {
         $bookmark = self::findOneBySQL("demand_id = ? AND author_id = ?", [$demand_id, $author_id]);
@@ -60,7 +65,6 @@ class Bookmark extends SimpleORMap
     public function getByMarketplace($marketplace_id, $author_id)
     {
         return \Marketplace\Demand::findBySQL("RIGHT JOIN mp_bookmark ON mp_bookmark.demand_id = mp_demand.id WHERE mp_demand.marketplace_id = ? AND mp_bookmark.author_id = ?", [$marketplace_id, $author_id]);
-        //return self::findBySQL("SELECT * FROM mp_bookmark LEFT JOIN mp_demand ON mp_bookmark.demand_id = mp_demand.id WHERE mp_demand.marketplace_id = ? AND mp_bookmark.author_id = ?", [$marketplace_id, $author_id]);
     }
 
     public function getBookmarkByDemand($demand_id, $author_id)

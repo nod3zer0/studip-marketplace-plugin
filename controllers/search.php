@@ -26,10 +26,6 @@ class SearchController extends \Marketplace\Controller
         Helpbar::get()->addPlainText("Categories", "Categories can be searched by property .category followed by = (equal sign) and category path (eg. .category = category1/subcategory1).");
         Helpbar::get()->addPlainText("Search operators", "You can use AND, OR, NOT operators to combine queries (eg. query1 AND query2). Text properties support = (equal sign). Search searches for exact words, partial words can be searched by adding * (asterisk) in the word (eg. example*, exa*ple, etc...). Number and date properties support =, >, <, >=, <= operators (eg. .price > 100, .date >= 2021-01-01).");
 
-
-
-
-        // https://github.com/nod3zer0/studip-docs-translated/blob/ba50f75faae1052d6c67a438c1c9d468f491944a/quickstart/helpbar.md
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/autocomplete.js');
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
@@ -50,22 +46,15 @@ class SearchController extends \Marketplace\Controller
         $tags = $db->fetchAll("SELECT name FROM mp_tag", []);
         $this->tags = json_encode($tags);
 
-
-
-
         $categories = Category::get_categories($marketplace_id);
         $this->categories = json_encode($categories);
         $this->limit = Request::get('limit') ?: get_config('ENTRIES_PER_PAGE');
         $order = Request::get('order') ?: 'mkdate_desc';
-        if ($query != '') {
+        if ($query != '') { // if query is empty display all demands
 
 
             $db = DBManager::get();
             $custom_properties = $db->fetchAll("SELECT name, type FROM mp_custom_property", []);
-            // $custom_properties = array_map(function ($value) {
-            //     return $value['name'];
-            // }, $custom_properties);
-
 
             $advanced_search_plus = new AdvancedSearchPlus();
             try {
@@ -120,6 +109,9 @@ class SearchController extends \Marketplace\Controller
         $this->render_text('' . json_encode($tags));
     }
 
+    /**
+     * Saves search query and subscribes user to notifications (unused)
+     */
     public function save_search_action()
     {
         $search_notification = json_decode(file_get_contents('php://input'), true);
