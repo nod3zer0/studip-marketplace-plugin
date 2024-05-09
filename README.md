@@ -26,7 +26,7 @@ To enable sending mails it is needed to configure Stud.IP mail API.
 
 ## Directory structure
 
-Directory structure is same as is recommended in Stud.IP plugin tutorials. Here are explained files that are not defined by Stud.IP plugin tutorials.
+Directory structure is same as is recommended in Stud.IP plugin tutorials. Here are explained files that are not defined by Stud.IP plugin tutorials. Files themselves are described in their headers.
 
 - classes/
     - search/: classes that are used for generation of SQL for search engines
