@@ -27,6 +27,11 @@ class TagDemand extends SimpleORMap
         parent::configure($config);
     }
 
+    /**
+     * Add tag to demand
+     * @param $tag_name
+     * @param $demand_id
+     */
     public function addTag($tag_name, $demand_id)
     {
         $tag_obj = \Marketplace\Tag::findByName($tag_name);
@@ -44,11 +49,21 @@ class TagDemand extends SimpleORMap
         }
     }
 
+    /**
+     * Get all tags for a given demand
+     * @param $demand_id
+     * @return array
+     */
     public function getAllTags($demand_id): array
     {
         return TagDemand::findBySQL("demand_id = ?", [$demand_id]);
     }
 
+    /**
+     * Delete tag from demand
+     * @param $tag_name
+     * @param $demand_id
+     */
     public function deleteTag($tag_name, $demand_id)
     {
         $tag_obj = \Marketplace\Tag::findByName($tag_name);
@@ -60,6 +75,11 @@ class TagDemand extends SimpleORMap
         }
     }
 
+    /**
+     * Update tags for a given demand
+     * @param $tags
+     * @param $demand_id
+     */
     public function updateTags($tags, $demand_id)
     {
         $old_tags = TagDemand::findBySQL("demand_id = ?", [$demand_id]);

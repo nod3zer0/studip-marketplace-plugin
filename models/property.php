@@ -25,12 +25,22 @@ class Property extends SimpleORMap
         ];
         parent::configure($config);
     }
-
+    /**
+     * Get all properties for a given demand
+     * @param $demand_id
+     * @return array
+     */
     public function findByDemandId($demand_id)
     {
         return self::findBySQL("demand_id = ?", [$demand_id]);
     }
 
+    /**
+     * Set custom properties for a given demand
+     * @param $new_properties
+     * @param $demand_id
+     * @return void
+     */
     public function update_custom_properties($new_properties, $demand_id)
     {
         $old_properties = self::findBySQL("demand_id = ?", [$demand_id]);

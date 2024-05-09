@@ -20,6 +20,11 @@ class MarketplaceModel extends SimpleORMap
         parent::configure($config);
     }
 
+    /**
+     * Set marketplaces
+     * @param $new_marketplaces
+     * @return array
+     */
     public function update_marketplaces($new_marketplaces)
     {
         $old_marketplaces = MarketplaceModel::findBySQL("1");

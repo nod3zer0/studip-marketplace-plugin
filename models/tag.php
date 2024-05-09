@@ -20,11 +20,21 @@ class Tag extends SimpleORMap
         parent::configure($config);
     }
 
+    /**
+     * Find tag by name
+     * @param $name
+     * @return Tag|null
+     */
     public function findByName($name): ?Tag
     {
         return \Marketplace\Tag::findOneBySQL("name = ?", [$name]);
     }
 
+    /**
+     * Get all tags in csv format
+     * @param $demand_id
+     * @return array
+     */
     public static function get_all_tags_csv()
     {
         $tags = self::findBySQL("1");
@@ -36,11 +46,21 @@ class Tag extends SimpleORMap
         return rtrim($tagsString, ",");
     }
 
+    /**
+     * Get all tags globally
+     * @param $demand_id
+     * @return array
+     */
     public static function get_all_tags()
     {
         return self::findBySQL("1");
     }
 
+    /**
+     * Set tags globally
+     * @param $demand_id
+     * @return array
+     */
     public function update_tags($new_tags)
     {
         $old_tags = \Marketplace\Tag::findBySQL("1");

@@ -52,7 +52,10 @@ class Image extends SimpleORMap
         }
         return true;
     }
-
+    /**
+     * Deletes the images from the database and the file system
+     * @return void
+     */
     public static function deleteImages($image_ids)
     {
         foreach ($image_ids as $image_id) {

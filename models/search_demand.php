@@ -26,6 +26,11 @@ class SearchDemand extends SimpleORMap
         parent::configure($config);
     }
 
+    /**
+     * Get all searches for a given user (unused)
+     * @param $user_id
+     * @return array
+     */
     public static function getSubscribedSearches($user_id)
     {
         return self::findBySQL("author_id = ?", [$user_id]);

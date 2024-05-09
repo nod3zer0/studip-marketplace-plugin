@@ -7,35 +7,7 @@
 use Studip\Form;
 use Studip\Button; ?>
 
-<!-- <script>
-    STUDIP.Vue.load().then(({
-        Vue,
-        createApp,
-        eventBus,
-        store
-    }) => {
-        new Vue({
-            el: '#tags',
-            data: {
-                tags: []
-            },
-            created() {
-                this.loadTags();
-            },
-            methods: {
-                addItem: function() {
-                    this.tags.push('');
-                },
-                deleteItem: function(index) {
-                    this.tags.splice(index, 1);
-                },
-                loadTags: function() {
-                    this.tags = '<?php echo $tagsString; ?>'.split(',');
-                }
-            }
-        });
-    });
-</script> -->
+
 
 <script>
     STUDIP.Vue.load().then(({
@@ -116,7 +88,7 @@ use Studip\Button; ?>
             eventBus,
             store
         }) => {
-
+            //this code was inspired by https://www.digitalocean.com/community/tutorials/vuejs-vue-autocomplete-component
 
 
 

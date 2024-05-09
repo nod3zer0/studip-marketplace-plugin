@@ -1,5 +1,6 @@
 ///@author Rene Ceska <xceska06@stud.fit.vutbr.cz>
 ///@brief Vue component for managing tag notifications
+///@brief  this code was inspired by https://www.digitalocean.com/community/tutorials/vuejs-vue-autocomplete-component
 
 $(document).ready(function() {
     STUDIP.Vue.load().then(({

@@ -70,6 +70,10 @@ Here can be set what should commodities be called, categories that should availa
 
 This feature is meant to transfer data when migrating Catalog plugin to another instance. It is available in `Catalog -> Config -> Export/Import`. Data are exported in JSON format. When importing data all of the already existing data are lost.
 
+## How to use plugin
+
+Information on how to use plugin is in help menus and help tour that starts on first load of the plugin and can be restarted in help menus.
+
 
 
 

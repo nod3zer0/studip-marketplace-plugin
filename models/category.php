@@ -31,6 +31,11 @@ class Category extends SimpleORMap
         parent::configure($config);
     }
 
+    /**
+     * Get all categories for a given marketplace in format that is accepted by frontend
+     * @param $marketplace_id
+     * @return array
+     */
     public function get_categories($marketplace_id)
     {
         $categories = Category::findBySQL("marketplace_id = ?", [$marketplace_id]);
@@ -38,6 +43,11 @@ class Category extends SimpleORMap
         return self::convert_categories($categories);
     }
 
+    /**
+     * Get all categories and include their marketplaces
+     * @param $marketplace_id
+     * @return array of categories with marketplaces
+     */
     public static function get_categories_with_marketplaces()
     {
         $marketplaces = MarketplaceModel::findBySQL("1");
@@ -51,6 +61,12 @@ class Category extends SimpleORMap
         return $marketplace_category;
     }
 
+    /**
+     * Convert categories to format that is accepted by frontend
+     * @param $categories - array of categories
+     * @param $parentId - parent category id nullable
+     * @return array
+     */
     function convert_categories($categories, $parentId = null)
     {
         $result = [];
@@ -70,18 +86,34 @@ class Category extends SimpleORMap
     }
 
 
-
+    /**
+     * Get all categories for a given parent category
+     * @param $parent_id - parent category id
+     * @param $marketplace_id - marketplace id
+     * @return array
+     */
     public function get_categories_by_parent_id($parent_id, $marketplace_id)
     {
         return Category::findBySQL("parent_category_id = ? AND marketplace_id = ?", [$parent_id, $marketplace_id]);
     }
 
+    /**
+     * Get all categories for a given marketplace
+     * @param $marketplace_id
+     * @return array
+     */
     public function get_categories_by_marketplace_id($marketplace_id)
     {
         return Category::findBySQL("marketplace_id = ?", [$marketplace_id]);
     }
 
-
+    /**
+     * Update categories recursively
+     * @param $categories - array of categories, in format that is given by frontend
+     * @param $parent_id - parent category id
+     * @param $flattened_categories [out] - array of categories
+     * @param $marketplace_id - marketplace id
+     */
     static function update_recursively($categories, $parent_id, &$flattened_categories, $marketplace_id)
     {
         foreach ($categories as $category) {
@@ -110,6 +142,11 @@ class Category extends SimpleORMap
         }
     }
 
+    /**
+     * Set categories for a given marketplace
+     * @param $categories - array of categories, in format that is given by frontend
+     * @param $marketplace_id - marketplace id
+     */
     public function set_categories($categories, $marketplace_id)
     {
 

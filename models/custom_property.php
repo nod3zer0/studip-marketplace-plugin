@@ -21,6 +21,11 @@ class CustomProperty extends SimpleORMap
         return CustomProperty::findOneBySQL("name = ?", [$name]);
     }
 
+    /**
+     * Set properties for a given marketplace
+     * @param $marketplace_id
+     * @return void
+     */
     public function update_properties($new_properties, $marketplace_id)
     {
         $old_properties = CustomProperty::findBySQL("marketplace_id = ?", [$marketplace_id]);
