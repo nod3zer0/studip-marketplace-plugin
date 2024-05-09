@@ -80,13 +80,53 @@ class ConfigController extends \Marketplace\Controller
         Navigation::activateItem('marketplace_' . $marketplace_id . '/config/properties');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
     }
-
+    /**
+     * Get categories for a given marketplace
+     * categories are sent in JSON in following format:
+     * categories: [{
+                    name: 'Category 1',
+                    subcategories: [{
+                        name: 'Subcategory 1-1',
+                        subcategories: [{
+                            name: 'Subcategory 1-1-1',
+                            subcategories: []
+                        }]
+                    }]
+                }, {
+                    name: 'Category 2',
+                    subcategories: []
+                }]
+     *
+     *  @param $marketplace_id
+     *
+     */
     public function get_categories_action($marketplace_id)
     {
         $categories = Category::get_categories($marketplace_id);
         $this->render_text('' . json_encode($categories));
     }
-
+    /**
+     * Set categories for a given marketplace
+     * incoming data are received in JSON by POST request in following format:
+     * categories: [{
+                    name: 'Category 1',
+                    subcategories: [{
+                        name: 'Subcategory 1-1',
+                        subcategories: [{
+                            name: 'Subcategory 1-1-1',
+                            subcategories: []
+                        }]
+                    }]
+                }, {
+                    name: 'Category 2',
+                    subcategories: []
+                }]
+     *
+     *
+     *
+     * @param $marketplace_id
+     * @return void
+     */
     public function set_categories_action($marketplace_id)
     {
         Category::set_categories(json_decode(file_get_contents('php://input'), true)["categories"], $marketplace_id);

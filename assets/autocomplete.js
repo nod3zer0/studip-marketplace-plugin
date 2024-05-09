@@ -80,13 +80,13 @@ $(document).ready(function() {
                     type: 'category_operator'
                 }],
                 category_paths: [],
-                results: [],
-                results_render: [],
-                isOpen: false,
-                last_type: '',
-                search: '',
-                arrowCounter: 0,
-                mode: 'attribute'
+                results: [], // results used internally
+                results_render: [], // results used for rendering
+                isOpen: false, // is dropdown open
+                last_type: '', // last type of selected item
+                search: '', // search input
+                arrowCounter: 0, // selected item counter
+                mode: 'attribute' // mode of autocompletion
             }),
             async created() {
 
@@ -121,6 +121,7 @@ $(document).ready(function() {
                 document.removeEventListener('click', this.handleClickOutside);
             },
             methods: {
+                /// @brief get all paths to categories
                 getCategoryPaths(categories, parentPath = '') {
                     let paths = [];
                     categories.forEach(category => {
@@ -132,6 +133,7 @@ $(document).ready(function() {
                     });
                     return paths;
                 },
+                /// @brief set notification for search (unused)
                 async SetNotification() {
                     fetch(STUDIP.URLHelper.getURL('plugins.php/marketplace/search/save_search'), {
                             method: 'POST',
@@ -150,6 +152,7 @@ $(document).ready(function() {
                             console.error('Error:', error);
                         });
                 },
+                /// @brief get index of word in list
                 getIndexOfWord(wordlist, cursorPosition) {
                     var index = 0;
                     var i = 0;
@@ -165,6 +168,7 @@ $(document).ready(function() {
                     }
 
                 },
+                /// @brief filter results based on search
                 filterResults(event) {
                     this.mode = 'attribute';
                     keys = this.search.split(' ');
@@ -216,9 +220,11 @@ $(document).ready(function() {
                         this.isOpen = true;
                     }
                 },
+                /// @brief insert substring at index
                 InsertAtIndex(str, substring, index) {
                     return str.slice(0, index) + substring + str.slice(index);
                 },
+                /// @brief pick selected item
                 PickSelected(selected) {
                     var search_input = this.$refs.search_input;
 
@@ -233,7 +239,7 @@ $(document).ready(function() {
                             this.isOpen = false;
                             return;
                         }
-
+                        // switch based on type of selected item and correct completion into search input
                         switch (selected.type) {
                             case 1: //short text
                             case 2: //number
@@ -254,7 +260,7 @@ $(document).ready(function() {
                                 this.isOpen = false;
                                 this.SetCursorPos(search_input.selectionStart + selected.name.slice(last_key.length).length + 1);
                         }
-
+                        // switch based on type of selected item and show operators
                         switch (selected.type) {
                             case 2: //number
                                 this.results = this.number_operators;
@@ -288,7 +294,7 @@ $(document).ready(function() {
                         }
 
                     } else if (this.mode == 'operator') {
-
+                        // insert operator into search input
                         if (selected.type == "category_operator") {
                             this.search = this.InsertAtIndex(this.search, ' '.concat(selected.name, ' /'), search_input.selectionStart);
                             this.isOpen = true; //open for path selection
@@ -315,10 +321,12 @@ $(document).ready(function() {
                     selected = this.results[this.arrowCounter];
                     this.PickSelected(selected);
                 },
+                /// set result from click
                 setResult(result) {
                     selected = this.results.filter(item => item.name == result)[0];
                     this.PickSelected(selected);
                 },
+                /// @brief set cursor position in search input
                 SetCursorPos(pos) {
                     var search_input = this.$refs.search_input;
                     this.$nextTick(() => {
@@ -326,12 +334,14 @@ $(document).ready(function() {
                         search_input.setSelectionRange(pos, pos);
                     });
                 },
+                /// @brief handle click outside of search input
                 handleClickOutside(event) {
                     if (!this.$el.contains(event.target)) {
                         this.arrowCounter = -1;
                         this.isOpen = false;
                     }
                 },
+                /// @brief handle arrow down
                 onArrowDown() {
                     if (this.arrowCounter < this.results.length) {
                         this.arrowCounter = this.arrowCounter + 1;
@@ -339,11 +349,8 @@ $(document).ready(function() {
                     if (this.arrowCounter >= this.results.length) {
                         this.arrowCounter = 0;
                     }
-
-                    // this.$nextTick(() => {
-                    //     document.getElementsByClassName('autocomplete-result is-active')[0].scrollIntoView();
-                    // });
                 },
+                /// @brief handle arrow up
                 onArrowUp() {
                     if (this.arrowCounter <= 0) {
                         this.arrowCounter = this.results.length - 1;
@@ -351,10 +358,8 @@ $(document).ready(function() {
                     if (this.arrowCounter > 0) {
                         this.arrowCounter = this.arrowCounter - 1;
                     }
-                    // this.$nextTick(() => {
-                    //     document.getElementsByClassName('autocomplete-result is-active')[0].scrollIntoView();
-                    // });
                 },
+                /// @brief handle change of search input
                 OnChange(event) {
                     this.filterResults(event);
                 }
