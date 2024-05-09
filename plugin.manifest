@@ -2,5 +2,5 @@ pluginclassname=Marketplace
 pluginname=Marketplace
 origin=Marketplace
 version=1.0.1
-description=Marketplace plugin
+description= The purpose of this plugin is to allow users to create demands or offers for a wide range of commodities, these commodities are divided into catalogs. For example, the catalog can be utilized to find team members for projects, instructors for courses, collaborators for research endeavors and more. Search engines are central to this plugin, as they offer varying levels of complexity, making it easy for users to search for anything they specify.
 studipMinVersion=4.6
