@@ -23,16 +23,17 @@ class AdvancedSearchController extends \Marketplace\Controller
 
     public function index_action($marketplace_id = '')
     {
+        //help
         Helpbar::get()->addPlainText("Searching", "This search allows you to search for demands based on custom properties, tags, and categories.");
         Helpbar::get()->addPlainText("Text properties", "Specified query is searched inside property as a whole. Partial words can be searched by adding * (asterisk) in the word (eg. example*, exa*ple, etc...).");
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/search_tag_select.js');
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/search_category_select.js');
         PageLayout::addScript($this->plugin->getPluginURL() . '/assets/bookmark_component.js');
         PageLayout::addStylesheet($this->plugin->getPluginURL() . '/assets/stylesheet.css');
-
         Navigation::activateItem('marketplace_' . $marketplace_id . '/marketplace_search/advanced_search');
         PageLayout::setTitle(MarketplaceModel::find($marketplace_id)->name);
 
+        // set data for view
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         $this->marketplace_comodity_name_plural = $marketplace_obj->comodity_name_plural;
         $this->marketplace_id = $marketplace_id;

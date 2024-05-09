@@ -141,7 +141,6 @@ $(document).ready(function() {
                             // Handle error
                             console.error('Error:', error);
                         });
-                    //reload to show saved successully dialog
 
                 },
                 get_categories() {

@@ -30,7 +30,7 @@ class MyDemandsController extends \Marketplace\Controller
         $marketplace_obj = \Marketplace\MarketplaceModel::find($marketplace_id);
         Navigation::activateItem('marketplace_' . $marketplace_id . '/overview/my_demands');
         PageLayout::setTitle(\Marketplace\MarketplaceModel::find($marketplace_id)->name);
-        if ($marketplace_id) {
+        if ($marketplace_id) { //check if global or local demands
             $this->all_demands = \Marketplace\Demand::findBySQL("marketplace_id = ? AND author_id = ?", [$marketplace_id, $GLOBALS['user']->id]);
         } else {
             $this->all_demands = \Marketplace\Demand::findBySQL("author_id = ?", [$GLOBALS['user']->id]);

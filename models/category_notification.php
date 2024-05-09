@@ -27,6 +27,11 @@ class CategoryNotification extends SimpleORMap
         parent::configure($config);
     }
 
+    /**
+     * Get all user IDs subscribed to category
+     * @param $category_id
+     * @return array
+     */
     public static function getUserIDsByCategory($category_id)
     {
         $category_notifications = self::findBySQL("category_id = ?", [$category_id]);
@@ -34,7 +39,11 @@ class CategoryNotification extends SimpleORMap
             return $category_notification->author_id;
         }, $category_notifications);
     }
-
+    /**
+     * Get categories to which user is subscribed
+     * @param $user_id
+     * @return array
+     */
     public static function getSubscribedCategories($user_id)
     {
         $marketplaces = MarketplaceModel::findBySQL("1");
@@ -50,7 +59,11 @@ class CategoryNotification extends SimpleORMap
         return $categories;
     }
 
-
+    /**
+     * Set categories for user
+     * @param $user_id  - user id
+     * @param $marketplaces - array marketplaces containing category ids
+     */
     public static function setSubscribedCategoriesWithMarketplaces($user_id, $marketplaces)
     {
         $categories = [];
@@ -61,6 +74,11 @@ class CategoryNotification extends SimpleORMap
         self::setSubscribedCategories($user_id, $categories);
     }
 
+    /**
+     * Set categories for user
+     * @param $user_id  - user id
+     * @param $categories - array of category ids
+     */
     public static function setSubscribedCategories($user_id, $categories)
     {
         $current_categories = self::findBySQL("author_id = ?", [$user_id]);

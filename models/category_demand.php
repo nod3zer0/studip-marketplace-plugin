@@ -29,7 +29,11 @@ class CategoryDemand extends SimpleORMap
         parent::configure($config);
     }
 
-
+    /**
+     * Get path for categories of demand
+     * @param $demand_id
+     * @return string
+     */
     public static function get_saved_path($demand_id)
     {
 
@@ -45,6 +49,11 @@ class CategoryDemand extends SimpleORMap
         return $path;
     }
 
+    /**
+     * Set categories for demand
+     * @param $categories
+     * @param $demand_id
+     */
     function set_category_demand($categories, $demand_id)
     {
         $old_categories = self::findBySQL("demand_id = ?", [$demand_id]);
